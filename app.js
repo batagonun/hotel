@@ -302,7 +302,7 @@ function viewUsers() {
   <div><label class="f">الدور</label><select data-u="role"><option value="inspector" ${ed.role === 'inspector' ? 'selected' : ''}>مفتش</option><option value="supervisor" ${ed.role === 'supervisor' ? 'selected' : ''}>مشرف</option></select></div></div>
   <div class="row" style="margin-top:10px"><button class="btn" data-act="saveuser">حفظ</button><button class="btn sec" data-act="canceluser">إلغاء</button></div></div>` : ''}
   <div class="card" style="margin-top:12px">${S.users.map(u => `<div class="listrow"><div class="sp"><b>${esc(u.name)}</b><div class="mut">${u.role === 'supervisor' ? 'مشرف' : 'مفتش'}</div></div><button class="btn sm" data-act="edituser" data-id="${u.id}">تعديل</button>${u.id !== S.session ? `<button class="btn bad sm" data-act="deluser" data-id="${u.id}">حذف</button>` : ''}</div>`).join('')}</div>
-  <p class="mut">الرموز السرية الافتراضية للتجربة فقط، غيّرها قبل الاستخدام الفعلي.</p></div>`;
+  <p class="mut">رمز الدخول هو ما يحدد المستخدم عند تسجيل الدخول، لذلك يجب أن يكون فريداً لكل مستخدم. الرموز الافتراضية للتجربة فقط، غيّرها قبل الاستخدام الفعلي.</p></div>`;
 }
 function viewSettings() {
   return bar('الإعدادات والمزامنة', 'admin') + `<div class="wrap"><div class="card"><label class="f">اسم المنشأة (يظهر في الترويسة)</label><input type="text" id="s_fac" value="${esc(S.settings.facility)}">
@@ -340,7 +340,7 @@ document.addEventListener('click', async e => {
   const t = e.target.closest('[data-act]'); if (!t) return; const a = t.dataset.act, d = t.dataset;
   if (V.view === 'editlist' && !['go', 'logout'].includes(a)) syncDraftFields();
   switch (a) {
-    case 'login': { const u = S.users.find(x => x.id === $('#lu').value); if (u && u.pin === $('#lp').value) { S.session = u.id; await save(); V.view = 'home'; render(); } else toast('الرمز السري غير صحيح'); break; }
+    case 'login': { const code = ($('#lp').value || '').trim(); const u = code && S.users.find(x => String(x.pin).trim() === code); if (u) { S.session = u.id; await save(); V.view = 'home'; render(); } else toast('رمز التحقق غير صحيح'); break; }
     case 'logout': S.session = null; await save(); V.view = 'login'; render(); break;
     case 'tab': V.view = d.v; render(); break;
     case 'go': V.view = d.v; V.editPlace = V.editUser = null; render(); break;
@@ -386,7 +386,7 @@ document.addEventListener('click', async e => {
     case 'newuser': V.editUser = { isNew: true, id: uid('U'), name: '', pin: '', role: 'inspector' }; render(); break;
     case 'edituser': V.editUser = clone(S.users.find(u => u.id === d.id)); render(); break;
     case 'canceluser': V.editUser = null; render(); break;
-    case 'saveuser': { const u = V.editUser; if (!u.name.trim() || !u.pin.trim()) return toast('أدخل الاسم والرمز'); delete u.isNew; const k = S.users.findIndex(x => x.id === u.id); if (k >= 0) S.users[k] = u; else S.users.push(u); await save(); V.editUser = null; render(); break; }
+    case 'saveuser': { const u = V.editUser; if (!u.name.trim() || !u.pin.trim()) return toast('أدخل الاسم والرمز'); u.pin = u.pin.trim(); if (S.users.some(x => x.id !== u.id && String(x.pin).trim() === u.pin)) return toast('هذا الرمز مستخدم لمستخدم آخر، اختر رمزاً مختلفاً'); delete u.isNew; const k = S.users.findIndex(x => x.id === u.id); if (k >= 0) S.users[k] = u; else S.users.push(u); await save(); V.editUser = null; render(); break; }
     case 'deluser': if (confirm('حذف المستخدم؟')) { S.users = S.users.filter(u => u.id !== d.id); await save(); render(); } break;
     case 'savesettings': S.settings.facility = $('#s_fac').value; S.settings.syncUrl = $('#s_url').value.trim(); S.settings.token = $('#s_tok').value.trim(); await save(); toast('تم الحفظ'); break;
     case 'export': { const b = new Blob([JSON.stringify(S)], { type: 'application/json' }); const a2 = document.createElement('a'); a2.href = URL.createObjectURL(b); a2.download = `inspect-backup-${nowParts().date}.json`; a2.click(); break; }
