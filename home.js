@@ -6,9 +6,12 @@
    ============================================================ */
 
 /* ===== القطاعات ===== */
-const SECTORS = { facility: 'المظهر العام والحالة الفنية والمرافق', hr: 'القوى البشرية والانضباط الإداري والتدريب', ops: 'تنظيم العمل وكفاءة التشغيل', rooms: 'قطاع الغرف', fnb: 'قطاع الأغذية والمشروبات', other: 'قطاعات أخرى' };
+const SECTORS = { facility: 'المظهر العام والحالة الفنية للمرافق', hr: 'القوى البشرية والانضباط الإداري والتدريب', ops: 'تنظيم العمل وكفاءة التشغيل', rooms: 'قطاع الغرف', fnb: 'قطاع الأغذية والمشروبات', other: 'قطاعات أخرى' };
 const SECTOR_ORDER = ['facility', 'hr', 'ops', 'rooms', 'fnb', 'other'];
-const SECTOR_PARENT = { rooms: 'جودة الخدمات', fnb: 'جودة الخدمات' };
+const SECTOR_PARENT = { rooms: 'جودة الخدمات وسلامة الغذاء', fnb: 'جودة الخدمات وسلامة الغذاء' };
+const SUB_ORDER = ['L_frontoffice', 'L_housekeeping', 'L_laundry', 'L_kitchen', 'L_restaurant', 'L_coffeeshop'];
+const listKey = l => { const k = SUB_ORDER.indexOf(l.id); return SECTOR_ORDER.indexOf(sectorOf(l)) * 100 + (k < 0 ? 50 : k); };
+const groupLabel = l => { const k = sectorOf(l); return SECTOR_PARENT[k] ? SECTOR_PARENT[k] + ' ‹ ' + SECTORS[k] : SECTORS[k]; };
 const GENERAL_SECTORS = ['facility', 'hr', 'ops'];
 function guessSector(l) {
   const t = (l.id || '') + ' ' + (l.title || '');
@@ -20,7 +23,7 @@ function guessSector(l) {
   return 'other';
 }
 const sectorOf = l => (l && SECTORS[l.sector] ? l.sector : guessSector(l || {}));
-const shortTitle = l => String((l && l.title) || '').replace(/^قائمة التحقق\s*(ل?قسم\s*)?/, '').trim() || ((l && l.title) || '');
+const shortTitle = l => String((l && l.title) || '').replace(/^قائمة التحقق\s*(ل?قسم\s+|لل(?=\S)|ل(?=\S))?/, (m, g) => g && /^لل/.test(g) ? 'ال' : '').trim() || ((l && l.title) || '');
 const autoName = id => { const l = S.lists.find(x => x.id === id); return l ? shortTitle(l).replace(/\s*\([A-Za-z ]+\)\s*$/, '') : ''; };
 const namesOf = ids => (ids || []).map(id => (S.users.find(u => u.id === id) || {}).name).filter(Boolean);
 const placeLabel = b => { const ps = [...new Set(b.map(i => i.header.place))]; return ps.length > 1 ? ps.join('، ') : ps[0]; };
@@ -104,12 +107,14 @@ function placeRows(facId, places, showInspectors) {
   const visit = visitFor(facId); const rows = [];
   places.forEach(p => (p.listIds || []).forEach(lid => { const l = S.lists.find(x => x.id === lid); if (l) rows.push({ p, l, insp: visit.find(i => i.placeId === p.id && i.listId === lid) }); }));
   if (!rows.length) return '';
-  const done = rows.filter(r => r.insp && r.insp.status === 'done');
+  rows.sort((a, b) => listKey(a.l) - listKey(b.l));
+  const done = rows.filter(r => r.insp && r.insp.status === 'done'); let lastG = '';
   const html = rows.map(({ p, l, insp }) => {
+    const gl = groupLabel(l); const gh = gl !== lastG ? `<div class="mut" style="margin:10px 0 2px;font-weight:700;color:var(--pri)">${esc(gl)}</div>` : ''; lastG = gl;
     let st = '', btn = `<button class="btn sm" data-act="startone" data-id="${p.id}" data-l="${l.id}">ابدأ التفتيش</button>`;
     if (insp && insp.status === 'done') { st = `<span class="tag ${insp.result.bandCls}">تم · ${insp.result.score}%</span>`; btn = `<button class="btn sec sm" data-act="rep" data-ids="${insp.id}" data-back="home">التقرير</button>`; }
     else if (insp) { const r = compute(insp.snap, insp.answers, insp.esc); st = `<span class="mut">قيد التنفيذ: ${r.answered} من ${r.total}</span>`; btn = `<button class="btn sm" data-act="open" data-id="${insp.id}">متابعة</button>`; }
-    return `<div class="listrow"><div class="sp"><b>${esc(p.name)}</b><div class="mut">${esc(l.title)}</div>${showInspectors ? `<div class="mut">المفتشون: ${esc(namesOf(p.inspectorIds).join('، ') || 'غير محدد')}</div>` : ''}<div style="margin-top:2px">${st}</div></div>${btn}</div>`;
+    return gh + `<div class="listrow"><div class="sp"><b>${esc(p.name)}</b><div class="mut">${esc(l.title)}</div>${showInspectors ? `<div class="mut">المفتشون: ${esc(namesOf(p.inspectorIds).join('، ') || 'غير محدد')}</div>` : ''}<div style="margin-top:2px">${st}</div></div>${btn}</div>`;
   }).join('');
   const prog = rows.length > 1 ? `<p class="mut" style="margin:6px 0 0">أنجزت ${done.length} من ${rows.length} قوائم${done.length < rows.length ? '. اختر القائمة التالية لاستكمال التفتيش.' : '.'}</p>` : '';
   const all = done.length > 1 ? `<button class="btn block" style="margin-top:8px" data-act="rep" data-ids="${done.map(r => r.insp.id).join(',')}" data-back="home">التقرير الشامل (${done.length} من ${rows.length})</button>` : '';
@@ -211,15 +216,20 @@ function openAssign(facId) {
 function viewAssign() {
   const a = V.asg, f = facOf(a.facId);
   const sec = new Set(); (f.services || []).forEach(s => { if (/إقامة|اقامة/.test(s)) sec.add('rooms'); if (/أغذية|اغذية|مشروبات/.test(s)) sec.add('fnb'); });
-  const rec = S.lists.filter(l => GENERAL_SECTORS.includes(sectorOf(l)) || !sec.size || sec.has(sectorOf(l))), oth = S.lists.filter(l => !rec.includes(l));
+  const fit = l => GENERAL_SECTORS.includes(sectorOf(l)) || !sec.size || sec.has(sectorOf(l));
+  const sorted = [...S.lists].sort((a, b) => listKey(a) - listKey(b));
   const opts = (arr, sel) => arr.map(l => `<option value="${l.id}" ${sel === l.id ? 'selected' : ''}>${esc(l.title)}</option>`).join('');
+  const groupedOpts = sel => { const groups = []; sorted.filter(fit).forEach(l => { const g = groupLabel(l); let x = groups.find(y => y.g === g); if (!x) groups.push(x = { g, items: [] }); x.items.push(l); });
+    const rest = sorted.filter(l => !fit(l));
+    return groups.map(x => `<optgroup label="${esc(x.g)}">${opts(x.items, sel)}</optgroup>`).join('') + (rest.length ? `<optgroup label="خارج خدمات المنشأة">${opts(rest, sel)}</optgroup>` : ''); };
   const insp = S.users.filter(u => u.role === 'inspector');
   return bar('تعيين قوائم التحقق', 'home') + `<div class="wrap"><div class="card"><b>${esc(f.name || 'منشأة بلا اسم')}</b>
   <div class="mut">الخدمات المقدمة: ${esc((f.services || []).join('، ') || 'لم تُحدد')}</div>
-  <p class="mut" style="margin:8px 0 0">اختر قائمة التحقق ثم حدد المفتش المسؤول عنها، وكرر ذلك لباقي القوائم حسب الخدمات التي تقدمها المنشأة.</p></div>
+  <p class="mut" style="margin:8px 0 0">القوائم المستقلة: المظهر العام والحالة الفنية للمرافق، والقوى البشرية والانضباط الإداري والتدريب، وتنظيم العمل وكفاءة التشغيل. وتحت جودة الخدمات وسلامة الغذاء: قطاع الغرف (الاستقبال، الإشراف الداخلي، المغسلة) وقطاع الأغذية والمشروبات (المطبخ، المطعم، الكوفي شوب). اختر ما يناسب خدمات المنشأة ثم حدد المفتش لكل قائمة.</p>
+  <button class="btn sm" style="margin-top:8px" data-act="asgall">إضافة كل القوائم المناسبة لخدمات المنشأة</button></div>
   ${a.rows.map((r, k) => `<div class="card"><div class="row"><b class="sp">القائمة ${k + 1}</b>${a.rows.length > 1 ? `<button class="btn bad sm" data-act="asgdel" data-k="${k}">حذف</button>` : ''}</div>
    <label class="f" style="margin-top:6px">قائمة التحقق</label>
-   <select data-asl="${k}"><option value="">اختر قائمة التحقق</option>${rec.length && oth.length ? `<optgroup label="مناسبة لخدمات المنشأة">${opts(rec, r.listId)}</optgroup><optgroup label="قوائم أخرى">${opts(oth, r.listId)}</optgroup>` : opts(S.lists, r.listId)}</select>
+   <select data-asl="${k}"><option value="">اختر قائمة التحقق</option>${groupedOpts(r.listId)}</select>
    <label class="f" style="margin-top:8px">اسم المكان</label><input type="text" data-asr="${k}" data-asf="name" value="${esc(r.name)}" placeholder="مثال: مطعم النيل">
    <label class="f" style="margin-top:8px">المفتشون المسؤولون</label>
    ${insp.length ? insp.map(u => `<label class="row" style="gap:8px;padding:4px 0"><input type="checkbox" data-asi="${k}" data-asu="${u.id}" ${r.inspectorIds.includes(u.id) ? 'checked' : ''}> <span>${esc(u.name)}</span></label>`).join('') : '<p class="mut">لا يوجد مفتشون. أضفهم من الإعدادات ثم المستخدمون والصلاحيات.</p>'}
@@ -259,7 +269,7 @@ function viewReport() {
   const i0 = list[0], h = i0.header, multi = list.length > 1;
   const fac = i0.fac || facOf((S.places.find(p => p.id === i0.placeId) || {}).facilityId);
   const places = [...new Set(list.map(i => i.header.place))]; const onePlace = places.length === 1;
-  const groups = SECTOR_ORDER.map(k => ({ k, items: list.filter(i => sectorOf(i.snap) === k) })).filter(g => g.items.length);
+  const groups = SECTOR_ORDER.map(k => ({ k, items: list.filter(i => sectorOf(i.snap) === k).sort((a, b) => listKey(a.snap) - listKey(b.snap)) })).filter(g => g.items.length);
   const summary = multi ? `<h3>ملخص جميع القوائم</h3><table class="rep"><tr><th class="sidehd">القطاع</th><th>المكان والقائمة</th><th>الدرجة</th><th>التقدير</th><th>البوابة الحرجة</th></tr>
     ${groups.map(g => g.items.map((i, n) => `<tr>${n === 0 ? `<td class="side" rowspan="${g.items.length}">${SECTOR_PARENT[g.k] ? SECTOR_PARENT[g.k] + '<br>' : ''}${SECTORS[g.k]}</td>` : ''}<td><b>${esc(i.header.place)}</b><div class="mut">${esc(i.snap.title)}</div></td><td>${i.result.score}%</td><td>${i.result.band}</td><td>${i.result.veto ? 'مفعّلة' : 'لا'}</td></tr>`).join('')).join('')}</table>` : '';
   let lastParent = '';
@@ -356,6 +366,12 @@ document.addEventListener('click', async e => {
       if (confirm(`حذف منشأة "${f.name || 'بلا اسم'}"؟` + (ps.length ? `\nسيُحذف معها ${ps.length} من أماكن المرور وتعييناتها.` : '') + '\nالتقارير السابقة تبقى محفوظة.')) {
         S.facilities = S.facilities.filter(x => x.id !== f.id); S.places = S.places.filter(p => p.facilityId !== f.id); S.facDeleted = true; await save(); toast('تم حذف المنشأة'); render();
       } break; }
+    case 'asgall': { const f = facOf(V.asg.facId); const sec = new Set(); (f.services || []).forEach(x => { if (/إقامة|اقامة/.test(x)) sec.add('rooms'); if (/أغذية|اغذية|مشروبات/.test(x)) sec.add('fnb'); });
+      const have = new Set(V.asg.rows.map(r => r.listId)); let n = 0;
+      [...S.lists].sort((a, b) => listKey(a) - listKey(b)).filter(l => GENERAL_SECTORS.includes(sectorOf(l)) || !sec.size || sec.has(sectorOf(l))).forEach(l => { if (have.has(l.id)) return; n++;
+        const empty = V.asg.rows.find(r => !r.listId && !r.name); const row = empty || { placeId: null, listId: '', name: '', inspectorIds: [], responsible: '', staff: '', shifts: '' };
+        row.listId = l.id; row.name = autoName(l.id); if (!empty) V.asg.rows.push(row); });
+      toast(n ? `أضيفت ${n} قائمة. حدد المفتش لكل قائمة، واحذف ما لا تحتاجه` : 'كل القوائم المناسبة مضافة بالفعل'); rerender(); break; }
     case 'asgadd': V.asg.rows.push({ placeId: null, listId: '', name: '', inspectorIds: [], responsible: '', staff: '', shifts: '' }); rerender(); break;
     case 'asgdel': V.asg.rows.splice(+d.k, 1); if (!V.asg.rows.length) V.asg.rows.push({ placeId: null, listId: '', name: '', inspectorIds: [], responsible: '', staff: '', shifts: '' }); rerender(); break;
     case 'asgsave': {
