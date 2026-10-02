@@ -11,7 +11,7 @@ const SECTOR_ORDER = ['rooms', 'fnb', 'other'];
 function guessSector(l) {
   const t = (l.id || '') + ' ' + (l.title || '');
   if (/kitchen|restaurant|cafe|coffee|bar\b|buffet|مطعم|مطاعم|كوفي|كافيه|كافتيريا|كافيتيريا|مقهى|بوفيه|مطبخ|مطابخ|مخزن|مخازن|أغذية|اغذية|مشروبات/i.test(t)) return 'fnb';
-  if (/housekeeping|frontoffice|laundry|استقبال|إشراف|اشراف|مغسل|غرف الضيوف|الغرف|غرف|إقامة|اقامة/i.test(t) && !/اجتماعات|مؤتمرات/.test(t)) return 'rooms';
+  if (/housekeeping|frontoffice|laundry|استقبال|إشراف|اشراف|مغسل|الغرف|غرف|إقامة|اقامة/i.test(t) && !/اجتماعات|مؤتمرات/.test(t)) return 'rooms';
   return 'other';
 }
 const sectorOf = l => (l && SECTORS[l.sector] ? l.sector : guessSector(l || {}));
@@ -88,24 +88,64 @@ function render() {
 /* ===== الرئيسية ===== */
 function viewHome() { return isSup() ? viewSupHome() : viewInspHome(); }
 
+
+/* ===== زيارة المنشأة: تفتيش القوائم واحدة بعد أخرى ثم تقرير شامل ===== */
+function visitFor(facId) {
+  const today = nowParts().date;
+  const mine = S.inspections.filter(i => i.inspectorId === S.session && i.header.date === today && (((i.fac && i.fac.id) || (S.places.find(p => p.id === i.placeId) || {}).facilityId) === facId));
+  return groupBatches(mine).sort((a, b) => Math.max(...b.map(i => i.startedAt || 0)) - Math.max(...a.map(i => i.startedAt || 0)))[0] || [];
+}
+function placeRows(facId, places, showInspectors) {
+  const visit = visitFor(facId); const rows = [];
+  places.forEach(p => (p.listIds || []).forEach(lid => { const l = S.lists.find(x => x.id === lid); if (l) rows.push({ p, l, insp: visit.find(i => i.placeId === p.id && i.listId === lid) }); }));
+  if (!rows.length) return '';
+  const done = rows.filter(r => r.insp && r.insp.status === 'done');
+  const html = rows.map(({ p, l, insp }) => {
+    let st = '', btn = `<button class="btn sm" data-act="startone" data-id="${p.id}" data-l="${l.id}">ابدأ التفتيش</button>`;
+    if (insp && insp.status === 'done') { st = `<span class="tag ${insp.result.bandCls}">تم · ${insp.result.score}%</span>`; btn = `<button class="btn sec sm" data-act="rep" data-ids="${insp.id}" data-back="home">التقرير</button>`; }
+    else if (insp) { const r = compute(insp.snap, insp.answers, insp.esc); st = `<span class="mut">قيد التنفيذ: ${r.answered} من ${r.total}</span>`; btn = `<button class="btn sm" data-act="open" data-id="${insp.id}">متابعة</button>`; }
+    return `<div class="listrow"><div class="sp"><b>${esc(p.name)}</b><div class="mut">${esc(l.title)}</div>${showInspectors ? `<div class="mut">المفتشون: ${esc(namesOf(p.inspectorIds).join('، ') || 'غير محدد')}</div>` : ''}<div style="margin-top:2px">${st}</div></div>${btn}</div>`;
+  }).join('');
+  const prog = rows.length > 1 ? `<p class="mut" style="margin:6px 0 0">أنجزت ${done.length} من ${rows.length} قوائم${done.length < rows.length ? '. اختر القائمة التالية لاستكمال التفتيش.' : '.'}</p>` : '';
+  const all = done.length > 1 ? `<button class="btn block" style="margin-top:8px" data-act="rep" data-ids="${done.map(r => r.insp.id).join(',')}" data-back="home">التقرير الشامل (${done.length} من ${rows.length})</button>` : '';
+  return html + prog + all;
+}
+function startOne(placeId, listId) {
+  const p = S.places.find(x => x.id === placeId), l = S.lists.find(x => x.id === listId); if (!p || !l) return toast('تعذر بدء التفتيش');
+  const fac = facOf(p.facilityId); const visit = visitFor(p.facilityId); const t = nowParts();
+  const batchId = visit.length && !visit.some(i => i.placeId === placeId && i.listId === listId) ? (visit[0].batchId || visit[0].id) : uid('B');
+  const insp = { id: uid('N'), batchId, listId, placeId, snap: clone(l), fac: clone(fac), status: 'draft', synced: false, inspectorId: S.session,
+    header: { facility: fac.name || S.settings.facility, place: p.name, dept: p.dept, staff: p.staff, shifts: p.shifts, responsible: p.responsible, inspector: me().name, date: t.date, time: t.time },
+    answers: {}, esc: {}, sig: {}, startedAt: Date.now() };
+  S.inspections.push(insp); save(); V.batch = batchId; V.cur = insp.id; V.view = 'insp'; render();
+}
+/* بعد الحفظ يعود المستخدم إلى صفحة التخصيصات لاستكمال باقي القوائم */
+function finalize() {
+  const i = cur(); i.result = compute(i.snap, i.answers, i.esc); i.status = 'done'; i.finishedAt = Date.now(); i.synced = false; save();
+  const rest = placeRowsLeft(i);
+  toast(rest ? 'تم حفظ التفتيش. اختر القائمة التالية' : 'تم حفظ التفتيش. اكتملت كل القوائم');
+  autoSync(); V.view = 'home'; render();
+}
+function placeRowsLeft(i) {
+  const fid = (i.fac && i.fac.id) || (S.places.find(p => p.id === i.placeId) || {}).facilityId; const visit = visitFor(fid);
+  return unitsForMe().filter(p => p.facilityId === fid).some(p => (p.listIds || []).some(lid => S.lists.some(l => l.id === lid) && !visit.some(x => x.placeId === p.id && x.listId === lid && x.status === 'done')));
+}
+const _viewInsp2 = viewInsp;
+viewInsp = function () { return _viewInsp2().replace('data-act="go" data-v="batch"', 'data-act="go" data-v="home"'); };
+
 function facCard(f) {
   const ps = S.places.filter(p => p.facilityId === f.id); const st = f.staff || {};
   const total = toNum(st.permanent) + toNum(st.insured) + toNum(st.temporary);
   const open = V.openFac && V.openFac[f.id];
   const info = [f.address, f.manager && 'المدير: ' + f.manager, total && 'العاملون: ' + total, (f.services || []).join('، ')].filter(Boolean).map(esc).join(' · ');
-  const detail = ps.length ? ps.map(p => { const ls = (p.listIds || []).map(id => S.lists.find(l => l.id === id)).filter(Boolean); const secs = [...new Set(ls.map(sectorOf))];
-    return `<div class="listrow"><div class="sp"><b>${esc(p.name)}</b><div class="mut">${esc(ls.map(l => l.title).join('، ') || 'لا توجد قائمة مرتبطة')}</div>
-    <div class="mut">المفتشون: ${esc(namesOf(p.inspectorIds).join('، ') || 'غير محدد')}</div>${secs.map(k => `<span class="tag s">${SECTORS[k]}</span> `).join('')}</div>
-    ${ls.length ? `<button class="btn sm" data-act="startplace" data-id="${p.id}">ابدأ التفتيش</button>` : ''}</div>`; }).join('')
-    + (ps.filter(p => (p.listIds || []).some(id => S.lists.some(l => l.id === id))).length > 1 ? `<button class="btn sec block" style="margin-top:8px" data-act="startall" data-fac="${f.id}">تفتيش شامل لكل القوائم</button>` : '')
-    : '<p class="mut">لم تُعيَّن قوائم تحقق لهذه المنشأة بعد. اضغط تعيين قائمة تحقق.</p>';
+  const detail = ps.length ? placeRows(f.id, ps, true) || '<p class="mut">لا توجد قوائم صالحة مرتبطة بأماكن هذه المنشأة.</p>' : '<p class="mut">لم تُعيَّن قوائم تحقق لهذه المنشأة بعد. اضغط تعيين قائمة تحقق.</p>';
   return `<div class="card"><div data-act="togfac" data-id="${f.id}" style="cursor:pointer"><b style="font-size:17px">${esc(f.name || 'منشأة بلا اسم')}</b>
   ${info ? `<div class="mut">${info}</div>` : ''}<div class="mut">${ps.length} من أماكن المرور · ${open ? 'إخفاء التفاصيل ▴' : 'عرض القوائم والمفتشين ▾'}</div></div>
   <div class="row" style="margin-top:10px"><button class="btn sm" data-act="editfac" data-id="${f.id}">تعديل</button><button class="btn bad sm" data-act="delfac2" data-id="${f.id}">حذف</button><button class="btn sec sm" data-act="assign" data-id="${f.id}">تعيين قائمة تحقق</button>${ps.length ? `<button class="btn sm" style="background:var(--ok)" data-act="openstart" data-id="${f.id}">بدء تفتيش</button>` : ''}</div>
   ${open ? `<div style="margin-top:8px">${detail}</div>` : ''}</div>`;
 }
 function draftsCard() {
-  const drafts = groupBatches(S.inspections.filter(i => i.inspectorId === S.session)).filter(b => b.some(i => i.status === 'draft'));
+  const today0 = nowParts().date; const drafts = groupBatches(S.inspections.filter(i => i.inspectorId === S.session)).filter(b => b.some(i => i.status === 'draft') && b[0].header.date !== today0);
   return drafts.length ? `<div class="card"><h3>تفتيشات غير مكتملة</h3>${drafts.map(b => `<div class="listrow"><div class="sp"><b>${esc(placeLabel(b))}</b><div class="mut">${esc(b[0].header.date)} ${esc(b[0].header.time)} · اكتملت ${b.filter(i => i.status === 'done').length} من ${b.length} قوائم</div></div><button class="btn sm" data-act="openbatch" data-b="${b[0].batchId || b[0].id}">متابعة</button></div>`).join('')}</div>` : '';
 }
 function viewSupHome() {
@@ -115,7 +155,7 @@ function viewSupHome() {
 }
 function viewInspHome() {
   const mine = S.inspections.filter(i => i.inspectorId === S.session);
-  const drafts = groupBatches(mine).filter(b => b.some(i => i.status === 'draft'));
+  const today0 = nowParts().date; const drafts = groupBatches(mine).filter(b => b.some(i => i.status === 'draft') && b[0].header.date !== today0);
   const pending = S.inspections.filter(i => i.status === 'done' && !i.synced).length;
   const units = unitsForMe().filter(p => (p.listIds || []).some(id => S.lists.some(l => l.id === id)));
   const byFac = new Map(); units.forEach(p => { if (!byFac.has(p.facilityId)) byFac.set(p.facilityId, []); byFac.get(p.facilityId).push(p); });
@@ -123,9 +163,7 @@ function viewInspHome() {
   <h2>مرحباً بك ${esc(me().name)}</h2>
   <p>نقدّر جهدك في أعمال الرقابة والمتابعة الميدانية، ونتمنى لك مروراً موفقاً ودقيقاً.</p>
   <p class="sign">مع تحيات إدارة الفنادق</p></div>
-  ${byFac.size ? [...byFac.entries()].map(([fid, ps]) => { const f = facOf(fid); return `<div class="card"><h3>${esc(f.name || 'منشأة بلا اسم')}</h3><p class="mut" style="margin:0 0 6px">أماكن التفتيش المعيّنة لك</p>
-    ${ps.map(p => `<div class="listrow"><div class="sp"><b>${esc(p.name)}</b><div class="mut">قائمة التحقق: ${esc(p.listIds.map(listTitle).filter(Boolean).join('، '))}</div></div><button class="btn sm" data-act="startplace" data-id="${p.id}">ابدأ التفتيش</button></div>`).join('')}
-    ${ps.length > 1 ? `<button class="btn sec block" style="margin-top:8px" data-act="startall" data-fac="${fid}">تفتيش شامل لكل القوائم المعيّنة (${ps.length})</button>` : ''}</div>`; }).join('')
+  ${byFac.size ? [...byFac.entries()].map(([fid, ps]) => { const f = facOf(fid); return `<div class="card"><h3>${esc(f.name || 'منشأة بلا اسم')}</h3><p class="mut" style="margin:0 0 6px">أماكن التفتيش المعيّنة لك</p>${placeRows(fid, ps, false)}</div>`; }).join('')
     : '<div class="card"><p class="mut">لا توجد أماكن تفتيش معيّنة لك حالياً. يحددها المشرف من الصفحة الرئيسية.</p></div>'}
   ${drafts.length ? `<div class="card"><h3>تفتيشات غير مكتملة</h3>${drafts.map(b => `<div class="listrow"><div class="sp"><b>${esc(placeLabel(b))}</b><div class="mut">${esc(b[0].header.date)} ${esc(b[0].header.time)} · اكتملت ${b.filter(i => i.status === 'done').length} من ${b.length} قوائم</div></div><button class="btn sm" data-act="openbatch" data-b="${b[0].batchId || b[0].id}">متابعة</button></div>`).join('')}</div>` : ''}
   <div class="card"><h3>حالة المزامنة</h3><p class="mut">${S.settings.syncUrl ? `بانتظار الرفع: ${pending} تفتيش` : 'المزامنة غير مفعّلة، البيانات محفوظة على هذا الهاتف فقط.'}</p>
@@ -134,8 +172,6 @@ function viewInspHome() {
 
 /* ===== بدء التفتيش لمكان أو لعدة أماكن ===== */
 function startMulti(placeIds) {
-  const dup = S.inspections.find(i => i.status === 'draft' && i.inspectorId === S.session && placeIds.includes(i.placeId) && Date.now() - (i.startedAt || 0) < 12 * 3600e3);
-  if (dup && confirm('توجد مسودة تفتيش غير مكتملة لهذا المكان. موافق لمتابعتها، وإلغاء لبدء تفتيش جديد.')) { V.batch = dup.batchId || dup.id; const sib = S.inspections.filter(i => (i.batchId || i.id) === V.batch); if (sib.length === 1) { V.cur = sib[0].id; V.view = 'insp'; } else V.view = 'batch'; return render(); }
   const t = nowParts(), batchId = uid('B'), ids = [];
   placeIds.forEach(pid => {
     const p = S.places.find(x => x.id === pid); if (!p) return; const fac = facOf(p.facilityId);
@@ -330,6 +366,7 @@ document.addEventListener('click', async e => {
       });
       S.places = S.places.filter(p => p.facilityId !== g.facId || keep.has(p.id));
       await save(); V.openFac = V.openFac || {}; V.openFac[g.facId] = true; V.asg = null; toast('تم حفظ التعيينات'); V.view = 'home'; render(); break; }
+    case 'startone': startOne(d.id, d.l); break;
     case 'startplace': startMulti([d.id]); break;
     case 'startall': startMulti(unitsForMe().filter(p => p.facilityId === d.fac).map(p => p.id)); break;
     case 'explist': { const l = S.lists.find(x => x.id === d.id); if (!l) break; const o = clone(l); o.sector = sectorOf(l); const b = new Blob([JSON.stringify(o, null, 2)], { type: 'application/json' }); const a2 = document.createElement('a'); a2.href = URL.createObjectURL(b); a2.download = `checklist-${l.id}.json`; a2.click(); break; }

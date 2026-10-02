@@ -65,16 +65,9 @@ table.rep th{background:var(--pri2)}
 
 .pb{page-break-before:always;margin-top:18px}
 @media print{.pb{break-before:page}}
-details.ms{border:1px solid var(--line);border-radius:12px;padding:0;background:var(--card);color:var(--ink);overflow:hidden}
-details.ms summary{cursor:pointer;font-weight:700;padding:12px 14px;color:var(--ink);list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px}
-details.ms summary::-webkit-details-marker{display:none}
-details.ms summary::after{content:"\25BE";color:var(--pri);font-size:16px}
-details.ms[open]{border-color:var(--pri)}
-details.ms[open] summary::after{content:"\25B4"}
-details.ms .selTxt{color:var(--ink)}
-details.ms label{display:flex;gap:10px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);color:var(--ink);cursor:pointer}
-details.ms label:hover{background:var(--pri2)}
-details.ms input[type=checkbox]{width:18px;height:18px;accent-color:var(--pri);flex:none}
+details.ms{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff}
+details.ms summary{cursor:pointer;font-weight:700}
+details.ms label{display:flex;gap:8px;align-items:center;padding:6px 0}
 
 /* ===== الواجهة الرئيسية الجديدة ===== */
 .hero{position:relative;height:36vh;min-height:210px;max-height:330px;overflow:hidden;border-radius:0 0 28px 28px;background:#0b3a48}
