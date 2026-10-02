@@ -10,8 +10,8 @@ const SECTORS = { rooms: 'قطاع الغرف', fnb: 'قطاع الأغذية و
 const SECTOR_ORDER = ['rooms', 'fnb', 'other'];
 function guessSector(l) {
   const t = (l.id || '') + ' ' + (l.title || '');
-  if (/housekeeping|frontoffice|laundry|استقبال|إشراف|اشراف|مغسل|غرف|إقامة|اقامة/i.test(t)) return 'rooms';
-  if (/kitchen|restaurant|cafe|coffee|store|مطعم|كوفي|مطبخ|مخزن|أغذية|اغذية|مشروبات/i.test(t)) return 'fnb';
+  if (/kitchen|restaurant|cafe|coffee|bar\b|buffet|مطعم|مطاعم|كوفي|كافيه|كافتيريا|كافيتيريا|مقهى|بوفيه|مطبخ|مطابخ|مخزن|مخازن|أغذية|اغذية|مشروبات/i.test(t)) return 'fnb';
+  if (/housekeeping|frontoffice|laundry|استقبال|إشراف|اشراف|مغسل|غرف الضيوف|الغرف|غرف|إقامة|اقامة/i.test(t) && !/اجتماعات|مؤتمرات/.test(t)) return 'rooms';
   return 'other';
 }
 const sectorOf = l => (l && SECTORS[l.sector] ? l.sector : guessSector(l || {}));
@@ -51,7 +51,8 @@ function heroSVG() {
   <rect x="0" y="348" width="800" height="72" fill="url(#hw)"/><rect x="0" y="348" width="800" height="3" fill="#d4af5a" opacity=".7"/>${streaks}
   ${palm(64, 1)}${palm(742, -1)}${palm(150, .8)}${palm(656, -.8)}</svg>`;
 }
-const heroImg = () => (S.settings && S.settings.heroImg ? `<img src="${S.settings.heroImg}" alt="">` : heroSVG());
+const safeHero = () => { const h = S.settings && S.settings.heroImg; return typeof h === 'string' && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(h) ? h : ''; };
+const heroImg = () => (safeHero() ? `<img src="${safeHero()}" alt="">` : heroSVG());
 const hero = inner => `<div class="hero">${heroImg()}<div class="heroshade"></div>${me() ? '<button class="herologout" data-act="logout">خروج</button>' : ''}${inner || ''}</div>`;
 
 /* ===== الدخول برمز التحقق ===== */
@@ -76,7 +77,7 @@ function render() {
   const v = V.view;
   const views = { login: viewLogin, home: viewHome, inspections: viewInspections, admin: viewAdmin, new: viewNew, insp: viewInsp, finish: viewFinish, report: viewReport, lists: viewLists, editlist: viewEditList, places: viewPlaces, users: viewUsers, settings: viewSettings, facs: viewFacs, editfac: viewEditFac, batch: viewBatch, printlist: viewPrintList, assign: viewAssign };
   if (['home', 'inspections', 'admin'].includes(v)) V.tab = v;
-  const h = (views[v] || viewLogin)();
+  let h; try { h = (views[v] || viewLogin)(); } catch (err) { console.error(err); V.view = me() ? 'home' : 'login'; if (typeof toast === 'function') toast('حدث خطأ في عرض الشاشة'); h = (me() ? viewHome : viewLogin)(); }
   const keep = V.keepScroll, y = window.scrollY;
   app().innerHTML = h + (NO_NAV2.includes(V.view) ? '' : nav());
   if (keep) window.scrollTo(0, y); else window.scrollTo(0, 0);
@@ -133,6 +134,8 @@ function viewInspHome() {
 
 /* ===== بدء التفتيش لمكان أو لعدة أماكن ===== */
 function startMulti(placeIds) {
+  const dup = S.inspections.find(i => i.status === 'draft' && i.inspectorId === S.session && placeIds.includes(i.placeId) && Date.now() - (i.startedAt || 0) < 12 * 3600e3);
+  if (dup && confirm('توجد مسودة تفتيش غير مكتملة لهذا المكان. موافق لمتابعتها، وإلغاء لبدء تفتيش جديد.')) { V.batch = dup.batchId || dup.id; const sib = S.inspections.filter(i => (i.batchId || i.id) === V.batch); if (sib.length === 1) { V.cur = sib[0].id; V.view = 'insp'; } else V.view = 'batch'; return render(); }
   const t = nowParts(), batchId = uid('B'), ids = [];
   placeIds.forEach(pid => {
     const p = S.places.find(x => x.id === pid); if (!p) return; const fac = facOf(p.facilityId);
@@ -184,7 +187,7 @@ function viewAssign() {
 /* ===== المرورات السابقة والدفعات ===== */
 function viewInspections() {
   const arr = S.inspections.filter(i => i.status === 'done' && (isSup() || i.inspectorId === S.session));
-  const batches = groupBatches(arr).sort((a, b) => Math.max(...b.map(i => i.finishedAt)) - Math.max(...a.map(i => i.finishedAt)));
+  const batches = groupBatches(arr).sort((a, b) => Math.max(...b.map(i => i.finishedAt || 0)) - Math.max(...a.map(i => i.finishedAt)));
   return bar('المرورات السابقة') + `<div class="wrap">${batches.length ? batches.map(b => {
     const h = b[0].header; const ids = b.map(i => i.id).join(',');
     return `<div class="card"><div class="row"><b class="sp">${esc(h.facility || '')}${h.facility ? ' · ' : ''}${esc(placeLabel(b))}</b>${b.some(i => i.result.veto) ? '<span class="tag bad">بوابة حرجة</span>' : ''}</div>
@@ -244,7 +247,8 @@ function viewLists() {
   <select data-lsec="${l.id}" style="width:auto;margin-top:6px;padding:6px 10px">${SECTOR_ORDER.map(k => `<option value="${k}" ${sectorOf(l) === k ? 'selected' : ''}>${SECTORS[k]}</option>`).join('')}</select></div>
   <div class="row"><button class="btn sm" data-act="editlist" data-id="${l.id}">تعديل</button><button class="btn sec sm" data-act="duplist" data-id="${l.id}">نسخ</button><button class="btn sec sm" data-act="printlist" data-id="${l.id}" data-back="lists">طباعة</button><button class="btn sec sm" data-act="explist" data-id="${l.id}">تصدير</button><button class="btn bad sm" data-act="dellist2" data-id="${l.id}">حذف</button></div></div>`).join('')}</div></div>`;
 }
-const CLS_ALIAS = { c: 'c', e: 'e', s: 's', 'حرج': 'c', 'حرجة': 'c', 'أساسي': 'e', 'اساسي': 'e', 'قياسي': 's' };
+const CLS_ALIAS = Object.assign(Object.create(null), { c: 'c', e: 'e', s: 's', 'حرج': 'c', 'حرجة': 'c', 'أساسي': 'e', 'اساسي': 'e', 'قياسي': 's' });
+const cleanId = v => String(v == null ? '' : v).replace(/[^\w-]/g, '').slice(0, 60);
 function normList(x) {
   if (!x || typeof x !== 'object' || Array.isArray(x)) throw new Error('بنية القائمة غير صحيحة');
   const title = String(x.title || '').trim(); if (!title) throw new Error('عنوان القائمة (title) مفقود');
@@ -255,13 +259,13 @@ function normList(x) {
     if (!Array.isArray(a.items) || !a.items.length) throw new Error(`المحور "${name}" بلا بنود (items)`);
     const items = a.items.map(it => {
       const text = String((it && it.text) || '').trim(); if (!text) throw new Error(`يوجد بند بلا نص في المحور "${name}"`);
-      const cls = CLS_ALIAS[String(it.cls || '').trim()]; if (!cls) throw new Error(`تصنيف غير صالح في المحور "${name}" (المسموح: c أو e أو s)`);
-      let id = String(it.id || ''); if (!id || usedI.has(id)) id = uid('I'); usedI.add(id); return { id, cls, text };
+      const cls = CLS_ALIAS[String(it.cls || '').trim().toLowerCase()]; if (!cls) throw new Error(`تصنيف غير صالح في المحور "${name}" (المسموح: c أو e أو s)`);
+      let id = cleanId(it.id); if (!id || usedI.has(id)) id = uid('I'); usedI.add(id); return { id, cls, text };
     });
-    let aid = String(a.id || ''); if (!aid || usedA.has(aid)) aid = uid('A'); usedA.add(aid);
+    let aid = cleanId(a.id); if (!aid || usedA.has(aid)) aid = uid('A'); usedA.add(aid);
     return { id: aid, name, weight: +a.weight || 0, items };
   });
-  const out = { id: String(x.id || uid('L')), title, version: +x.version || 1, axes, escalation: Array.isArray(x.escalation) ? x.escalation.map(s => String(s).trim()).filter(Boolean) : [] };
+  const out = { id: cleanId(x.id) || uid('L'), title, version: +x.version || 1, axes, escalation: Array.isArray(x.escalation) ? x.escalation.map(s => String(s).trim()).filter(Boolean) : [] };
   if (SECTORS[x.sector]) out.sector = x.sector;
   return out;
 }
@@ -269,6 +273,7 @@ async function importLists(files) {
   let ok = 0, replaced = 0; const errs = []; const warn = [];
   for (const f of files) {
     let j; try { j = JSON.parse((await f.text()).replace(/^﻿/, '')); } catch { errs.push(`${f.name}: الملف ليس بصيغة JSON صحيحة`); continue; }
+    if (j === null || typeof j !== 'object') { errs.push(`${f.name}: محتوى الملف غير صالح`); continue; }
     const cands = Array.isArray(j) ? j : Array.isArray(j.lists) ? j.lists : [j];
     for (const c of cands) {
       try {
@@ -316,6 +321,7 @@ document.addEventListener('click', async e => {
         if (!r.name.trim()) return toast(`القائمة ${k + 1}: اكتب اسم المكان`);
         if (!r.inspectorIds.length) return toast(`القائمة ${k + 1}: حدد مفتشاً واحداً على الأقل`);
       }
+      if (empty && S.places.some(p => p.facilityId === g.facId) && !confirm('لم تُحدد أي قائمة تحقق. سيؤدي الحفظ إلى حذف جميع أماكن المرور المعيّنة لهذه المنشأة. هل تريد المتابعة؟')) return;
       const keep = new Set();
       g.rows.filter(r => r.listId).forEach(r => {
         const dept = autoName(r.listId); const base = { name: r.name.trim(), dept, staff: r.staff, shifts: r.shifts, responsible: r.responsible.trim(), listIds: [r.listId], inspectorIds: [...r.inspectorIds] };
