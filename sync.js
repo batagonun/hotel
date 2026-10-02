@@ -1,7 +1,27 @@
 /* مزامنة الأجهزة عبر Google Apps Script
    - المشرف: يرفع الإعدادات (منشآت، تعيينات، قوائم، مستخدمون) عند أي تعديل، ويستلم التفتيشات المنتهية من كل المفتشين.
    - المفتش: يسحب الإعدادات تلقائياً، ويرفع تفتيشاته المنتهية. */
-const SY = { busy: false, timer: null };
+const SY = { busy: false, timer: null, fails: 0, next: null };
+/* اتصال متين بالخادم: مهلة وإعادة محاولة تلقائية عند الانقطاع أو الازدحام */
+async function api(action, payload, opt) {
+  opt = opt || {}; const tries = opt.tries || 3; let last;
+  for (let n = 0; n < tries; n++) {
+    const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), opt.timeout || 30000);
+    try {
+      const r = await fetch(S.settings.syncUrl, { method: 'POST', body: JSON.stringify({ action, token: S.settings.token, ...payload }), signal: ctl.signal, redirect: 'follow' });
+      const txt = await r.text(); clearTimeout(to); let j;
+      try { j = JSON.parse(txt); } catch (e) { throw new Error('رد غير متوقع من الخادم، تأكد أن النشر بصلاحية "أي شخص"'); }
+      if (!j.ok) { const er = new Error(j.error || 'خطأ'); er.fatal = !/busy|مشغول|Lock|timed out/i.test(j.error || ''); throw er; }
+      return j;
+    } catch (e) {
+      clearTimeout(to);
+      last = e.name === 'AbortError' ? new Error('انتهت مهلة الاتصال') : (e instanceof TypeError ? new Error('تعذر الوصول إلى الخادم، تحقق من الإنترنت') : e);
+      if (last.fatal) throw last;
+      if (n < tries - 1) await new Promise(res => setTimeout(res, 1500 * (n + 1) * (n + 1)));
+    }
+  }
+  throw last;
+}
 const syS = () => (S.sync = S.sync || { rev: 0, hash: '', dirty: false, since: {}, lastOk: 0, err: '' });
 const cfgOf = () => ({ lists: S.lists, places: S.places, users: S.users, facilities: S.facilities || [], facDeleted: !!S.facDeleted,
   facility: S.settings.facility || '', heroImg: S.settings.heroImg || '', inspDeleted: S.inspDeleted || [] });
@@ -49,8 +69,8 @@ async function applyConfig(c) {
 }
 
 /* الإعدادات: ترجع true إن تغيّر شيء محلياً */
-async function syncCfg(force) {
-  const y = syS(); const r = await api('rev');
+async function syncCfg(force, pl) {
+  const y = syS(); const r = pl;
   const localChanged = y.dirty || (isSup() && cfgHash() !== y.hash);
   const push = async () => { const h = cfgHash(); const j = await api('saveConfig', { config: cfgOf() }); y.rev = j.rev; y.hash = h; y.dirty = false; };
   if (force === 'push') { await push(); return false; }
@@ -65,10 +85,11 @@ async function syncCfg(force) {
 }
 
 /* التفتيشات: رفع المنتهية وسحب الواردة */
-async function syncInsp() {
+async function syncInsp(pl) {
   const y = syS(); let pushed = 0, got = 0;
   for (const i of S.inspections.filter(x => x.status === 'done' && !x.synced)) { await api('saveInspection', { inspection: i }); i.synced = true; pushed++; await save(); }
   const key = isSup() ? 'all' : (S.session || ''); if (!key) return { pushed, got };
+  y.seen = y.seen || {}; if (pl && pl.lastInsp !== undefined && pl.lastInsp === y.seen[key]) return { pushed, got };
   let since = y.since[key] || 0, more = true, guard = 0;
   while (more && guard++ < 50) {
     const j = await api('getInspections', { since, inspectorId: isSup() ? '' : S.session });
@@ -80,7 +101,7 @@ async function syncInsp() {
     }
     since = j.next || since; more = !!j.more;
   }
-  y.since[key] = since; return { pushed, got };
+  y.since[key] = since; if (pl && pl.lastInsp !== undefined) y.seen[key] = pl.lastInsp; return { pushed, got };
 }
 
 const SAFE_VIEWS = ['home', 'inspections', 'admin', 'login', 'lists', 'facs', 'users'];
@@ -92,16 +113,25 @@ function safeRender() {
 
 async function syncAll(silent, force) {
   if (!S || !S.settings.syncUrl) { if (!silent) toast('المزامنة غير مفعّلة'); return; }
-  if (!navigator.onLine) { if (!silent) toast('لا يوجد اتصال بالإنترنت'); return; }
+  if (!navigator.onLine) { SY.fails++; if (!silent) toast('لا يوجد اتصال بالإنترنت'); return; }
   if (SY.busy) return; SY.busy = true; const y = syS(); let changed = false, info = null;
+  const sig = () => `${y.rev}|${y.hash}|${y.dirty}|${JSON.stringify(y.since)}|${JSON.stringify(y.seen || {})}`; const before = sig(); let pushedAny = false;
   try {
-    changed = await syncCfg(force); info = await syncInsp(); changed = changed || info.got > 0;
-    y.lastOk = Date.now(); y.err = '';
+    const pl = await api('poll');
+    changed = await syncCfg(force, pl); info = await syncInsp(pl); changed = changed || info.got > 0; pushedAny = info.pushed > 0;
+    y.lastOk = Date.now(); y.err = ''; SY.fails = 0;
     if (!silent) toast(force === 'push' ? 'تم رفع الإعدادات' : force === 'pull' ? 'تم سحب الإعدادات' : 'اكتملت المزامنة');
-  } catch (e) { y.err = e.message; if (!silent) toast('تعذرت المزامنة: ' + e.message); }
-  SY.busy = false; await save();
+  } catch (e) { SY.fails++; y.err = e.message; if (!silent) toast('تعذرت المزامنة: ' + e.message); }
+  SY.busy = false;
+  if (changed || pushedAny || sig() !== before) await save();
   if (changed) safeRender();
   if (!silent && V.view === 'settings') render();
+  scheduleSync();
+}
+/* جدولة المزامنة: كل دقيقة، وتتباعد تدريجياً (حتى 5 دقائق) عند تكرار الفشل */
+function scheduleSync() {
+  clearTimeout(SY.next); const d = SY.fails ? Math.min(300000, 60000 * Math.pow(2, SY.fails - 1)) : 60000;
+  SY.next = setTimeout(() => { if (document.visibilityState === 'visible' && S) syncAll(true); else scheduleSync(); }, d);
 }
 
 /* إعادة تعريف دوال المزامنة القديمة */
@@ -110,8 +140,9 @@ async function syncInspections(silent) { await syncAll(silent); }
 async function pushConfig() { await syncAll(false, 'push'); }
 async function pullConfig() { if (confirm('سحب الإعدادات من السحابة سيستبدل الإعدادات الحالية في هذا الجهاز. متابعة؟')) await syncAll(false, 'pull'); }
 
-setInterval(() => { if (document.visibilityState === 'visible' && S) syncAll(true); }, 45000);
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && S) syncAll(true); });
+scheduleSync();
+window.addEventListener('online', () => { SY.fails = 0; syncAll(true); });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && S) { SY.fails = 0; syncAll(true); } });
 
 /* شاشة المزامنة في الإعدادات */
 viewSettings = function () {
@@ -123,7 +154,7 @@ viewSettings = function () {
   <button class="btn block" style="margin-top:12px" data-act="savesettings">حفظ الإعدادات</button></div>
   <div class="card"><h3>حالة المزامنة بين الأجهزة</h3>
   <p class="mut" style="margin:0">${on ? 'المزامنة مفعّلة' : 'المزامنة غير مفعّلة. أدخل الرابط والمفتاح واحفظ.'}</p>
-  ${on ? `<p class="mut" style="margin:4px 0">آخر مزامنة ناجحة: ${esc(t)}</p><p class="mut" style="margin:4px 0">تفتيشات بانتظار الرفع: ${pending}</p>${y.err ? `<p class="mut" style="margin:4px 0;color:var(--bad)">آخر خطأ: ${esc(y.err)}</p>` : ''}
+  ${on ? `<p class="mut" style="margin:4px 0">آخر مزامنة ناجحة: ${esc(t)}</p><p class="mut" style="margin:4px 0">تفتيشات بانتظار الرفع: ${pending}</p>${SY.fails ? `<p class="mut" style="margin:4px 0;color:var(--bad)">الاتصال متقطع حالياً، ستُعاد المحاولة تلقائياً. بياناتك محفوظة على الجهاز ولن تضيع.${y.err ? ' (' + esc(y.err) + ')' : ''}</p>` : ''}
   <div class="row" style="margin-top:8px"><button class="btn sm" data-act="sync">مزامنة الآن</button><button class="btn sec sm" data-act="pushcfg">رفع الإعدادات</button><button class="btn sec sm" data-act="pullcfg">سحب الإعدادات</button></div>` : ''}</div>
   ${on ? `<div class="card"><h3>ربط جهاز جديد</h3><p class="mut" style="margin:0 0 8px">أرسل هذا الرابط إلى المفتش مرة واحدة. يفتحه على هاتفه فيرتبط تلقائياً، ثم يدخل برمز التحقق. الرابط يحوي مفتاح الربط فلا تنشره علناً.</p>
   <div class="row"><button class="btn sm" data-act="copylink">نسخ الرابط</button><button class="btn sec sm" data-act="sharelink">مشاركة</button></div></div>` : ''}

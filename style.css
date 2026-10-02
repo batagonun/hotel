@@ -84,3 +84,5 @@ table.rep th.sidehd{width:92px}
 @media print{h2.sector{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 
 @media print{body.noprint-user #app{display:none!important}body.noprint-user::before{content:'الطباعة وتصدير PDF متاحان للمشرف فقط';display:block;text-align:center;padding:40px;font-size:18px}}
+
+h2.sector.sub{font-size:15px;opacity:.9;margin-top:6px}

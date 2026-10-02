@@ -6,10 +6,15 @@
    ============================================================ */
 
 /* ===== القطاعات ===== */
-const SECTORS = { rooms: 'قطاع الغرف', fnb: 'قطاع الأغذية والمشروبات', other: 'قطاعات أخرى' };
-const SECTOR_ORDER = ['rooms', 'fnb', 'other'];
+const SECTORS = { facility: 'المظهر العام والحالة الفنية والمرافق', hr: 'القوى البشرية والانضباط الإداري والتدريب', ops: 'تنظيم العمل وكفاءة التشغيل', rooms: 'قطاع الغرف', fnb: 'قطاع الأغذية والمشروبات', other: 'قطاعات أخرى' };
+const SECTOR_ORDER = ['facility', 'hr', 'ops', 'rooms', 'fnb', 'other'];
+const SECTOR_PARENT = { rooms: 'جودة الخدمات', fnb: 'جودة الخدمات' };
+const GENERAL_SECTORS = ['facility', 'hr', 'ops'];
 function guessSector(l) {
   const t = (l.id || '') + ' ' + (l.title || '');
+  if (/facility|المظهر العام|الحالة الفنية/i.test(t)) return 'facility';
+  if (/manpower|القوى البشرية|الانضباط الإداري|الموارد البشرية/i.test(t)) return 'hr';
+  if (/workflow|تنظيم العمل|كفاءة التشغيل/i.test(t)) return 'ops';
   if (/housekeeping|frontoffice|laundry|استقبال|إشراف|اشراف|مغسل|غرف|إقامة|اقامة/i.test(t)) return 'rooms';
   if (/kitchen|restaurant|cafe|coffee|store|مطعم|كوفي|مطبخ|مخزن|أغذية|اغذية|مشروبات/i.test(t)) return 'fnb';
   return 'other';
@@ -206,7 +211,7 @@ function openAssign(facId) {
 function viewAssign() {
   const a = V.asg, f = facOf(a.facId);
   const sec = new Set(); (f.services || []).forEach(s => { if (/إقامة|اقامة/.test(s)) sec.add('rooms'); if (/أغذية|اغذية|مشروبات/.test(s)) sec.add('fnb'); });
-  const rec = S.lists.filter(l => !sec.size || sec.has(sectorOf(l))), oth = S.lists.filter(l => !rec.includes(l));
+  const rec = S.lists.filter(l => GENERAL_SECTORS.includes(sectorOf(l)) || !sec.size || sec.has(sectorOf(l))), oth = S.lists.filter(l => !rec.includes(l));
   const opts = (arr, sel) => arr.map(l => `<option value="${l.id}" ${sel === l.id ? 'selected' : ''}>${esc(l.title)}</option>`).join('');
   const insp = S.users.filter(u => u.role === 'inspector');
   return bar('تعيين قوائم التحقق', 'home') + `<div class="wrap"><div class="card"><b>${esc(f.name || 'منشأة بلا اسم')}</b>
@@ -256,10 +261,11 @@ function viewReport() {
   const places = [...new Set(list.map(i => i.header.place))]; const onePlace = places.length === 1;
   const groups = SECTOR_ORDER.map(k => ({ k, items: list.filter(i => sectorOf(i.snap) === k) })).filter(g => g.items.length);
   const summary = multi ? `<h3>ملخص جميع القوائم</h3><table class="rep"><tr><th class="sidehd">القطاع</th><th>المكان والقائمة</th><th>الدرجة</th><th>التقدير</th><th>البوابة الحرجة</th></tr>
-    ${groups.map(g => g.items.map((i, n) => `<tr>${n === 0 ? `<td class="side" rowspan="${g.items.length}">${SECTORS[g.k]}</td>` : ''}<td><b>${esc(i.header.place)}</b><div class="mut">${esc(i.snap.title)}</div></td><td>${i.result.score}%</td><td>${i.result.band}</td><td>${i.result.veto ? 'مفعّلة' : 'لا'}</td></tr>`).join('')).join('')}</table>` : '';
+    ${groups.map(g => g.items.map((i, n) => `<tr>${n === 0 ? `<td class="side" rowspan="${g.items.length}">${SECTOR_PARENT[g.k] ? SECTOR_PARENT[g.k] + '<br>' : ''}${SECTORS[g.k]}</td>` : ''}<td><b>${esc(i.header.place)}</b><div class="mut">${esc(i.snap.title)}</div></td><td>${i.result.score}%</td><td>${i.result.band}</td><td>${i.result.veto ? 'مفعّلة' : 'لا'}</td></tr>`).join('')).join('')}</table>` : '';
+  let lastParent = '';
   const sections = groups.map(g => g.items.map((i, n) => {
     const body = reportSection(i, false).replace('</h2>', `</h2><p class="mut" style="text-align:center;margin:0 0 8px">المكان: ${esc(i.header.place)}${i.header.responsible ? ' · المسؤول: ' + esc(i.header.responsible) : ''}</p>`);
-    return `<div class="${multi ? 'pb' : ''}">${multi && n === 0 ? `<h2 class="sector">${SECTORS[g.k]}</h2>` : ''}${body}</div>`;
+    return `<div class="${multi ? 'pb' : ''}">${multi && n === 0 ? `${SECTOR_PARENT[g.k] && SECTOR_PARENT[g.k] !== lastParent ? (lastParent = SECTOR_PARENT[g.k], `<h2 class="sector">${SECTOR_PARENT[g.k]}</h2>`) : ''}<h2 class="sector${SECTOR_PARENT[g.k] ? ' sub' : ''}">${SECTORS[g.k]}</h2>` : ''}${body}</div>`;
   }).join('')).join('');
   return `<div class="overlay"><div class="bar noprint"><button data-act="go" data-v="${V.back || 'inspections'}">رجوع</button><h1>${multi ? 'التقرير الشامل' : 'التقرير'}</h1><button data-act="print">طباعة / PDF</button></div><div class="wrap">
   ${facilityBlock(fac)}

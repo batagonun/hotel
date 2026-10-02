@@ -49,6 +49,7 @@ let S = null;          // البيانات الدائمة
 let V = { view: 'login' }; // حالة العرض المؤقتة
 const save = () => DB.set('state', S);
 const me = () => S.users.find(u => u.id === S.session);
+const normPin = v => String(v == null ? '' : v).replace(/[\u0660-\u0669]/g, d => d.charCodeAt(0) - 0x660).replace(/[\u06F0-\u06F9]/g, d => d.charCodeAt(0) - 0x6F0).replace(/\s+/g, '');
 const isSup = () => me() && me().role === 'supervisor';
 
 async function init() {
@@ -340,7 +341,7 @@ document.addEventListener('click', async e => {
   const t = e.target.closest('[data-act]'); if (!t) return; const a = t.dataset.act, d = t.dataset;
   if (V.view === 'editlist' && !['go', 'logout'].includes(a)) syncDraftFields();
   switch (a) {
-    case 'login': { const code = ($('#lp').value || '').trim(); const u = code && S.users.find(x => String(x.pin).trim() === code); if (u) { S.session = u.id; await save(); V.view = 'home'; render(); } else toast('رمز التحقق غير صحيح'); break; }
+    case 'login': { const code = normPin($('#lp').value); const u = code && S.users.find(x => normPin(x.pin) === code); if (u) { S.session = u.id; await save(); V.view = 'home'; render(); } else toast('رمز التحقق غير صحيح'); break; }
     case 'logout': S.session = null; await save(); V.view = 'login'; render(); break;
     case 'tab': V.view = d.v; render(); break;
     case 'go': V.view = d.v; V.editPlace = V.editUser = null; render(); break;
@@ -386,8 +387,14 @@ document.addEventListener('click', async e => {
     case 'newuser': V.editUser = { isNew: true, id: uid('U'), name: '', pin: '', role: 'inspector' }; render(); break;
     case 'edituser': V.editUser = clone(S.users.find(u => u.id === d.id)); render(); break;
     case 'canceluser': V.editUser = null; render(); break;
-    case 'saveuser': { const u = V.editUser; if (!u.name.trim() || !u.pin.trim()) return toast('أدخل الاسم والرمز'); u.pin = u.pin.trim(); if (S.users.some(x => x.id !== u.id && String(x.pin).trim() === u.pin)) return toast('هذا الرمز مستخدم لمستخدم آخر، اختر رمزاً مختلفاً'); delete u.isNew; const k = S.users.findIndex(x => x.id === u.id); if (k >= 0) S.users[k] = u; else S.users.push(u); await save(); V.editUser = null; render(); break; }
-    case 'deluser': if (confirm('حذف المستخدم؟')) { S.users = S.users.filter(u => u.id !== d.id); await save(); render(); } break;
+    case 'saveuser': { const u = V.editUser; u.name = (u.name || '').trim(); u.pin = normPin(u.pin);
+      if (!u.name || !u.pin) return toast('أدخل الاسم والرمز');
+      if (u.pin.length < 4) return toast('الرمز يجب ألا يقل عن 4 خانات');
+      if (S.users.some(x => x.id !== u.id && normPin(x.pin) === u.pin)) return toast('هذا الرمز مستخدم لمستخدم آخر، اختر رمزاً مختلفاً');
+      const old = S.users.find(x => x.id === u.id);
+      if (old && old.role === 'supervisor' && u.role !== 'supervisor' && !S.users.some(x => x.id !== u.id && x.role === 'supervisor')) return toast('لا يمكن تغيير دور المشرف الوحيد، يجب أن يبقى مشرف واحد على الأقل');
+      delete u.isNew; const k = S.users.findIndex(x => x.id === u.id); if (k >= 0) S.users[k] = u; else S.users.push(u); await save(); V.editUser = null; toast('تم حفظ المستخدم'); render(); break; }
+    case 'deluser': { const du = S.users.find(x => x.id === d.id); if (du && du.role === 'supervisor' && !S.users.some(x => x.id !== du.id && x.role === 'supervisor')) { toast('لا يمكن حذف المشرف الوحيد'); break; } if (confirm('حذف المستخدم؟')) { S.users = S.users.filter(u => u.id !== d.id); await save(); render(); } break; }
     case 'savesettings': S.settings.facility = $('#s_fac').value; S.settings.syncUrl = $('#s_url').value.trim(); S.settings.token = $('#s_tok').value.trim(); await save(); toast('تم الحفظ'); break;
     case 'export': { const b = new Blob([JSON.stringify(S)], { type: 'application/json' }); const a2 = document.createElement('a'); a2.href = URL.createObjectURL(b); a2.download = `inspect-backup-${nowParts().date}.json`; a2.click(); break; }
   }
