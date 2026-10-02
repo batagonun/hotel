@@ -62,3 +62,9 @@ table.rep th{background:var(--pri2)}
 .veto{border:2px solid var(--bad);background:rgba(192,57,43,.08);border-radius:12px;padding:10px 12px;margin-bottom:12px}
 .overlay{position:fixed;inset:0;background:var(--bg);overflow:auto;z-index:50}
 @media print{.bar,.nav,.noprint,.toast{display:none!important}.overlay{position:static;overflow:visible}body{background:#fff;color:#000}.card{border-color:#999}.wrap{max-width:none;padding:0}}
+
+.pb{page-break-before:always;margin-top:18px}
+@media print{.pb{break-before:page}}
+details.ms{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff}
+details.ms summary{cursor:pointer;font-weight:700}
+details.ms label{display:flex;gap:8px;align-items:center;padding:6px 0}

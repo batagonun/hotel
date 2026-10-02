@@ -411,4 +411,4 @@ document.addEventListener('change', async e => {
     const f = t.files[0]; if (!f) return; try { const j = JSON.parse(await f.text()); if (!j.lists || !j.users) throw 0; S = j; await save(); toast('تم الاستيراد'); V.view = 'login'; S.session = null; render(); } catch { toast('ملف غير صالح'); }
   }
 });
-init();
+window.addEventListener('DOMContentLoaded', () => init());
