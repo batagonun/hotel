@@ -68,6 +68,24 @@ table.rep th{background:var(--pri2)}
 details.ms{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--card);color:var(--ink)}
 details.ms summary{cursor:pointer;font-weight:700}
 details.ms label{display:flex;gap:8px;align-items:center;padding:6px 0}
+
+/* ===== الواجهة الرئيسية الجديدة ===== */
+.hero{position:relative;height:36vh;min-height:210px;max-height:330px;overflow:hidden;border-radius:0 0 28px 28px;background:#0b3a48}
+.hero svg,.hero img{display:block;width:100%;height:100%;object-fit:cover}
+.heroshade{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,30,38,.6),rgba(8,30,38,0) 55%)}
+.herotxt{position:absolute;inset-inline:0;bottom:14px;text-align:center;color:#fff;font-weight:800;font-size:22px;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.herologout{position:absolute;top:max(12px,env(safe-area-inset-top));inset-inline-end:12px;background:rgba(0,0,0,.38);color:#fff;border:0;border-radius:10px;padding:8px 14px;cursor:pointer}
+.heropv{height:120px;border-radius:12px;overflow:hidden}.heropv svg,.heropv img{width:100%;height:100%;object-fit:cover;display:block}
+.welcome h2{font-size:19px;margin:0 0 8px}.welcome p{margin:0 0 8px;line-height:1.8}
+.welcome .sign{margin:12px 0 0;font-weight:700;color:var(--pri)}
+h2.sector{margin:18px 0 10px;padding:8px 14px;background:var(--pri2);color:var(--pri);border-inline-start:6px solid var(--pri);border-radius:8px;font-size:18px}
+table.rep td.side{background:var(--pri);color:#fff;font-weight:700;text-align:center;vertical-align:middle;width:92px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+table.rep th.sidehd{width:92px}
+@media print{h2.sector{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+@media print{body.noprint-user #app{display:none!important}body.noprint-user::before{content:'الطباعة وتصدير PDF متاحان للمشرف فقط';display:block;text-align:center;padding:40px;font-size:18px}}
+
+h2.sector.sub{font-size:15px;opacity:.9;margin-top:6px}
 details.ms .item{border-top:0;padding:4px 0;color:var(--ink)}
 details.ms input[type=checkbox]{width:22px;height:22px;accent-color:var(--pri)}
 @media print{body.nosup #app{display:none!important}body.nosup::before{content:'الطباعة وتصدير PDF متاحان للمشرف فقط';display:block;padding:40px;text-align:center;font-size:20px;color:#000}}

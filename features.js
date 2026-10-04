@@ -31,7 +31,7 @@ const bindTarget = t => ({ ef: V.ef, ep: V.editPlace, nv: V, hd: V.hd }[t]);
 V.det = {};
 const newFac = () => ({ id: uid('F'), name: '', address: '', manager: '', assistants: '', staff: { permanent: '', insured: '', temporary: '', security: '' }, services: [], venues: [], contacts: { phone: '', fax: '', email: '', extra: [] }, transport: [''] });
 const newVenue = type => ({ id: uid('V'), type, name: '', fields: VENUE_TYPES[type].fields.map(([label, t]) => ({ id: uid('f'), label, t, v: t === 'rows' ? [{ n: '', c: '' }] : '' })) });
-const facOf = id => S.facilities.find(f => f.id === id) || S.facilities[0];
+const facOf = id => S.facilities.find(f => f.id === id) || S.facilities[0] || newFac();
 const listTitle = id => (S.lists.find(l => l.id === id) || {}).title;
 const batchOf = i => S.inspections.filter(x => (x.batchId || x.id) === (i.batchId || i.id));
 const groupBatches = arr => { const m = new Map(); arr.forEach(i => { const k = i.batchId || i.id; if (!m.has(k)) m.set(k, []); m.get(k).push(i); }); return [...m.values()]; };
@@ -47,11 +47,12 @@ const todayStr = () => nowParts().date;
 
 /* ===== ترحيل البيانات القديمة إلى الهيكل الجديد ===== */
 function migrate() {
-  if (!S.facilities || !S.facilities.length) {
+  if (!S.facilities) S.facilities = [];
+  if (!S.facilities.length && S.places.length && !S.facDeleted) {
     const f = newFac(); f.id = 'F1'; f.name = (S.settings && S.settings.facility) || ''; S.facilities = [f];
   }
   S.places.forEach(p => {
-    if (!p.facilityId) p.facilityId = S.facilities[0].id;
+    if (!p.facilityId && S.facilities[0]) p.facilityId = S.facilities[0].id;
     if (!p.listIds) p.listIds = p.listId ? [p.listId] : [];
     delete p.listId;
     p.inspectorIds = p.inspectorIds || []; p.venueId = p.venueId || '';
@@ -304,7 +305,7 @@ function viewEditFac() {
   const f = V.ef; const st = f.staff; const total = toNum(st.permanent) + toNum(st.insured) + toNum(st.temporary);
   const allSvc = [...SERVICES, ...f.services.filter(s => !SERVICES.includes(s))];
   const c = f.contacts;
-  return bar('وصف المنشأة', 'facs') + `<div class="wrap">
+  return bar(S.facilities.some(x => x.id === f.id) ? 'تعديل المنشأة' : 'منشأة جديدة', 'home') + `<div class="wrap">
   <div class="card"><h3>بيانات المنشأة</h3><div class="grid2"><div><label class="f">اسم المنشأة</label>${inp('ef', f, 'name')}</div><div><label class="f">العنوان</label>${inp('ef', f, 'address')}</div>
   <div><label class="f">اسم المدير</label>${inp('ef', f, 'manager')}</div><div><label class="f">عدد معاونيه</label>${inp('ef', f, 'assistants', { type: 'number' })}</div></div></div>
   <div class="card"><h3>العاملون</h3><div class="grid2"><div><label class="f">مثبت</label>${inp('ef', f, 'staff.permanent', { type: 'number' })}</div><div><label class="f">مؤمَّن</label>${inp('ef', f, 'staff.insured', { type: 'number' })}</div>
@@ -324,7 +325,7 @@ function viewEditFac() {
   <div class="card"><h3>وسائل المواصلات</h3>
   ${f.transport.map((x, k) => `<div class="row" style="margin-bottom:6px;flex-wrap:nowrap"><div style="flex:1">${inp('ef', f, `transport.${k}`, { ph: 'اكتب الوسيلة' })}</div><button class="btn sec sm" data-act="trdel" data-k="${k}">×</button></div>`).join('')}
   <button class="btn sec sm" data-act="tradd">＋ وسيلة أخرى</button></div>
-  <div class="row"><button class="btn sp" data-act="savefac">حفظ المنشأة</button><button class="btn sec" data-act="go" data-v="facs">إلغاء</button></div></div>`;
+  <div class="row"><button class="btn sp" data-act="savefac">حفظ المنشأة</button><button class="btn sec" data-act="go" data-v="home">إلغاء</button></div></div>`;
 }
 
 /* ===== أماكن التفتيش وربطها بالقوائم والمفتشين ===== */
@@ -424,7 +425,7 @@ document.addEventListener('click', async e => {
       f.venues.forEach(v => v.fields.forEach(fl => { if (fl.t === 'rows') { fl.v = fl.v.filter(r => String(r.n).trim() || String(r.c).trim()); if (!fl.v.length) fl.v = [{ n: '', c: '' }]; } }));
       const k = S.facilities.findIndex(x => x.id === f.id); if (k >= 0) S.facilities[k] = f; else S.facilities.push(f);
       S.places.filter(p => p.facilityId === f.id).forEach(() => {}); if (S.facilities[0].id === f.id) S.settings.facility = f.name;
-      await save(); toast('تم حفظ المنشأة'); V.view = 'facs'; render(); break; }
+      await save(); toast('تم حفظ المنشأة'); V.view = 'home'; render(); break; }
     case 'genunits': {
       const f = S.facilities.find(x => x.id === d.id); let made = 0; const noList = [];
       f.venues.forEach(v => {
