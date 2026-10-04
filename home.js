@@ -240,16 +240,42 @@ function viewAssign() {
 }
 
 /* ===== المرورات السابقة والدفعات ===== */
+/* المفتش يشارك تفتيشاته مع المشرف، والمشرف يستوردها ويجمعها في زيارة واحدة لكل منشأة ويوم */
+const vkey = i => (i.header.facility || '') + '|' + i.header.date;
+function groupVisits(arr) {
+  const m = new Map(); arr.forEach(i => { const k = vkey(i); if (!m.has(k)) m.set(k, []); m.get(k).push(i); });
+  return [...m.values()].map(items => items.sort((a, b) => listKey(a.snap) - listKey(b.snap) || (a.header.time || '').localeCompare(b.header.time || '')));
+}
+/* القوائم المعيّنة لأماكن المنشأة ولم يُستلم تفتيشها في هذه الزيارة */
+function missingInVisit(items) {
+  const p0 = placeOfInsp(items[0]); const facId = p0 && p0.facilityId; if (!facId) return [];
+  const have = new Set(items.map(i => (placeOfInsp(i) || {}).id + '|' + i.listId));
+  return S.places.filter(p => p.facilityId === facId).flatMap(p => (p.listIds || []).filter(id => !have.has(p.id + '|' + id)).map(id => { const n = autoName(id) || listTitle(id) || ''; return n && n !== p.name ? p.name + ' / ' + n : p.name; })).filter(Boolean);
+}
 function viewInspections() {
-  const arr = S.inspections.filter(i => i.status === 'done' && (isSup() || i.inspectorId === S.session));
-  const batches = groupBatches(arr).sort((a, b) => Math.max(...b.map(i => i.finishedAt)) - Math.max(...a.map(i => i.finishedAt)));
-  return bar('المرورات السابقة') + `<div class="wrap">${batches.length ? batches.map(b => {
-    const h = b[0].header; const ids = b.map(i => i.id).join(',');
-    return `<div class="card"><div class="row"><b class="sp">${esc(h.facility || '')}${h.facility ? ' · ' : ''}${esc(placeLabel(b))}</b>${b.some(i => i.result.veto) ? '<span class="tag bad">بوابة حرجة</span>' : ''}</div>
-    <div class="mut">${esc(h.date)} ${esc(h.time)} · ${esc(h.inspector)} ${b.every(i => i.synced) ? '· تمت المزامنة' : '· لم تُرفع'}</div>
-    ${b.map(i => `<div class="row" style="margin-top:6px"><span class="sp">${esc(i.snap.title)}</span><span class="tag ${i.result.bandCls}">${i.result.score}%</span></div>`).join('')}
-    <div class="row" style="margin-top:8px"><button class="btn sm" data-act="rep" data-ids="${ids}" data-back="inspections">${b.length > 1 ? 'التقرير الشامل' : 'عرض التقرير'}</button>${isSup() ? `<button class="btn sm bad" data-act="delbatch" data-b="${b[0].batchId || b[0].id}">حذف</button>` : ''}</div></div>`;
-  }).join('') : '<p class="mut">لا توجد مرورات مكتملة بعد.</p>'}</div>`;
+  const done = S.inspections.filter(i => i.status === 'done');
+  const card = (b, btns, sub) => { const h = b[0].header; return `<div class="card"><div class="row"><b class="sp">${esc(h.facility || '')}${h.facility ? ' · ' : ''}${esc(placeLabel(b))}</b>${b.some(i => i.result.veto) ? '<span class="tag bad">بوابة حرجة</span>' : ''}</div>
+    <div class="mut">${sub}</div>
+    ${b.map(i => `<div class="row" style="margin-top:6px"><span class="sp">${esc(i.snap.title)}${isSup() ? `<span class="mut"> · ${esc(i.header.inspector)} · ${esc(i.header.time)}</span>` : ''}</span><span class="tag ${i.result.bandCls}">${i.result.score}%</span></div>`).join('')}
+    <div class="row" style="margin-top:8px">${btns}</div></div>`; };
+  const latest = b => Math.max(...b.map(i => i.finishedAt || 0));
+  if (!isSup()) {
+    const mine = groupBatches(done.filter(i => i.inspectorId === S.session)).sort((x, y) => latest(y) - latest(x));
+    return bar('المرورات السابقة') + `<div class="wrap"><p class="mut">أرسل التفتيش المكتمل إلى المشرف بزر «مشاركة مع المشرف». التقرير الشامل والطباعة من اختصاص المشرف.</p>${mine.length ? mine.map(b => { const ids = b.map(i => i.id).join(',');
+      return card(b, `<button class="btn sm" data-act="share" data-ids="${ids}">مشاركة مع المشرف</button>${b.length === 1 ? `<button class="btn sec sm" data-act="rep" data-ids="${ids}" data-back="inspections">عرض على الشاشة</button>` : ''}`,
+        `${esc(b[0].header.date)} ${esc(b[0].header.time)} ${b.every(i => i.synced) ? '· تمت المزامنة' : '· لم تُرفع'}`); }).join('') : '<p class="mut">لا توجد مرورات مكتملة بعد.</p>'}</div>`;
+  }
+  const visits = groupVisits(done).sort((x, y) => latest(y) - latest(x));
+  const today = todayStr(); const tv = visits.filter(v => v[0].header.date === today);
+  const facsToday = distinct(tv.map(v => v[0].header.facility));
+  const notYet = (S.facilities || []).filter(f => f.name && !facsToday.includes(f.name) && S.places.some(p => p.facilityId === f.id && (p.listIds || []).length)).map(f => f.name);
+  const todayCard = `<div class="card"><h3>جولة اليوم (${esc(today)})</h3>${tv.length ? tv.map(v => { const m = missingInVisit(v); return `<div class="row" style="padding:4px 0"><b class="sp">${esc(v[0].header.facility || placeLabel(v))}</b><span class="tag ${m.length ? 'warn' : 'ok'}">${m.length ? 'ناقصة: ' + m.length : 'مكتملة'}</span></div>${m.length ? `<div class="mut">لم تُستلم: ${m.map(esc).join('، ')}</div>` : ''}`; }).join('') : '<p class="mut">لا توجد مرورات اليوم بعد.</p>'}
+  ${notYet.length ? `<div class="mut" style="margin-top:6px">منشآت لم تُفتَّش اليوم: ${notYet.map(esc).join('، ')}</div>` : ''}</div>`;
+  return bar('المرورات السابقة') + `<div class="wrap">
+  <div class="row" style="margin-bottom:10px"><button class="btn sm" data-act="importpick">استيراد تفتيشات من مفتش</button><input type="file" id="impf" accept=".json,application/json" multiple style="display:none"></div>
+  ${todayCard}${visits.length ? visits.map(v => { const ids = v.map(i => i.id).join(','); const m = missingInVisit(v); const insp = distinct(v.map(i => i.header.inspector));
+    return card(v, `<button class="btn sm" data-act="rep" data-ids="${ids}" data-back="inspections">${v.length > 1 ? 'التقرير الشامل' : 'عرض التقرير'}</button><button class="btn sm bad" data-act="delids" data-ids="${ids}">حذف</button>`,
+      `${esc(v[0].header.date)} · ${v.length} قائمة · ${insp.map(esc).join('، ')} ${v.every(i => i.synced || i.imported) ? '' : '· لم تُرفع'}${m.length ? ` · ناقصة: ${m.length}` : ''}`); }).join('') : '<p class="mut">لا توجد مرورات مكتملة بعد. استورد ملفات المفتشين أو أجرِ تفتيشاً بنفسك.</p>'}</div>`;
 }
 function viewBatch() {
   const arr = S.inspections.filter(i => (i.batchId || i.id) === V.batch);
@@ -259,31 +285,41 @@ function viewBatch() {
   ${arr.map(i => { const r = compute(i.snap, i.answers, i.esc); return `<div class="card"><div class="row"><div class="sp"><b>${esc(i.header.place)}</b><div class="mut">${esc(i.snap.title)}</div></div>${i.status === 'done' ? `<span class="tag ${i.result.bandCls}">${i.result.score}%</span>` : `<span class="mut">${r.answered} من ${r.total}</span>`}</div>
    <div class="pbar" style="margin:8px 0"><i style="width:${i.status === 'done' ? 100 : (r.total ? r.answered / r.total * 100 : 0)}%"></i></div>
    <div class="row">${i.status === 'done' ? `<button class="btn sm" data-act="rep" data-ids="${i.id}" data-back="batch">التقرير</button>` : `<button class="btn sm" data-act="open" data-id="${i.id}">${r.answered ? 'متابعة' : 'ابدأ'}</button>`}</div></div>`; }).join('')}
-  <button class="btn block" data-act="rep" data-ids="${done.map(i => i.id).join(',')}" data-back="batch" ${done.length ? '' : 'disabled'}>التقرير الشامل (${done.length} من ${arr.length})</button></div>`;
+  ${isSup() ? `<button class="btn block" data-act="rep" data-ids="${done.map(i => i.id).join(',')}" data-back="batch" ${done.length ? '' : 'disabled'}>التقرير الشامل (${done.length} من ${arr.length})</button>` : `<button class="btn block" data-act="share" data-ids="${done.map(i => i.id).join(',')}" ${done.length ? '' : 'disabled'}>مشاركة مع المشرف (${done.length} من ${arr.length})</button>`}</div>`;
 }
 
 /* ===== التقرير الشامل: قوائم قطاع الغرف ثم قطاع الأغذية والمشروبات ===== */
 function viewReport() {
   const list = ((V.rep && V.rep.ids) || [V.cur]).map(id => S.inspections.find(i => i.id === id)).filter(i => i && i.status === 'done');
   if (!list.length) return bar('التقرير', V.back || 'inspections') + '<div class="wrap"><p class="mut">لا توجد تفتيشات مكتملة لعرضها.</p></div>';
-  const i0 = list[0], h = i0.header, multi = list.length > 1;
-  const fac = i0.fac || facOf((S.places.find(p => p.id === i0.placeId) || {}).facilityId);
+  const i0 = list[0], h = i0.header, multi = list.length > 1, sup = isSup();
+  if (multi && !sup) return bar('التقرير', V.back || 'inspections') + '<div class="wrap"><p class="mut">التقرير الشامل متاح للمشرف فقط.</p></div>';
+  const fac = i0.fac || facOf((placeOfInsp(i0) || {}).facilityId);
   const places = [...new Set(list.map(i => i.header.place))]; const onePlace = places.length === 1;
+  /* بيانات المكان قابلة للتعديل من المشرف وتُحفظ لكل مكان ويوم */
+  S.heads = S.heads || {}; const hk = rkey(i0);
+  const hd = onePlace ? (S.heads[hk] = Object.assign({ staff: h.staff, shifts: h.shifts, responsible: h.responsible }, S.heads[hk] || {})) : h; V.hd = hd;
+  const hv = k => sup && onePlace ? `<input type="text" data-tgt="hd" data-bind="${k}" value="${esc(hd[k] ?? '')}" style="padding:4px 6px">` : esc(hd[k]);
+  const inspectors = distinct(list.map(i => i.header.inspector)).map(esc).join('، '), times = distinct(list.map(i => i.header.time)).map(esc).join('، ');
+  const minI = list.reduce((m, i) => (i.result.score < m.result.score ? i : m), list[0]); const overall = bandFor(minI.result.score);
+  const missing = multi ? missingInVisit(list) : [];
+  const overallCard = multi ? `<div class="card"><div class="mut" style="text-align:center">التقدير العام (أدنى تقدير بين القوائم)</div><div style="text-align:center;margin-top:6px"><span class="tag ${overall[2]}" style="font-size:18px">${overall[1]}</span></div><div class="mut" style="text-align:center;margin-top:6px">أدنى درجة: ${minI.result.score}% في «${esc(minI.snap.title)}» · ${esc(minI.header.place)}</div></div>
+  ${list.some(i => i.result.veto) ? '<div class="veto"><b>توجد بوابة حرجة مفعّلة في إحدى القوائم، راجع تفاصيلها أدناه.</b></div>' : ''}` : '';
   const groups = SECTOR_ORDER.map(k => ({ k, items: list.filter(i => sectorOf(i.snap) === k).sort((a, b) => listKey(a.snap) - listKey(b.snap)) })).filter(g => g.items.length);
-  const summary = multi ? `<h3>ملخص جميع القوائم</h3><table class="rep"><tr><th class="sidehd">القطاع</th><th>المكان والقائمة</th><th>الدرجة</th><th>التقدير</th><th>البوابة الحرجة</th></tr>
-    ${groups.map(g => g.items.map((i, n) => `<tr>${n === 0 ? `<td class="side" rowspan="${g.items.length}">${SECTOR_PARENT[g.k] ? SECTOR_PARENT[g.k] + '<br>' : ''}${SECTORS[g.k]}</td>` : ''}<td><b>${esc(i.header.place)}</b><div class="mut">${esc(i.snap.title)}</div></td><td>${i.result.score}%</td><td>${i.result.band}</td><td>${i.result.veto ? 'مفعّلة' : 'لا'}</td></tr>`).join('')).join('')}</table>` : '';
+  const summary = multi ? `${overallCard}<h3>ملخص جميع القوائم</h3><table class="rep"><tr><th class="sidehd">القطاع</th><th>المكان والقائمة</th><th>المفتش</th><th>الدرجة</th><th>التقدير</th><th>البوابة الحرجة</th></tr>
+    ${groups.map(g => g.items.map((i, n) => `<tr>${n === 0 ? `<td class="side" rowspan="${g.items.length}">${SECTOR_PARENT[g.k] ? SECTOR_PARENT[g.k] + '<br>' : ''}${SECTORS[g.k]}</td>` : ''}<td><b>${esc(i.header.place)}</b><div class="mut">${esc(i.snap.title)}</div></td><td>${esc(i.header.inspector)}<div class="mut">${esc(i.header.time)}</div></td><td>${i.result.score}%</td><td>${i.result.band}</td><td>${i.result.veto ? 'مفعّلة' : 'لا'}</td></tr>`).join('')).join('')}</table>` : '';
   let lastParent = '';
   const sections = groups.map(g => g.items.map((i, n) => {
-    const body = reportSection(i, false).replace('</h2>', `</h2><p class="mut" style="text-align:center;margin:0 0 8px">المكان: ${esc(i.header.place)}${i.header.responsible ? ' · المسؤول: ' + esc(i.header.responsible) : ''}</p>`);
+    const body = reportSection(i, false).replace('</h2>', `</h2><p class="mut" style="text-align:center;margin:0 0 8px">المكان: ${esc(i.header.place)}${i.header.responsible ? ' · المسؤول: ' + esc(i.header.responsible) : ''}${multi ? ' · المفتش: ' + esc(i.header.inspector) + ' · ' + esc(i.header.time) : ''}</p>`);
     return `<div class="${multi ? 'pb' : ''}">${multi && n === 0 ? `${SECTOR_PARENT[g.k] && SECTOR_PARENT[g.k] !== lastParent ? (lastParent = SECTOR_PARENT[g.k], `<h2 class="sector">${SECTOR_PARENT[g.k]}</h2>`) : ''}<h2 class="sector${SECTOR_PARENT[g.k] ? ' sub' : ''}">${SECTORS[g.k]}</h2>` : ''}${body}</div>`;
   }).join('')).join('');
   return `<div class="overlay"><div class="bar noprint"><button data-act="go" data-v="${V.back || 'inspections'}">رجوع</button><h1>${multi ? 'التقرير الشامل' : 'التقرير'}</h1><button data-act="print">طباعة / PDF</button></div><div class="wrap">
   ${facilityBlock(fac)}
   <table class="rep"><tr><th>المنشأة</th><td>${esc(h.facility)}</td><th>${onePlace ? 'المكان / القسم' : 'أماكن التفتيش'}</th><td>${places.map(esc).join('، ')}</td></tr>
-  ${onePlace ? `<tr><th>عدد العاملين</th><td>${esc(h.staff)}</td><th>عدد الورديات</th><td>${esc(h.shifts)}</td></tr>
-  <tr><th>المسؤول عن المكان</th><td>${esc(h.responsible)}</td><th>القائم بالتفتيش</th><td>${esc(h.inspector)}</td></tr>` : `<tr><th>القائم بالتفتيش</th><td colspan="3">${esc(h.inspector)}</td></tr>`}
-  <tr><th>التاريخ</th><td>${esc(h.date)}</td><th>الساعة</th><td>${esc(h.time)}</td></tr></table>
-  ${summary}${sections}</div></div>`;
+  ${onePlace ? `<tr><th>عدد العاملين</th><td>${hv('staff')}</td><th>عدد الورديات</th><td>${hv('shifts')}</td></tr>
+  <tr><th>المسؤول عن المكان</th><td>${hv('responsible')}</td><th>${multi ? 'القائمون بالتفتيش' : 'القائم بالتفتيش'}</th><td>${inspectors}</td></tr>` : `<tr><th>${multi ? 'القائمون بالتفتيش' : 'القائم بالتفتيش'}</th><td colspan="3">${inspectors}</td></tr>`}
+  <tr><th>التاريخ</th><td>${esc(h.date)}</td><th>الساعة</th><td>${times}</td></tr></table>
+  ${summary}${missing.length ? `<p class="mut">قوائم لم يُستلم تفتيشها في هذه الزيارة: ${missing.map(esc).join('، ')}</p>` : ''}${sections}</div></div>`;
 }
 
 /* ===== الإعدادات ===== */
@@ -301,7 +337,7 @@ function viewLists() {
   <p class="mut">يقبل الرفع ملف قائمة بصيغة JSON، سواء قائمة واحدة أو مجموعة قوائم. القوائم المرفوعة تظهر هنا ويمكن تعديلها كأي قائمة أخرى.</p>
   <div class="card" style="margin-top:12px">${S.lists.map(l => `<div class="listrow" style="flex-wrap:wrap"><div class="sp" style="min-width:60%"><b>${esc(l.title)}</b><div class="mut">${l.axes.length} محاور · ${l.axes.reduce((n, a) => n + a.items.length, 0)} بنداً · الإصدار ${esc(l.version || 1)}</div>
   <select data-lsec="${l.id}" style="width:auto;margin-top:6px;padding:6px 10px">${SECTOR_ORDER.map(k => `<option value="${k}" ${sectorOf(l) === k ? 'selected' : ''}>${SECTORS[k]}</option>`).join('')}</select></div>
-  <div class="row"><button class="btn sm" data-act="editlist" data-id="${l.id}">تعديل</button><button class="btn sec sm" data-act="duplist" data-id="${l.id}">نسخ</button><button class="btn sec sm" data-act="printlist" data-id="${l.id}" data-back="lists">طباعة</button><button class="btn sec sm" data-act="explist" data-id="${l.id}">تصدير</button><button class="btn bad sm" data-act="dellist2" data-id="${l.id}">حذف</button></div></div>`).join('')}</div></div>`;
+  <div class="row"><button class="btn sm" data-act="editlist" data-id="${l.id}">تعديل</button><button class="btn sec sm" data-act="duplist" data-id="${l.id}">نسخ</button>${isSup() ? `<button class="btn sec sm" data-act="printlist" data-id="${l.id}" data-back="lists">طباعة</button>` : ''}<button class="btn sec sm" data-act="explist" data-id="${l.id}">تصدير</button><button class="btn bad sm" data-act="dellist2" data-id="${l.id}">حذف</button></div></div>`).join('')}</div></div>`;
 }
 const CLS_ALIAS = { c: 'c', e: 'e', s: 's', 'حرج': 'c', 'حرجة': 'c', 'أساسي': 'e', 'اساسي': 'e', 'قياسي': 's' };
 function normList(x) {
