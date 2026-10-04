@@ -3,7 +3,7 @@
   "account": "@batagonun",
   "metricool_brand_id": "7154737",
   "timezone": "Africa/Cairo",
-  "status": "pending_review",
+  "status": "scheduled",
   "posts": [
     {
       "id": "e01-oct-eve",
@@ -131,5 +131,6 @@
       "caption": "“People are not disturbed by things, but by the views they take of them.”\n— Epictetus, Enchiridion\n\nTwo people can stand in the same storm: one sees ruin, the other sees a lesson.\nWe rarely choose what happens to us, but we always choose the story we tell ourselves about it.\n\n🔸 لا تُقلقنا الأحداث نفسها، بل الطريقة التي نفسّرها بها؛ ونحن من يختار هذا التفسير.\n\nWhat story will you choose this week? 👇\n\n#WeeklyWisdom #Stoicism #Epictetus #Perspective",
       "ar_note": "لا تُقلقنا الأشياء نفسها، بل نظرتُنا إليها"
     }
-  ]
+  ],
+  "approved_at": "2026-10-04"
 }
