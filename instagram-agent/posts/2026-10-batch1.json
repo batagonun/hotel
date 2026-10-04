@@ -6,6 +6,17 @@
   "status": "pending_review",
   "posts": [
     {
+      "id": "e01-oct-eve",
+      "date": "2026-10-05T19:00:00+03:00",
+      "pillar": "سلسلة نصر أكتوبر",
+      "lang": "ar",
+      "scene": "flag",
+      "tag": "غدًا ذكرى العبور | ٦ أكتوبر",
+      "headline": "بسم الله.. الله أكبر<br>بسم الله.. بسم الله",
+      "sub": "من أغنية «بسم الله» · كلمات: عبد الرحيم منصور · ألحان: بليغ حمدي",
+      "caption": "غدًا تحلّ الذكرى الثالثة والخمسون لعبور أكتوبر.\nظهر السبت 6 أكتوبر 1973، الموافق العاشر من رمضان، ارتفع النداء على ضفة القناة، وارتفع معه علم مصر على الضفة الشرقية.\n\n«بسم الله.. الله أكبر.. بسم الله بسم الله»\n— من أغنية «بسم الله»، كلمات عبد الرحيم منصور وألحان بليغ حمدي\n\nما الأغنية الوطنية التي ترتبط عندك بذكرى أكتوبر؟ 👇\n\n#نصر_أكتوبر #العبور #مصر #6_أكتوبر"
+    },
+    {
       "id": "p01-oct6",
       "date": "2026-10-06T09:00:00+03:00",
       "pillar": "مناسبات وطنية",
@@ -15,6 +26,30 @@
       "headline": "ما يبدو مستحيلًا<br>يحتاج فقط إلى<br>إعدادٍ وصبرٍ وشجاعة",
       "sub": "ذكرى نصر أكتوبر المجيد",
       "caption": "في السادس من أكتوبر 1973 عبر المصريون حاجزًا قيل إنه لا يُعبر.\nوالدرس الباقي بعد 53 عامًا: ما يبدو مستحيلًا يحتاج فقط إلى إعداد جيد، وصبر طويل، ولحظة شجاعة.\n\nكل عام ومصر بخير، وجيشها وشعبها بخير 🇪🇬\n\nما الحاجز الذي تستعد لعبوره هذا العام؟ 👇\n\n#نصر_أكتوبر #6_أكتوبر #مصر #عزيمة"
+    },
+    {
+      "id": "e02-oct-sadat",
+      "date": "2026-10-06T19:00:00+03:00",
+      "pillar": "سلسلة نصر أكتوبر",
+      "lang": "ar",
+      "scene": "boats",
+      "tag": "يوم العبور | ٦ أكتوبر ١٩٧٣",
+      "headline": "«إن القوات المسلحة المصرية<br>قامت بمعجزة<br>على أي مقياس عسكري»",
+      "size": 76,
+      "sub": "الرئيس محمد أنور السادات · خطابه أمام مجلس الشعب، ١٦ أكتوبر ١٩٧٣",
+      "caption": "«إن القوات المسلحة المصرية قامت بمعجزة على أي مقياس عسكري»\n— الرئيس محمد أنور السادات، خطابه أمام مجلس الشعب في 16 أكتوبر 1973\n\nعبرت القوارب المطاطية قناة السويس، وفتحت خراطيم المياه الساتر الترابي لخط بارليف، وهي الفكرة التي اقترحها المهندس العسكري باقي زكي يوسف. عقلٌ مصري حوّل الماء إلى مفتاح للنصر.\n\nكل عام ومصر بخير 🇪🇬 شاركنا قصة سمعتها من أحد أبطال أكتوبر في عائلتك 👇\n\n#نصر_أكتوبر #العبور #خط_بارليف #مصر"
+    },
+    {
+      "id": "e03-oct-martyrs",
+      "date": "2026-10-07T19:00:00+03:00",
+      "pillar": "سلسلة نصر أكتوبر",
+      "lang": "ar",
+      "scene": "memorial",
+      "tag": "تحية لأرواح شهداء أكتوبر",
+      "headline": "وَلَا تَحْسَبَنَّ الَّذِينَ قُتِلُوا فِي سَبِيلِ اللَّهِ أَمْوَاتًا<br>بَلْ أَحْيَاءٌ عِندَ رَبِّهِمْ يُرْزَقُونَ",
+      "size": 60,
+      "sub": "سورة آل عمران · الآية ١٦٩",
+      "caption": "﴿وَلَا تَحْسَبَنَّ الَّذِينَ قُتِلُوا فِي سَبِيلِ اللَّهِ أَمْوَاتًا ۚ بَلْ أَحْيَاءٌ عِندَ رَبِّهِمْ يُرْزَقُونَ﴾\n— سورة آل عمران، الآية 169\n\nتحية إجلال لأرواح شهداء أكتوبر، ولكل من عاد من المعركة يحمل جرحه وفخره.\nالنصر الذي صنعوه أمانة، والوفاء لهم أن نكمل البناء كلٌّ في موقعه.\n\nاكتب «رحمهم الله» تحيةً لهم 🤍\n\n#نصر_أكتوبر #شهداء_أكتوبر #مصر #وفاء"
     },
     {
       "id": "p02-listen",
@@ -47,7 +82,8 @@
       "tag": "WEEKLY WISDOM",
       "headline": "“We suffer more often<br>in imagination<br>than in reality.”",
       "sub": "SENECA · LETTERS TO LUCILIUS",
-      "caption": "“We suffer more often in imagination than in reality.”\n— Seneca, Letters to Lucilius\n\nMost of what we dread never arrives, yet we pay for it in advance with sleepless nights and stolen calm.\nThis week, when worry knocks, ask one honest question: is this actually happening, or am I only imagining it?\n\nWhat worry are you ready to set down this week? 👇\n\n#WeeklyWisdom #Stoicism #Seneca #Mindset"
+      "caption": "“We suffer more often in imagination than in reality.”\n— Seneca, Letters to Lucilius\n\nMost of what we dread never arrives, yet we pay for it in advance with sleepless nights and stolen calm.\nThis week, when worry knocks, ask one honest question: is this actually happening, or am I only imagining it?\n\n🔸 بالعربي: نتألّم في خيالنا أكثر مما نتألّم في الواقع؛ فأغلب ما نخشاه لا يحدث أبدًا.\n\nWhat worry are you ready to set down this week? 👇\n\n#WeeklyWisdom #Stoicism #Seneca #Mindset",
+      "ar_note": "نتألّم في خيالنا أكثر مما نتألّم في الواقع"
     },
     {
       "id": "p05-shafii",
@@ -55,7 +91,7 @@
       "pillar": "شعر وحكمة",
       "lang": "ar",
       "scene": "dunes",
-      "tag": "من ديوان الإمام الشافعي",
+      "tag": "الإمام محمد بن إدريس الشافعي (١٥٠–٢٠٤ هـ)",
       "headline": "دَعِ الأيّامَ تَفعَلُ ما تَشاءُ<br>وَطِبْ نَفسًا إذا حَكَمَ القَضاءُ",
       "sub": "وَلا تَجزَعْ لِحادِثَةِ اللَّيالي · فَما لِحَوادِثِ الدُّنيا بَقاءُ",
       "caption": "دعِ الأيامَ تفعلُ ما تشاءُ\nوطِبْ نفسًا إذا حكمَ القضاءُ\nولا تجزعْ لحادثةِ الليالي\nفما لحوادثِ الدنيا بقاءُ\n— الإمام الشافعي\n\nبيتان يلخّصان فلسفة كاملة في الرضا: ما يضيق اليوم لن يبقى ضيقًا إلى الأبد.\n\nأي بيت شعر تعود إليه في الأوقات الصعبة؟ 👇\n\n#شعر #الشافعي #رضا #حكمة"
@@ -91,7 +127,8 @@
       "tag": "WEEKLY WISDOM",
       "headline": "“People are not disturbed<br>by things, but by the views<br>they take of them.”",
       "sub": "EPICTETUS · ENCHIRIDION",
-      "caption": "“People are not disturbed by things, but by the views they take of them.”\n— Epictetus, Enchiridion\n\nTwo people can stand in the same storm: one sees ruin, the other sees a lesson.\nWe rarely choose what happens to us, but we always choose the story we tell ourselves about it.\n\nWhat story will you choose this week? 👇\n\n#WeeklyWisdom #Stoicism #Epictetus #Perspective"
+      "caption": "“People are not disturbed by things, but by the views they take of them.”\n— Epictetus, Enchiridion\n\nTwo people can stand in the same storm: one sees ruin, the other sees a lesson.\nWe rarely choose what happens to us, but we always choose the story we tell ourselves about it.\n\n🔸 بالعربي: لا تُقلقنا الأحداث نفسها، بل الطريقة التي نفسّرها بها؛ ونحن من يختار هذا التفسير.\n\nWhat story will you choose this week? 👇\n\n#WeeklyWisdom #Stoicism #Epictetus #Perspective",
+      "ar_note": "لا تُقلقنا الأشياء نفسها، بل نظرتُنا إليها"
     }
   ]
 }
