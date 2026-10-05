@@ -1,0 +1,22 @@
+{
+  "batch": "2026-10-reels",
+  "status": "pending_review",
+  "note": "نسخ ريلز (9 ثوانٍ، 1080x1920) من بوستات الأسبوع القادم، بنفس الكابشن والموعد",
+  "reels": [
+    {
+      "id": "p03-walk",
+      "date": "2026-10-10T09:00:00+03:00",
+      "video": "out/2026-10-reels/p03-walk.mp4"
+    },
+    {
+      "id": "p04-seneca",
+      "date": "2026-10-11T09:00:00+03:00",
+      "video": "out/2026-10-reels/p04-seneca.mp4"
+    },
+    {
+      "id": "p05-shafii",
+      "date": "2026-10-13T09:00:00+03:00",
+      "video": "out/2026-10-reels/p05-shafii.mp4"
+    }
+  ]
+}
