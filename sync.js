@@ -174,11 +174,12 @@ document.addEventListener('click', async e => {
 /* حذف التفتيش من كل الأجهزة عبر علامة حذف تنتقل مع الإعدادات */
 function tombstone(ids) { S.inspDeleted = [...new Set([...(S.inspDeleted || []), ...ids])]; }
 document.addEventListener('click', async e => {
-  const t = e.target.closest('[data-act="delinsp"],[data-act="delbatch"]'); if (!t) return;
+  const t = e.target.closest('[data-act="delinsp"],[data-act="delbatch"],[data-act="delids"]'); if (!t) return;
   e.stopImmediatePropagation();
   const where = S.settings.syncUrl ? 'من كل الأجهزة' : 'من هذا الجهاز';
   if (!confirm(`حذف هذا التفتيش نهائياً ${where}؟`)) return;
   const d = t.dataset;
-  const gone = S.inspections.filter(i => t.dataset.act === 'delinsp' ? i.id === d.id : (i.batchId || i.id) === d.b).map(i => i.id);
+  const ids = (d.ids || '').split(',');
+  const gone = S.inspections.filter(i => t.dataset.act === 'delinsp' ? i.id === d.id : t.dataset.act === 'delids' ? ids.includes(i.id) : (i.batchId || i.id) === d.b).map(i => i.id);
   tombstone(gone); S.inspections = S.inspections.filter(i => !gone.includes(i.id)); await save(); render();
 }, true);
