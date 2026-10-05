@@ -205,18 +205,38 @@ function facilityBlock(f) {
   ${venues ? `<table class="rep"><tr><th style="width:30%">المرفق</th><th>البيانات</th></tr>${venues}</table>` : ''}
   ${contacts ? `<p><b>وسائل الاتصال:</b> ${contacts}</p>` : ''}${transport ? `<p><b>وسائل المواصلات:</b> ${transport}</p>` : ''}</div>`;
 }
-function reportSection(i, multi) {
+/* لون الشريط حسب التقدير */
+const barCls = sc => (sc >= 80 ? 'b-ok' : sc >= 70 ? 'b-warn' : 'b-bad');
+const RATE_NAME = { 'م': 'مُرضٍ', 'ت': 'يحتاج إلى تحسين', 'ف': 'تصحيح فوري', 'غ': 'غير منطبق' };
+/* القائمة كاملة بكل البنود والتقديرات والملاحظات (لطباعة القوائم المستلمة) */
+function fullChecklist(i) {
+  let n = 0;
+  const rows = i.snap.axes.map(a => `<tr class="axrow"><th colspan="5">${esc(a.name)} <span class="mut">(الوزن ${a.weight})</span></th></tr>${a.items.map(it => { const x = i.answers[it.id] || {}; n++;
+    return `<tr><td class="num">${n}</td><td>${esc(it.text)}</td><td>${CLS_NAME[it.cls]}</td><td class="rv r-${{ 'م': 'm', 'ت': 't', 'ف': 'f', 'غ': 'g' }[x.v] || 'x'}">${x.v ? esc(x.v) : '-'}</td><td>${esc(x.note || '')}</td></tr>`; }).join('')}`).join('');
+  const escl = (i.snap.escalation || []).map((t, k) => `<tr><td>${i.esc && i.esc[k] ? '☒' : '☐'}</td><td>${esc(t)}</td></tr>`).join('');
+  return `<h3>القائمة الكاملة للبنود</h3><table class="rep full"><tr><th class="num">م</th><th>البند</th><th>التصنيف</th><th>التقدير</th><th>الملاحظة</th></tr>${rows}</table>
+  <p class="mut">م = مُرضٍ · ت = يحتاج إلى تحسين · ف = تصحيح فوري · غ = غير منطبق</p>
+  ${escl ? `<h3>حالات التصعيد الفوري</h3><table class="rep"><tr><th style="width:40px"></th><th>الحالة</th></tr>${escl}</table>` : ''}`;
+}
+function reportSection(i, multi, o) {
+  o = o || {}; const th = o.theme || 'std';
   const r = i.result || compute(i.snap, i.answers, i.esc);
   const fails = i.snap.axes.flatMap(a => a.items.map(it => ({ it, x: i.answers[it.id] })).filter(o => o.x && (o.x.v === 'ف' || o.x.v === 'ت')));
   const hh = i.header;
-  return `<div class="${multi ? 'pb' : ''}"><h2 style="text-align:center">${esc(i.snap.title)}</h2>
+  const scoreBox = th === 'exec' ? `<div class="kpis"><div class="kpi"><b>${r.score}%</b><span>الدرجة</span></div><div class="kpi"><b class="t-${r.bandCls}">${r.band}</b><span>التقدير</span></div><div class="kpi"><b>${fails.length}</b><span>ملاحظات</span></div><div class="kpi"><b>${r.critFails.length}</b><span>بنود حرجة غير مطابقة</span></div></div>`
+    : th === 'formal' ? `<table class="rep"><tr><th>الدرجة النهائية</th><td><b>${r.score}%</b></td><th>التقدير</th><td><b>${r.band}</b></td><th>عدد الملاحظات</th><td>${fails.length}</td></tr></table>`
+    : `<div class="card"><div class="score">${r.score}%</div><div style="text-align:center"><span class="tag ${r.bandCls}">${r.band}</span></div></div>`;
+  const axes = th === 'exec' ? `<div class="card"><h3>أداء المحاور</h3>${r.axes.map(a => `<div class="hb"><span>${esc(a.name)} <span class="mut">(${a.weight})</span></span><span class="tr">${a.pct === null ? '' : `<i class="${barCls(a.pct)}" style="width:${a.pct.toFixed(1)}%"></i>`}</span><b>${a.pct === null ? 'غ' : a.pct.toFixed(0) + '%'}</b></div>`).join('')}</div>`
+    : `<table class="rep"><tr><th>المحور</th><th>الوزن</th><th>النسبة</th></tr>${r.axes.map(a => `<tr><td>${esc(a.name)}</td><td>${a.weight}</td><td>${a.pct === null ? 'غير منطبق' : a.pct.toFixed(1) + '%'}</td></tr>`).join('')}</table>`;
+  return `<div class="${multi ? 'pb' : ''}"><h2 class="lt" style="text-align:center">${esc(i.snap.title)}</h2>
   ${multi ? `<table class="rep"><tr><th>القائم بالتفتيش</th><td>${esc(hh.inspector)}</td><th>الساعة</th><td>${esc(hh.time)}</td></tr><tr><th>عدد العاملين</th><td>${esc(hh.staff)}</td><th>عدد الورديات</th><td>${esc(hh.shifts)}</td></tr><tr><th>المسؤول عن المكان</th><td colspan="3">${esc(hh.responsible)}</td></tr></table>` : ''}
-  <div class="card"><div class="score">${r.score}%</div><div style="text-align:center"><span class="tag ${r.bandCls}">${r.band}</span></div></div>
+  ${scoreBox}
   ${r.veto ? `<div class="veto"><b>البوابة الحرجة مفعّلة</b>${r.critFails.map(c => `<div>• ${esc(c.text)}</div>`).join('')}${r.escHits.map(c => `<div>• تصعيد فوري: ${esc(c)}</div>`).join('')}</div>` : ''}
-  <table class="rep"><tr><th>المحور</th><th>الوزن</th><th>النسبة</th></tr>${r.axes.map(a => `<tr><td>${esc(a.name)}</td><td>${a.weight}</td><td>${a.pct === null ? 'غير منطبق' : a.pct.toFixed(1) + '%'}</td></tr>`).join('')}</table>
+  ${axes}
   <h3>الملاحظات والإجراءات المطلوبة (${fails.length})</h3>
   ${fails.length ? `<table class="rep"><tr><th>البند</th><th>التصنيف</th><th>التقدير</th><th>الملاحظة</th></tr>${fails.map(o => `<tr><td>${esc(o.it.text)}${(o.x.photos || []).map(p => `<br><img src="${esc(p)}" style="width:90px;margin:3px;border-radius:6px">`).join('')}</td><td>${CLS_NAME[o.it.cls]}</td><td>${o.x.v}</td><td>${esc(o.x.note || '')}</td></tr>`).join('')}</table>` : '<p class="mut">لا توجد ملاحظات.</p>'}
-  <div class="grid2"><div><b>توقيع المفتش</b><br>${i.sig.inspector ? `<img src="${esc(i.sig.inspector)}" style="width:100%;max-height:110px;object-fit:contain">` : ''}</div><div><b>توقيع المسؤول</b><br>${i.sig.responsible ? `<img src="${esc(i.sig.responsible)}" style="width:100%;max-height:110px;object-fit:contain">` : ''}</div></div></div>`;
+  ${o.full ? fullChecklist(i) : ''}
+  <div class="grid2 sigs"><div><b>توقيع المفتش</b><br>${i.sig.inspector ? `<img src="${esc(i.sig.inspector)}" style="width:100%;max-height:110px;object-fit:contain">` : ''}</div><div><b>توقيع المسؤول</b><br>${i.sig.responsible ? `<img src="${esc(i.sig.responsible)}" style="width:100%;max-height:110px;object-fit:contain">` : ''}</div></div></div>`;
 }
 function viewReport() {
   const list = ((V.rep && V.rep.ids) || [V.cur]).map(id => S.inspections.find(i => i.id === id)).filter(i => i && i.status === 'done')
