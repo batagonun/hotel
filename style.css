@@ -130,3 +130,30 @@ table.lh-meta{width:100%;margin-top:8px;font-size:14px}table.lh-meta td{text-ali
 .finsig{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:22px;text-align:center;break-inside:avoid}
 .finsig img{width:100%;max-height:90px;object-fit:contain;margin-top:6px}
 .finsig .sigline{border-bottom:1px solid var(--ink);height:60px;margin:0 12px}
+
+/* ===== تنسيق الطباعة الموحّد لكل التقارير ووثائق التحقق =====
+   خط Simplified Arabic بحجم 14، عناوين بالخط العريض، حدود جداول سوداء واضحة،
+   صفحة مضغوطة داخل إطار يتكرر في كل صفحة */
+@page{size:A4;margin:9mm}
+@media print{
+  html,body,.overlay,.wrap,.wrap *{font-family:"Simplified Arabic","Traditional Arabic","Arabic Typesetting","Noto Naskh Arabic","Times New Roman",serif!important}
+  body{font-size:14pt;line-height:1.3;color:#000!important}
+  body::after{content:'';position:fixed;top:0;bottom:0;left:0;right:0;border:2px solid #000;pointer-events:none}
+  .wrap{padding:4mm 5mm!important;font-size:14pt}
+  .wrap h1,.wrap h2,.wrap h3,.wrap th,.wrap b,.lh-org,.lh-title{font-weight:700!important;color:#000!important}
+  .wrap h2{font-size:16pt;margin:4pt 0}.wrap h3{font-size:14pt;margin:6pt 0 3pt}
+  .card{border:1px solid #000!important;border-radius:0!important;padding:5pt 7pt!important;margin-bottom:6pt!important;box-shadow:none!important;background:#fff!important}
+  table.rep{font-size:14pt;margin-bottom:6pt;border:1.5px solid #000}
+  table.rep th,table.rep td{border:1px solid #000!important;padding:2pt 5pt!important;color:#000}
+  table.rep th{background:#e6e6e6!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  table.rep tr{break-inside:avoid}
+  .score{font-size:24pt}.kpi b{font-size:16pt}.kpi span,.mut{color:#222!important;font-size:12pt}
+  .veto{border:2px solid #000!important;border-radius:0!important;padding:5pt 7pt!important;margin-bottom:6pt!important}
+  h2.sector{padding:3pt 6pt!important;margin:6pt 0 4pt!important;border-radius:0!important}
+  .finsig{margin-top:10pt}.finsig .sigline{border-color:#000;height:40pt}
+  .grid2{gap:6pt}
+  .pb{margin-top:8pt;break-before:auto!important;border-top:2px solid #000;padding-top:4pt}
+  .wrap h2,.wrap h3,h2.sector{break-after:avoid}
+  table.rep th.sidehd,table.rep td.side{width:110pt!important}
+  h2.sector.sub{font-size:14pt!important}
+}
