@@ -35,7 +35,8 @@ const facOf = id => S.facilities.find(f => f.id === id) || S.facilities[0] || ne
 const listTitle = id => (S.lists.find(l => l.id === id) || {}).title;
 const batchOf = i => S.inspections.filter(x => (x.batchId || x.id) === (i.batchId || i.id));
 const groupBatches = arr => { const m = new Map(); arr.forEach(i => { const k = i.batchId || i.id; if (!m.has(k)) m.set(k, []); m.get(k).push(i); }); return [...m.values()]; };
-const unitsForMe = () => S.places.filter(p => isSup() || !(p.inspectorIds || []).length || p.inspectorIds.includes(S.session));
+/* المفتش يرى فقط الأماكن والقوائم التي عيّنه لها المشرف */
+const unitsForMe = () => S.places.filter(p => isSup() || (p.inspectorIds || []).includes(S.session));
 const toNum = x => +x || 0;
 const bandFor = sc => BANDS.find(b => sc >= b[0]);
 const rkey = i => (i.header.place || '') + '|' + i.header.date;
@@ -465,6 +466,7 @@ document.addEventListener('click', async e => {
 
 
 /* ===== مشاركة التفتيش واستيراده (ملف JSON يُنقل بواتساب أو بلوتوث أو غيرهما) ===== */
+async function markShared(arr) { const t = Date.now(); arr.forEach(i => { i.sharedAt = t; }); await save(); if (V.view === 'home' || V.view === 'inspections') rerender(); }
 async function shareInspections(ids) {
   const arr = S.inspections.filter(i => ids.includes(i.id) && i.status === 'done');
   if (!arr.length) { toast('لا توجد تفتيشات مكتملة للمشاركة'); return; }
@@ -472,10 +474,10 @@ async function shareInspections(ids) {
   const name = ('تفتيش_' + arr[0].header.place + '_' + arr[0].header.date + '.json').replace(/[\\/:*?"<>|\s]+/g, '_');
   const file = new File([JSON.stringify(payload)], name, { type: 'application/json' });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try { await navigator.share({ files: [file], title: name }); return; } catch (e) { if (e && e.name === 'AbortError') return; }
+    try { await navigator.share({ files: [file], title: name }); await markShared(arr); return; } catch (e) { if (e && e.name === 'AbortError') return; }
   }
   const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name; document.body.appendChild(a); a.click(); a.remove();
-  toast('تم حفظ الملف على الهاتف، أرسله إلى المشرف');
+  await markShared(arr); toast('تم حفظ الملف على الهاتف، أرسله إلى المشرف');
 }
 const okImg = v => typeof v === 'string' && /^data:image\/(jpeg|png|webp);base64,/.test(v);
 function cleanImported(x) {

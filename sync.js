@@ -97,7 +97,8 @@ async function syncInsp(pl) {
       if ((S.inspDeleted || []).includes(it.id)) continue;
       it.synced = true; const k = S.inspections.findIndex(x => x.id === it.id);
       if (k < 0) { S.inspections.push(it); got++; }
-      else if (S.inspections[k].status !== 'done' && it.status === 'done' && V.cur !== it.id) { S.inspections[k] = it; got++; }
+      else if (it.status === 'done' && V.cur !== it.id && !S.inspections[k].reopened &&
+        (S.inspections[k].status !== 'done' || (it.finishedAt || 0) > (S.inspections[k].finishedAt || 0))) { S.inspections[k] = it; got++; } // نسخة معدّلة أحدث من المفتش
     }
     since = j.next || since; more = !!j.more;
   }
