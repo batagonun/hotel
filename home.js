@@ -363,6 +363,56 @@ function approvalBlock(list) {
   <p class="mut" style="text-align:center">وثيقة داخلية، يُحظر تداولها خارج المؤسسة دون إذن.</p></div>`;
 }
 
+/* ===== تنزيل التقرير ===== */
+/* اسم ملف التقرير: المنشأة والتاريخ، ويُستخدم أيضاً اسماً افتراضياً عند الحفظ PDF */
+function reportFileName() {
+  const i = ((V.rep && V.rep.ids) || [V.cur]).map(id => S.inspections.find(x => x.id === id)).find(Boolean);
+  const h = (i && i.header) || {};
+  return ('تقرير_' + (h.facility || 'التفتيش') + '_' + (h.date || todayStr())).replace(/[\\/:*?"<>|\s]+/g, '_');
+}
+let _docTitle = '';
+window.addEventListener('beforeprint', () => { if (V.view === 'report') { _docTitle = document.title; document.title = reportFileName(); } });
+window.addEventListener('afterprint', () => { if (_docTitle) { document.title = _docTitle; _docTitle = ''; } });
+const WORD_CSS = `@page Section1{size:21cm 29.7cm;margin:1.5cm;border:solid windowtext 1.5pt;padding:12pt}
+div.Section1{page:Section1}
+body{font-family:"Simplified Arabic";font-size:14pt;direction:rtl}
+h1,h2,h3,b,th,.lh-org,.lh-title{font-weight:bold}
+h2{font-size:16pt;margin:8pt 0 4pt}h3{font-size:14pt;margin:6pt 0 3pt}
+table{border-collapse:collapse;width:100%;margin-bottom:6pt}
+td,th{border:1px solid #000;padding:2pt 4pt;font-size:14pt;vertical-align:top;text-align:right}
+th{background:#E6E6E6}
+.card{border:1px solid #000;padding:4pt;margin-bottom:6pt}
+.mut{color:#333;font-size:12pt}
+.score{font-size:24pt;font-weight:bold;text-align:center}
+.veto{border:2px solid #000;padding:4pt;margin-bottom:6pt}
+.lh{text-align:center;border-bottom:3px double #000;margin-bottom:8pt}.lh-org{font-size:18pt}.lh-title{font-size:16pt}
+.tag{font-weight:bold}.secline{margin:0}
+table.lh-meta td,table.sig td{border:none}`;
+/* ملف Word بصيغة MHTML: يحفظ التنسيق والجداول والتوقيعات، ويُفتح ويُعدَّل في Word */
+function downloadWord() {
+  const src = document.querySelector('.overlay .wrap'); if (!src) return;
+  const w = src.cloneNode(true);
+  w.querySelectorAll('.noprint,.themepick,.dlcard,input,button,script,.hb .tr').forEach(e => e.remove());
+  w.querySelectorAll('.printonly').forEach(e => e.removeAttribute('class'));
+  w.querySelectorAll('.finsig').forEach(f => { const cells = [...f.children].map(c => `<td style="border:none;text-align:center;width:50%">${c.innerHTML}</td>`).join('');
+    const t = document.createElement('table'); t.className = 'sig'; t.innerHTML = `<tr>${cells}</tr>`; f.replaceWith(t); });
+  const imgs = [];
+  w.querySelectorAll('img').forEach((im, k) => { const m = /^data:(image\/(png|jpe?g|webp));base64,(.+)$/.exec(im.getAttribute('src') || ''); if (!m) { im.remove(); return; }
+    const loc = `http://report.local/report_files/img${k}.${m[2].replace('jpeg', 'jpg')}`; imgs.push({ type: m[1], data: m[3], loc }); im.setAttribute('src', loc); im.removeAttribute('style'); im.setAttribute('width', '150'); });
+  const name = reportFileName();
+  const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${esc(name)}</title>
+<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]--><style>${WORD_CSS}</style></head>
+<body dir="rtl" lang="AR-SA"><div class="Section1">${w.innerHTML}</div></body></html>`;
+  const b64 = s => btoa(unescape(encodeURIComponent(s))), lines = s => s.replace(/(.{76})/g, '$1\r\n');
+  const B = '----=_NextPart_inspect_report';
+  let out = `MIME-Version: 1.0\r\nContent-Type: multipart/related; boundary="${B}"; type="text/html"\r\n\r\n--${B}\r\nContent-Type: text/html; charset="utf-8"\r\nContent-Transfer-Encoding: base64\r\nContent-Location: http://report.local/report.htm\r\n\r\n${lines(b64(html))}\r\n`;
+  imgs.forEach(i => { out += `--${B}\r\nContent-Type: ${i.type}\r\nContent-Transfer-Encoding: base64\r\nContent-Location: ${i.loc}\r\n\r\n${lines(i.data)}\r\n`; });
+  out += `--${B}--\r\n`;
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([out], { type: 'application/msword' })); a.download = 'Inspection-Report_' + (name.match(/\d{4}-\d{2}-\d{2}/) || [todayStr()])[0] + '.doc'; // اسم لاتيني لأن بعض المتصفحات ترفض الأسماء العربية في التنزيل
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  toast('تم تنزيل ملف Word');
+}
+
 /* ===== التقرير الشامل: قوائم قطاع الغرف ثم قطاع الأغذية والمشروبات ===== */
 function viewReport() {
   const list = ((V.rep && V.rep.ids) || [V.cur]).map(id => S.inspections.find(i => i.id === id)).filter(i => i && i.status === 'done');
@@ -389,7 +439,9 @@ function viewReport() {
     const body = reportSection(i, false, { theme: th, full }).replace('</h2>', `</h2><p class="mut" style="text-align:center;margin:0 0 8px">المكان: ${esc(i.header.place)}${i.header.responsible ? ' · المسؤول: ' + esc(i.header.responsible) : ''}</p>`);
     return `<div class="${multi ? 'pb' : ''}">${multi && n === 0 ? `${SECTOR_PARENT[g.k] && SECTOR_PARENT[g.k] !== lastParent ? (lastParent = SECTOR_PARENT[g.k], `<h2 class="sector">${SECTOR_PARENT[g.k]}</h2>`) : ''}<h2 class="sector${SECTOR_PARENT[g.k] ? ' sub' : ''}">${SECTORS[g.k]}</h2>` : ''}${body}</div>`;
   }).join('')).join('');
-  return `<div class="overlay"><div class="bar noprint"><button data-act="go" data-v="${V.back || 'inspections'}">رجوع</button><h1>${full ? 'طباعة القوائم كاملة' : multi ? 'التقرير الشامل' : 'التقرير'}</h1><button data-act="print">طباعة / PDF</button></div><div class="wrap rep-${th}">
+  return `<div class="overlay"><div class="bar noprint"><button data-act="go" data-v="${V.back || 'inspections'}">رجوع</button><h1>${full ? 'طباعة القوائم كاملة' : multi ? 'التقرير الشامل' : 'التقرير'}</h1><button data-act="print">طباعة</button>${sup ? '<button data-act="dlmenu">تنزيل</button>' : ''}</div><div class="wrap rep-${th}">
+  ${sup && V.dl ? `<div class="card noprint dlcard"><b>تنزيل التقرير</b><div class="row" style="margin-top:8px"><button class="btn sm" data-act="dlpdf">ملف PDF</button><button class="btn sm" data-act="dlword">ملف Word</button></div>
+  <p class="mut" style="margin:6px 0 0">PDF: تفتح نافذة الطباعة، اختر منها «حفظ بتنسيق PDF». Word: يُنزَّل ملف قابل للتعديل يُفتح ببرنامج Word.</p></div>` : ''}
   ${sup ? themePicker(th, full) : ''}${th === 'formal' ? letterhead(list, multi, full) : ''}
   ${facilityBlock(fac)}
   <table class="rep"><tr><th>المنشأة</th><td colspan="3">${esc(h.facility)}</td></tr>
@@ -476,6 +528,9 @@ document.addEventListener('click', async e => {
       if (!canEdit(i)) { toast('لا يمكن تعديل تفتيش بعد تصديره'); break; }
       if (!confirm('سيُعاد فتح التفتيش للتعديل. بعد التعديل اضغط «مراجعة وإنهاء» واحفظه من جديد، ثم صدّره للمشرف. متابعة؟')) break;
       i.status = 'draft'; i.reopened = true; await save(); V.cur = i.id; V.batch = i.batchId || i.id; V.view = 'insp'; render(); break; }
+    case 'dlmenu': V.dl = !V.dl; rerender(); break;
+    case 'dlpdf': toast('اختر «حفظ بتنسيق PDF» من نافذة الطباعة'); setTimeout(() => window.print(), 400); break;
+    case 'dlword': downloadWord(); break;
     case 'reptheme': S.settings.repTheme = d.t; await save(); rerender(); break;
     case 'repfull': V.rep = Object.assign({}, V.rep || { ids: [V.cur] }, { full: t.checked }); rerender(); break;
     case 'repall': V.rep = { ids: d.ids.split(',').filter(Boolean), full: true }; V.back = d.back || 'inspections'; V.view = 'report'; render(); break;
