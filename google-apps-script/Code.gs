@@ -13,6 +13,31 @@ var SHEET_SETUP = 'الإعداد';
 var SHEET_INSP = 'التفتيشات';
 var INSP_HEAD = ['التسلسل', 'المعرّف', 'معرّف المفتش', 'المفتش', 'المنشأة', 'المكان', 'القائمة', 'التاريخ', 'الساعة', 'الدرجة %', 'التقدير', 'بوابة حرجة', 'آخر تحديث', 'معرّف الملف'];
 var PAGE = 20; // عدد التفتيشات في كل دفعة سحب
+var APP_URL = 'https://batagonun.github.io/hotel/'; // رابط التطبيق
+
+/* قائمة في الجدول لإنشاء رابط ربط الأجهزة بضغطة واحدة */
+function onOpen() {
+  SpreadsheetApp.getUi().createMenu('مزامنة التفتيش')
+    .addItem('1) الإعداد الأول', 'setup')
+    .addItem('2) إنشاء رابط ربط الأجهزة (بعد النشر)', 'makeLink')
+    .addItem('تغيير مفتاح الربط', 'resetToken')
+    .addToUi();
+}
+/* ينشئ رابطاً يفتحه المشرف على هاتفه فيرتبط التطبيق بالمزامنة تلقائياً */
+function makeLink() {
+  var url = ScriptApp.getService().getUrl();
+  if (!url || !/\/exec$/.test(url)) {
+    SpreadsheetApp.getUi().alert('انشر السكربت أولاً: نشر ← نشر جديد ← تطبيق ويب ← من يمكنه الوصول: أي شخص، ثم أعد المحاولة.');
+    return;
+  }
+  var props = PropertiesService.getScriptProperties(); if (!props.getProperty('TOKEN')) setup();
+  var link = APP_URL + '#sync=' + encodeURIComponent(Utilities.base64Encode(JSON.stringify({ u: url, t: props.getProperty('TOKEN') })));
+  var st = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_SETUP);
+  st.getRange(6, 1, 3, 2).setValues([['رابط تطبيق الويب', url], ['رابط ربط الأجهزة', link],
+    ['طريقة الاستخدام', 'افتح «رابط ربط الأجهزة» على هاتف المشرف مرة واحدة، ثم ادخل برمز المشرف. ومن الإعدادات أرسل رابط الربط لكل مفتش.']]);
+  st.getRange('A6:A8').setFontWeight('bold');
+  SpreadsheetApp.getUi().alert('تم إنشاء رابط ربط الأجهزة في ورقة «الإعداد» (الخلية B7). افتحه على هاتف المشرف.');
+}
 
 /* ===== الإعداد الأول: شغّلها مرة واحدة من المحرر ===== */
 function setup() {
@@ -28,8 +53,8 @@ function setup() {
   st.clear(); st.setRightToLeft(true);
   st.getRange(1, 1, 4, 2).setValues([
     ['مفتاح الربط السري', props.getProperty('TOKEN')],
-    ['الخطوة التالية', 'نشر ← نشر جديد ← تطبيق ويب ← التنفيذ بصفتي ← من يمكنه الوصول: أي شخص'],
-    ['ثم في التطبيق', 'الإعدادات ← المزامنة والنسخ الاحتياطي ← الصق رابط النشر (ينتهي بـ /exec) والمفتاح أعلاه ← حفظ'],
+    ['الخطوة التالية', 'في محرر Apps Script: نشر ← نشر جديد ← تطبيق ويب ← التنفيذ بصفتي ← من يمكنه الوصول: أي شخص'],
+    ['ثم', 'من قائمة «مزامنة التفتيش» أعلى الجدول اختر «إنشاء رابط ربط الأجهزة»، وافتح الرابط على هاتف المشرف'],
     ['تنبيه', 'لا تشارك المفتاح أو رابط النشر علناً. لتغيير المفتاح شغّل الدالة resetToken ثم حدّث المفتاح في أجهزة المشرف.']
   ]);
   st.getRange('A1:A4').setFontWeight('bold'); st.setColumnWidth(1, 160); st.setColumnWidth(2, 620);
