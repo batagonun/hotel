@@ -1,6 +1,6 @@
 {
   "batch": "2026-10-reels",
-  "status": "pending_review",
+  "status": "scheduled",
   "note": "نسخ ريلز (9 ثوانٍ، 1080x1920) من بوستات الأسبوع القادم، بنفس الكابشن والموعد",
   "reels": [
     {
@@ -18,5 +18,6 @@
       "date": "2026-10-13T09:00:00+03:00",
       "video": "out/2026-10-reels/p05-shafii.mp4"
     }
-  ]
+  ],
+  "approved_at": "2026-10-05"
 }
