@@ -126,3 +126,7 @@ td.rv{text-align:center;font-weight:800}td.r-m{color:var(--ok)}td.r-t{color:var(
 table.lh-meta{width:100%;margin-top:8px;font-size:14px}table.lh-meta td{text-align:center}
 .appr{margin-top:18px;break-inside:avoid}.appr td.sgn{height:56px}
 @media print{.overlay,html,body{background:#fff!important}}
+.secline{padding:2px 0}.secline+.secline{border-top:1px dashed var(--line)}
+.finsig{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:22px;text-align:center;break-inside:avoid}
+.finsig img{width:100%;max-height:90px;object-fit:contain;margin-top:6px}
+.finsig .sigline{border-bottom:1px solid var(--ink);height:60px;margin:0 12px}

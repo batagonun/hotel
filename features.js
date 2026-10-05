@@ -9,13 +9,13 @@
 const SERVICES = ['الإقامة الفندقية', 'الأغذية والمشروبات', 'الحفلات والمؤتمرات', 'النشاط الرياضي', 'النشاط الترفيهي', 'النشاط الثقافي'];
 const VENUE_TYPES = {
   hotel: { name: 'فندق', fields: [['عدد النجوم', 'text'], ['عدد الأدوار', 'number'], ['عدد الغرف في كل دور', 'text'], ['إجمالي عدد الغرف', 'number'], ['أنواع الغرف وأعدادها', 'rows']] },
-  restaurant: { name: 'مطعم', fields: [['عدد الطاولات', 'number'], ['عدد الكراسي', 'number'], ['الطاقة الاستيعابية', 'number'], ['مواعيد التشغيل', 'text']] },
-  cafe: { name: 'كوفي شوب', fields: [['عدد الطاولات', 'number'], ['عدد الكراسي', 'number'], ['الطاقة الاستيعابية', 'number'], ['مواعيد التشغيل', 'text']] },
-  banquet: { name: 'قاعة احتفالات', fields: [['الطاقة الاستيعابية', 'number'], ['المساحة (م²)', 'number'], ['عدد الطاولات', 'number'], ['مواعيد التشغيل', 'text']] },
-  conference: { name: 'قاعة مؤتمرات', fields: [['الطاقة الاستيعابية', 'number'], ['المساحة (م²)', 'number'], ['التجهيزات السمعية والبصرية', 'text'], ['مواعيد التشغيل', 'text']] },
-  fields: { name: 'ملاعب', fields: [['عدد الملاعب', 'number'], ['أنواع الملاعب وأعدادها', 'rows'], ['مواعيد التشغيل', 'text']] },
-  pool: { name: 'حمام سباحة', fields: [['عدد الأحواض', 'number'], ['أبعاد وأعماق الأحواض', 'text'], ['عدد المنقذين', 'number'], ['مواعيد التشغيل', 'text']] },
-  kids: { name: 'ألعاب أطفال', fields: [['عدد الألعاب', 'number'], ['الفئة العمرية', 'text'], ['عدد المشرفين', 'number'], ['مواعيد التشغيل', 'text']] }
+  restaurant: { name: 'مطعم', fields: [['عدد الطاولات', 'number'], ['عدد الكراسي', 'number'], ['الطاقة الاستيعابية', 'number'], ['مواعيد التشغيل', 'hours']] },
+  cafe: { name: 'كوفي شوب', fields: [['عدد الطاولات', 'number'], ['عدد الكراسي', 'number'], ['الطاقة الاستيعابية', 'number'], ['مواعيد التشغيل', 'hours']] },
+  banquet: { name: 'قاعة احتفالات', fields: [['الطاقة الاستيعابية', 'number'], ['المساحة (م²)', 'number'], ['عدد الطاولات', 'number'], ['مواعيد التشغيل', 'hours']] },
+  conference: { name: 'قاعة مؤتمرات', fields: [['الطاقة الاستيعابية', 'number'], ['المساحة (م²)', 'number'], ['التجهيزات السمعية والبصرية', 'text'], ['مواعيد التشغيل', 'hours']] },
+  fields: { name: 'ملاعب', fields: [['عدد الملاعب', 'number'], ['أنواع الملاعب وأعدادها', 'rows'], ['مواعيد التشغيل', 'hours']] },
+  pool: { name: 'حمام سباحة', fields: [['عدد الأحواض', 'number'], ['أبعاد وأعماق الأحواض', 'text'], ['عدد المنقذين', 'number'], ['مواعيد التشغيل', 'hours']] },
+  kids: { name: 'ألعاب أطفال', fields: [['عدد الألعاب', 'number'], ['الفئة العمرية', 'text'], ['عدد المشرفين', 'number'], ['مواعيد التشغيل', 'hours']] }
 };
 /* أماكن التفتيش المقترحة لكل نوع مرفق، مع قوائم التحقق الجاهزة لها */
 const VENUE_UNITS = {
@@ -30,7 +30,17 @@ const inp = (tgt, obj, path, o = {}) => `<input type="${o.type || 'text'}" ${o.t
 const bindTarget = t => ({ ef: V.ef, ep: V.editPlace, nv: V, hd: V.hd }[t]);
 V.det = {};
 const newFac = () => ({ id: uid('F'), name: '', address: '', manager: '', assistants: '', staff: { permanent: '', insured: '', temporary: '', security: '' }, services: [], venues: [], contacts: { phone: '', fax: '', email: '', extra: [] }, transport: [''] });
-const newVenue = type => ({ id: uid('V'), type, name: '', fields: VENUE_TYPES[type].fields.map(([label, t]) => ({ id: uid('f'), label, t, v: t === 'rows' ? [{ n: '', c: '' }] : '' })) });
+const blankVal = t => (t === 'rows' ? [{ n: '', c: '' }] : t === 'hours' ? { from: '', to: '' } : '');
+const newVenue = type => ({ id: uid('V'), type, name: '', fields: VENUE_TYPES[type].fields.map(([label, t]) => ({ id: uid('f'), label, t, v: blankVal(t) })) });
+/* مواعيد التشغيل: من ... إلى ... بصيغة 12 ساعة */
+const fmtT = v => { const m = /^(\d{1,2}):(\d{2})/.exec(v || ''); if (!m) return esc(v || ''); let h = +m[1]; const ap = h < 12 ? 'ص' : 'م'; h = h % 12 || 12; return `${h}:${m[2]} ${ap}`; };
+const hoursTxt = v => (v && (v.from || v.to) ? `من ${fmtT(v.from) || '—'} إلى ${fmtT(v.to) || '—'}` : '');
+/* تحويل حقل مواعيد التشغيل القديم (نص حر) إلى حقلي من وإلى */
+function toHours(fl) {
+  if (fl.t === 'hours' || !/مواعيد التشغيل/.test(fl.label || '') || fl.t !== 'text') return;
+  const ts = String(fl.v || '').match(/\d{1,2}:\d{2}/g) || []; const pad = x => x.padStart(5, '0');
+  fl.t = 'hours'; fl.v = { from: ts[0] ? pad(ts[0]) : '', to: ts[1] ? pad(ts[1]) : '' };
+}
 const facOf = id => S.facilities.find(f => f.id === id) || S.facilities[0] || newFac();
 const listTitle = id => (S.lists.find(l => l.id === id) || {}).title;
 const batchOf = i => S.inspections.filter(x => (x.batchId || x.id) === (i.batchId || i.id));
@@ -58,6 +68,7 @@ function migrate() {
     delete p.listId;
     p.inspectorIds = p.inspectorIds || []; p.venueId = p.venueId || '';
   });
+  S.facilities.forEach(f => (f.venues || []).forEach(v => (v.fields || []).forEach(toHours)));
   S.inspections.forEach(i => { if (!i.batchId) i.batchId = i.id; });
 }
 
@@ -193,7 +204,7 @@ function facilityBlock(f) {
   const rowsTxt = v => (v || []).filter(r => r.n || r.c).map(r => `${esc(r.n)}: ${esc(r.c)}`).join('، ');
   const venues = (f.venues || []).map(v => {
     const vt = (VENUE_TYPES[v.type] || { name: v.type }).name;
-    const facts = v.fields.map(fl => { const t = fl.t === 'rows' ? rowsTxt(fl.v) : esc(fl.v); return t ? `${esc(fl.label)}: ${t}` : ''; }).filter(Boolean).join(' · ');
+    const facts = v.fields.map(fl => { const t = fl.t === 'rows' ? rowsTxt(fl.v) : fl.t === 'hours' ? hoursTxt(fl.v) : esc(fl.v); return t ? `${esc(fl.label)}: ${t}` : ''; }).filter(Boolean).join(' · ');
     return `<tr><td>${esc(vt)}${v.name ? ' (' + esc(v.name) + ')' : ''}</td><td>${facts || '-'}</td></tr>`;
   }).join('');
   const contacts = [c.phone && `هاتف أرضي: ${esc(c.phone)}`, c.fax && `فاكس: ${esc(c.fax)}`, c.email && `بريد إلكتروني: ${esc(c.email)}`, ...(c.extra || []).filter(x => x.label || x.value).map(x => `${esc(x.label)}: ${esc(x.value)}`)].filter(Boolean).join(' · ');
@@ -307,6 +318,11 @@ function fieldRow(vi, fi, fl) {
     ${fl.v.map((r, ri) => `<div class="row" style="margin-top:6px;flex-wrap:nowrap"><div style="flex:1">${inp('ef', f, `${base}.v.${ri}.n`, { ph: 'الاسم' })}</div><div style="width:90px">${inp('ef', f, `${base}.v.${ri}.c`, { type: 'number', ph: 'العدد' })}</div><button class="btn sec sm" data-act="rowdel" data-vi="${vi}" data-fi="${fi}" data-ri="${ri}">×</button></div>`).join('')}
     <div class="row" style="margin-top:6px"><button class="btn sec sm" data-act="rowadd" data-vi="${vi}" data-fi="${fi}">＋ سطر</button><span class="mut">المجموع: <b data-sumfor="${base}.v">${sum}</b></span></div></div>`;
   }
+  if (fl.t === 'hours') {
+    if (!fl.v || typeof fl.v !== 'object') fl.v = { from: '', to: '' };
+    return `<div class="item"><div class="row"><label class="f sp">${esc(fl.label)}</label>${del}</div>
+    <div class="row" style="flex-wrap:nowrap;gap:8px"><span>من</span><div style="flex:1">${inp('ef', f, `${base}.v.from`, { type: 'time' })}</div><span>إلى</span><div style="flex:1">${inp('ef', f, `${base}.v.to`, { type: 'time' })}</div></div></div>`;
+  }
   return `<div class="item"><div class="row"><label class="f sp">${esc(fl.label)}</label>${del}</div>${inp('ef', f, `${base}.v`, { type: fl.t === 'number' ? 'number' : 'text' })}</div>`;
 }
 function venueCard(vi) {
@@ -314,7 +330,7 @@ function venueCard(vi) {
   return `<details class="axis" data-dk="${v.id}" ${V.det[v.id] ? 'open' : ''}><summary><span>${esc(vt.name)}${v.name ? ': ' + esc(v.name) : ''}</span></summary>
   <div class="item"><label class="f">اسم المرفق</label>${inp('ef', f, `venues.${vi}.name`, { ph: 'مثال: مطعم النيل' })}</div>
   ${v.fields.map((fl, fi) => fieldRow(vi, fi, fl)).join('')}
-  <div class="item"><label class="f">إضافة حقل جديد</label><div class="row" style="flex-wrap:nowrap"><input type="text" id="nf_${v.id}" placeholder="اسم الحقل" style="flex:1"><select id="nt_${v.id}" style="width:auto"><option value="text">نص</option><option value="number">رقم</option><option value="rows">جدول (اسم وعدد)</option></select><button class="btn sec sm" data-act="fldadd" data-vi="${vi}" data-vid="${v.id}">إضافة</button></div></div>
+  <div class="item"><label class="f">إضافة حقل جديد</label><div class="row" style="flex-wrap:nowrap"><input type="text" id="nf_${v.id}" placeholder="اسم الحقل" style="flex:1"><select id="nt_${v.id}" style="width:auto"><option value="text">نص</option><option value="number">رقم</option><option value="rows">جدول (اسم وعدد)</option><option value="hours">مواعيد (من - إلى)</option></select><button class="btn sec sm" data-act="fldadd" data-vi="${vi}" data-vid="${v.id}">إضافة</button></div></div>
   <div class="item"><button class="btn bad sm" data-act="venuedel" data-vi="${vi}">حذف هذا المرفق</button></div></details>`;
 }
 function viewEditFac() {
@@ -427,7 +443,7 @@ document.addEventListener('click', async e => {
     case 'addsvc': { const el = $('#newsvc'); const s = el.value.trim(); if (s && !V.ef.services.includes(s)) { V.ef.services.push(s); V.det.svc = true; rerender(); } break; }
     case 'addvenue': { const v = newVenue($('#vtype').value); V.ef.venues.push(v); V.det[v.id] = true; rerender(); break; }
     case 'venuedel': if (confirm('حذف هذا المرفق؟')) { V.ef.venues.splice(+d.vi, 1); rerender(); } break;
-    case 'fldadd': { const label = $('#nf_' + d.vid).value.trim(); if (!label) return toast('اكتب اسم الحقل'); const tp = $('#nt_' + d.vid).value; V.ef.venues[+d.vi].fields.push({ id: uid('f'), label, t: tp, v: tp === 'rows' ? [{ n: '', c: '' }] : '' }); V.det[d.vid] = true; rerender(); break; }
+    case 'fldadd': { const label = $('#nf_' + d.vid).value.trim(); if (!label) return toast('اكتب اسم الحقل'); const tp = $('#nt_' + d.vid).value; V.ef.venues[+d.vi].fields.push({ id: uid('f'), label, t: tp, v: blankVal(tp) }); V.det[d.vid] = true; rerender(); break; }
     case 'flddel': if (confirm('حذف هذا الحقل؟')) { V.ef.venues[+d.vi].fields.splice(+d.fi, 1); rerender(); } break;
     case 'rowadd': V.ef.venues[+d.vi].fields[+d.fi].v.push({ n: '', c: '' }); rerender(); break;
     case 'rowdel': { const arr = V.ef.venues[+d.vi].fields[+d.fi].v; arr.splice(+d.ri, 1); if (!arr.length) arr.push({ n: '', c: '' }); rerender(); break; }
