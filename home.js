@@ -319,20 +319,38 @@ function execDashboard(list) {
   return `<div class="card"><h3>لوحة المؤشرات التنفيذية</h3><div class="kpis">
   <div class="kpi"><b class="t-${ov[2]}">${ov[1]}</b><span>التقدير العام (الأدنى)</span></div><div class="kpi"><b>${avg.toFixed(1)}%</b><span>متوسط الدرجات</span></div><div class="kpi"><b>${list.length}</b><span>قوائم مُنفذة</span></div>
   <div class="kpi"><b>${all.length}</b><span>إجمالي الملاحظات</span></div><div class="kpi"><b class="${crit ? 't-bad' : ''}">${crit}</b><span>بنود حرجة غير مطابقة</span></div><div class="kpi"><b class="${escN ? 't-bad' : ''}">${escN}</b><span>حالات تصعيد</span></div></div></div>
-  <div class="card"><h3>أداء القوائم</h3>${list.map(i => `<div class="hb"><span>${esc(shortTitle(i.snap))}<span class="mut"> · ${esc(i.header.place)}</span></span><span class="tr"><i class="${barCls(i.result.score)}" style="width:${i.result.score}%"></i></span><b>${i.result.score.toFixed(0)}%</b></div>`).join('')}
+  <div class="card"><h3>أداء القوائم</h3>${list.map(i => `<div class="hb"><span>${esc(listLabel(i.snap))}</span><span class="tr"><i class="${barCls(i.result.score)}" style="width:${i.result.score}%"></i></span><b>${i.result.score.toFixed(0)}%</b></div>`).join('')}
   <p class="mut" style="margin:6px 0 0">الأخضر 80% فأكثر · البرتقالي 70% إلى أقل من 80% · الأحمر أقل من 70%</p></div>
-  ${top.length ? `<div class="card"><h3>أولويات الإجراءات التصحيحية (أهم ${top.length})</h3><table class="rep"><tr><th>م</th><th>البند</th><th>القائمة / المكان</th><th>الأولوية</th><th>المهلة</th></tr>${top.map((o, k) => `<tr><td>${k + 1}</td><td>${esc(o.it.text)}${o.x.note ? `<div class="mut">${esc(o.x.note)}</div>` : ''}</td><td>${esc(shortTitle(o.i.snap))}<div class="mut">${esc(o.i.header.place)}</div></td><td><span class="tag ${o.it.cls}">${PRIO[o.it.cls][0]}</span></td><td>${PRIO[o.it.cls][1]}</td></tr>`).join('')}</table></div>` : ''}`;
+  ${top.length ? `<div class="card"><h3>أولويات الإجراءات التصحيحية (أهم ${top.length})</h3><table class="rep"><tr><th>م</th><th>البند</th><th>القائمة</th><th>الأولوية</th><th>المهلة</th></tr>${top.map((o, k) => `<tr><td>${k + 1}</td><td>${esc(o.it.text)}${o.x.note ? `<div class="mut">${esc(o.x.note)}</div>` : ''}</td><td>${esc(listLabel(o.i.snap))}</td><td><span class="tag ${o.it.cls}">${PRIO[o.it.cls][0]}</span></td><td>${PRIO[o.it.cls][1]}</td></tr>`).join('')}</table></div>` : ''}`;
 }
 function letterhead(list, multi, full) {
   const h = list[0].header; const ref = 'INS-' + String(h.date || '').replace(/-/g, '') + '-' + hashStr(list.map(i => i.id).join(',')).split(':')[0].replace('-', '').slice(-4);
   return `<div class="lh"><div class="lh-org">${esc(h.facility || S.settings.facility || '')}</div><div class="lh-title">${full ? 'سجل قوائم التحقق المنفذة' : multi ? 'تقرير التفتيش الشامل' : 'تقرير التفتيش'}</div>
   <table class="lh-meta"><tr><td>الرقم المرجعي: <b>${ref}</b></td><td>تاريخ التفتيش: <b>${esc(h.date)}</b></td><td>تاريخ الإصدار: <b>${esc(todayStr())}</b></td></tr></table></div>`;
 }
+/* اسم القائمة المختصر: اسم القسم للقوائم الخدمية، وأول أربع كلمات للقوائم التي اسمها هو اسم القطاع */
+function listLabel(snap) {
+  const n = String(shortTitle(snap)).replace(/\s*\([A-Za-z ]+\)\s*$/, '').trim();
+  return GENERAL_SECTORS.includes(sectorOf(snap)) ? n.split(/\s+/).slice(0, 4).join(' ') : n;
+}
+/* أماكن التفتيش مرتبة بالقطاع: كل قطاع في سطر، وتحته أقسامه */
+function sectorLines(groups) {
+  return groups.map(g => { const parts = distinct(g.items.map(i => i.header.place));
+    const head = (SECTOR_PARENT[g.k] ? SECTOR_PARENT[g.k] + ' ‹ ' : '') + SECTORS[g.k];
+    return `<div class="secline"><b>${esc(head)}</b>${GENERAL_SECTORS.includes(g.k) ? '' : `: ${parts.map(esc).join('، ')}`}</div>`; }).join('');
+}
+/* التوقيع الختامي: توقيع المفتش، ويُعتمد بتوقيع المشرف */
+function finalSigs(list) {
+  const names = distinct(list.map(i => i.header.inspector)); const one = names.length === 1;
+  const img = one ? (list.filter(i => i.sig && i.sig.inspector).sort((a, b) => (b.finishedAt || 0) - (a.finishedAt || 0))[0] || {}).sig : null;
+  return `<div class="finsig"><div><b>توقيع المفتش</b><div>${names.map(esc).join('، ')}</div>${img && img.inspector ? `<img src="${esc(img.inspector)}" alt="">` : '<div class="sigline"></div>'}</div>
+  <div><b>يُعتمد، توقيع المشرف</b><div>${isSup() ? esc(me().name) : ''}</div><div class="sigline"></div></div></div>`;
+}
 function approvalBlock(list) {
   const insp = distinct(list.map(i => i.header.inspector)).map(esc).join('، ');
-  return `<div class="appr"><h2 class="sector">الاعتماد</h2><table class="rep"><tr><th></th><th>أعدّه</th><th>اطّلع عليه</th><th>اعتمده</th></tr>
-  <tr><th>الصفة</th><td>القائم بالتفتيش</td><td>مدير المنشأة</td><td>المدير الإقليمي</td></tr><tr><th>الاسم</th><td>${insp}</td><td></td><td></td></tr>
-  <tr><th>التوقيع</th><td class="sgn"></td><td class="sgn"></td><td class="sgn"></td></tr><tr><th>التاريخ</th><td></td><td></td><td></td></tr></table>
+  return `<div class="appr"><h2 class="sector">الاعتماد</h2><table class="rep"><tr><th></th><th>أعدّه</th><th>اعتمده</th></tr>
+  <tr><th>الصفة</th><td>المفتش</td><td>المشرف</td></tr><tr><th>الاسم</th><td>${insp}</td><td>${isSup() ? esc(me().name) : ''}</td></tr>
+  <tr><th>التوقيع</th><td class="sgn"></td><td class="sgn"></td></tr><tr><th>التاريخ</th><td></td><td></td></tr></table>
   <p class="mut" style="text-align:center">وثيقة داخلية، يُحظر تداولها خارج المؤسسة دون إذن.</p></div>`;
 }
 
@@ -349,28 +367,29 @@ function viewReport() {
   S.heads = S.heads || {}; const hk = rkey(i0);
   const hd = onePlace ? (S.heads[hk] = Object.assign({ staff: h.staff, shifts: h.shifts, responsible: h.responsible }, S.heads[hk] || {})) : h; V.hd = hd;
   const hv = k => sup && onePlace ? `<input type="text" data-tgt="hd" data-bind="${k}" value="${esc(hd[k] ?? '')}" style="padding:4px 6px">` : esc(hd[k]);
-  const inspectors = distinct(list.map(i => i.header.inspector)).map(esc).join('، '), times = distinct(list.map(i => i.header.time)).map(esc).join('، ');
+  const times = distinct(list.map(i => i.header.time)).map(esc).join('، ');
   const minI = list.reduce((m, i) => (i.result.score < m.result.score ? i : m), list[0]); const overall = bandFor(minI.result.score);
   const missing = multi ? missingInVisit(list) : [];
-  const overallCard = multi ? `<div class="card"><div class="mut" style="text-align:center">التقدير العام (أدنى تقدير بين القوائم)</div><div style="text-align:center;margin-top:6px"><span class="tag ${overall[2]}" style="font-size:18px">${overall[1]}</span></div><div class="mut" style="text-align:center;margin-top:6px">أدنى درجة: ${minI.result.score}% في «${esc(minI.snap.title)}» · ${esc(minI.header.place)}</div></div>
+  const overallCard = multi ? `<div class="card"><div class="mut" style="text-align:center">التقدير العام (أدنى تقدير بين القوائم)</div><div style="text-align:center;margin-top:6px"><span class="tag ${overall[2]}" style="font-size:18px">${overall[1]}</span></div><div class="mut" style="text-align:center;margin-top:6px">أدنى درجة: ${minI.result.score}% في «${esc(listLabel(minI.snap))}»</div></div>
   ${list.some(i => i.result.veto) ? '<div class="veto"><b>توجد بوابة حرجة مفعّلة في إحدى القوائم، راجع تفاصيلها أدناه.</b></div>' : ''}` : '';
   const groups = SECTOR_ORDER.map(k => ({ k, items: list.filter(i => sectorOf(i.snap) === k).sort((a, b) => listKey(a.snap) - listKey(b.snap)) })).filter(g => g.items.length);
-  const summary = multi ? `${overallCard}<h3>ملخص جميع القوائم</h3><table class="rep"><tr><th class="sidehd">القطاع</th><th>المكان والقائمة</th><th>المفتش</th><th>الدرجة</th><th>التقدير</th><th>البوابة الحرجة</th></tr>
-    ${groups.map(g => g.items.map((i, n) => `<tr>${n === 0 ? `<td class="side" rowspan="${g.items.length}">${SECTOR_PARENT[g.k] ? SECTOR_PARENT[g.k] + '<br>' : ''}${SECTORS[g.k]}</td>` : ''}<td><b>${esc(i.header.place)}</b><div class="mut">${esc(i.snap.title)}</div></td><td>${esc(i.header.inspector)}<div class="mut">${esc(i.header.time)}</div></td><td>${i.result.score}%</td><td>${i.result.band}</td><td>${i.result.veto ? 'مفعّلة' : 'لا'}</td></tr>`).join('')).join('')}</table>` : '';
+  const summary = multi ? `${overallCard}<h3>ملخص جميع القوائم</h3><table class="rep"><tr><th class="sidehd">القطاع</th><th>القائمة</th><th>الدرجة</th><th>التقدير</th><th>البوابة الحرجة</th></tr>
+    ${groups.map(g => g.items.map((i, n) => `<tr>${n === 0 ? `<td class="side" rowspan="${g.items.length}">${SECTOR_PARENT[g.k] ? SECTOR_PARENT[g.k] + '<br>' : ''}${SECTORS[g.k]}</td>` : ''}<td><b>${esc(listLabel(i.snap))}</b></td><td>${i.result.score}%</td><td>${i.result.band}</td><td>${i.result.veto ? 'مفعّلة' : 'لا'}</td></tr>`).join('')).join('')}</table>` : '';
   let lastParent = '';
   const sections = groups.map(g => g.items.map((i, n) => {
-    const body = reportSection(i, false, { theme: th, full }).replace('</h2>', `</h2><p class="mut" style="text-align:center;margin:0 0 8px">المكان: ${esc(i.header.place)}${i.header.responsible ? ' · المسؤول: ' + esc(i.header.responsible) : ''}${multi ? ' · المفتش: ' + esc(i.header.inspector) + ' · ' + esc(i.header.time) : ''}</p>`);
+    const body = reportSection(i, false, { theme: th, full }).replace('</h2>', `</h2><p class="mut" style="text-align:center;margin:0 0 8px">المكان: ${esc(i.header.place)}${i.header.responsible ? ' · المسؤول: ' + esc(i.header.responsible) : ''}</p>`);
     return `<div class="${multi ? 'pb' : ''}">${multi && n === 0 ? `${SECTOR_PARENT[g.k] && SECTOR_PARENT[g.k] !== lastParent ? (lastParent = SECTOR_PARENT[g.k], `<h2 class="sector">${SECTOR_PARENT[g.k]}</h2>`) : ''}<h2 class="sector${SECTOR_PARENT[g.k] ? ' sub' : ''}">${SECTORS[g.k]}</h2>` : ''}${body}</div>`;
   }).join('')).join('');
   return `<div class="overlay"><div class="bar noprint"><button data-act="go" data-v="${V.back || 'inspections'}">رجوع</button><h1>${full ? 'طباعة القوائم كاملة' : multi ? 'التقرير الشامل' : 'التقرير'}</h1><button data-act="print">طباعة / PDF</button></div><div class="wrap rep-${th}">
   ${sup ? themePicker(th, full) : ''}${th === 'formal' ? letterhead(list, multi, full) : ''}
   ${facilityBlock(fac)}
-  <table class="rep"><tr><th>المنشأة</th><td>${esc(h.facility)}</td><th>${onePlace ? 'المكان / القسم' : 'أماكن التفتيش'}</th><td>${places.map(esc).join('، ')}</td></tr>
+  <table class="rep"><tr><th>المنشأة</th><td colspan="3">${esc(h.facility)}</td></tr>
+  <tr><th>${onePlace ? 'المكان / القسم' : 'أماكن التفتيش'}</th><td colspan="3">${sectorLines(groups)}</td></tr>
   ${onePlace ? `<tr><th>عدد العاملين</th><td>${hv('staff')}</td><th>عدد الورديات</th><td>${hv('shifts')}</td></tr>
-  <tr><th>المسؤول عن المكان</th><td>${hv('responsible')}</td><th>${multi ? 'القائمون بالتفتيش' : 'القائم بالتفتيش'}</th><td>${inspectors}</td></tr>` : `<tr><th>${multi ? 'القائمون بالتفتيش' : 'القائم بالتفتيش'}</th><td colspan="3">${inspectors}</td></tr>`}
+  <tr><th>المسؤول عن المكان</th><td colspan="3">${hv('responsible')}</td></tr>` : ''}
   <tr><th>التاريخ</th><td>${esc(h.date)}</td><th>الساعة</th><td>${times}</td></tr></table>
   ${th === 'exec' ? execDashboard(list) : summary}${missing.length ? `<p class="mut">قوائم لم يُستلم تفتيشها في هذه الزيارة: ${missing.map(esc).join('، ')}</p>` : ''}${sections}
-  ${th === 'formal' ? approvalBlock(list) : ''}</div></div>`;
+  ${th === 'formal' ? approvalBlock(list) : finalSigs(list)}</div></div>`;
 }
 
 /* ===== الإعدادات ===== */
