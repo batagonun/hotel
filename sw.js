@@ -1,4 +1,4 @@
-const CACHE = 'inspect-v15';
+const CACHE = 'inspect-v16';
 const FILES = ['./', './index.html', './app.js', './features.js', './home.js', './sync.js', './seed.js', './style.css', './manifest.json', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));

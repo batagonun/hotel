@@ -137,7 +137,7 @@ function finalize() {
   if (miss || nn) return toast(miss ? `لا يمكن الحفظ: بقي ${miss} بنداً بلا إجابة` : `لا يمكن الحفظ: ${nn} بنداً يحتاج ملاحظة`);
   i.result = compute(i.snap, i.answers, i.esc); i.status = 'done'; i.finishedAt = Date.now(); i.synced = false; save();
   const rest = placeRowsLeft(i);
-  toast(rest ? 'تم حفظ التفتيش. اختر القائمة التالية' : 'تم حفظ التفتيش. اكتملت كل القوائم');
+  toast(rest ? 'تم حفظ التفتيش. اختر القائمة التالية' : isSup() ? 'تم حفظ التفتيش. اكتملت كل القوائم' : 'اكتملت كل القوائم. صدّرها للمشرف من زر «تصدير وإرسال»');
   autoSync(); V.view = 'home'; render();
 }
 function placeRowsLeft(i) {
@@ -167,6 +167,15 @@ function viewSupHome() {
   <button class="btn block" style="padding:16px;font-size:17px;margin-bottom:14px" data-act="newvenue">＋ تعيين مكان جديد للمرور</button>
   ${draftsCard()}${S.facilities.length ? S.facilities.map(facCard).join('') : '<div class="card"><p class="mut">لا توجد منشآت بعد. اضغط تعيين مكان جديد للمرور لإضافة أول منشأة.</p></div>'}</div>`;
 }
+/* بطاقة تصدير التفتيشات المكتملة وإرسالها إلى المشرف (تعمل مع المزامنة أو بدونها) */
+function sendCard(mine) {
+  const done = mine.filter(i => i.status === 'done'); if (!done.length) return '';
+  const unsent = done.filter(i => !i.sharedAt), today = done.filter(i => i.header.date === nowParts().date);
+  const ids = (unsent.length ? unsent : today.length ? today : done).map(i => i.id).join(',');
+  return `<div class="card" style="border:2px solid var(--pri)"><h3>إرسال التفتيشات إلى المشرف</h3>
+  <p class="mut" style="margin:0 0 8px">${unsent.length ? `لديك ${unsent.length} تفتيش مكتمل لم يُصدَّر بعد. صدّره وأرسله إلى المشرف عبر واتساب أو البريد.` : 'كل التفتيشات المكتملة صُدِّرت. يمكنك إعادة إرسال تفتيشات اليوم عند الحاجة.'}</p>
+  <button class="btn block" data-act="share" data-ids="${ids}">${unsent.length ? `تصدير وإرسال إلى المشرف (${unsent.length})` : 'إعادة إرسال تفتيشات اليوم'}</button></div>`;
+}
 function viewInspHome() {
   const mine = S.inspections.filter(i => i.inspectorId === S.session);
   const today0 = nowParts().date; const drafts = groupBatches(mine).filter(b => b.some(i => i.status === 'draft') && b[0].header.date !== today0);
@@ -177,6 +186,7 @@ function viewInspHome() {
   <h2>مرحباً بك ${esc(me().name)}</h2>
   <p>نقدّر جهدك في أعمال الرقابة والمتابعة الميدانية، ونتمنى لك مروراً موفقاً ودقيقاً.</p>
   <p class="sign">مع تحيات إدارة الفنادق</p></div>
+  ${sendCard(mine)}
   ${byFac.size ? [...byFac.entries()].map(([fid, ps]) => { const f = facOf(fid); return `<div class="card"><h3>${esc(f.name || 'منشأة بلا اسم')}</h3><p class="mut" style="margin:0 0 6px">أماكن التفتيش المعيّنة لك</p>${placeRows(fid, ps, false)}</div>`; }).join('')
     : '<div class="card"><p class="mut">لا توجد أماكن تفتيش معيّنة لك حالياً. يحددها المشرف من الصفحة الرئيسية.</p></div>'}
   ${drafts.length ? `<div class="card"><h3>تفتيشات غير مكتملة</h3>${drafts.map(b => `<div class="listrow"><div class="sp"><b>${esc(placeLabel(b))}</b><div class="mut">${esc(b[0].header.date)} ${esc(b[0].header.time)} · اكتملت ${b.filter(i => i.status === 'done').length} من ${b.length} قوائم</div></div><button class="btn sm" data-act="openbatch" data-b="${b[0].batchId || b[0].id}">متابعة</button></div>`).join('')}</div>` : ''}
