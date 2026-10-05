@@ -333,7 +333,7 @@ function listLabel(snap) {
   const n = String(shortTitle(snap)).replace(/\s*\([A-Za-z ]+\)\s*$/, '').trim();
   return GENERAL_SECTORS.includes(sectorOf(snap)) ? n.split(/\s+/).slice(0, 4).join(' ') : n;
 }
-/* أماكن التفتيش مرتبة بالقطاع: كل قطاع في سطر، وتحته أقسامه */
+/* محاور التقييم مرتبة بالقطاع: كل قطاع في سطر، وتحته أقسامه */
 function sectorLines(groups) {
   return groups.map(g => { const parts = distinct(g.items.map(i => i.header.place));
     const head = (SECTOR_PARENT[g.k] ? SECTOR_PARENT[g.k] + ' ‹ ' : '') + SECTORS[g.k];
@@ -384,7 +384,7 @@ function viewReport() {
   ${sup ? themePicker(th, full) : ''}${th === 'formal' ? letterhead(list, multi, full) : ''}
   ${facilityBlock(fac)}
   <table class="rep"><tr><th>المنشأة</th><td colspan="3">${esc(h.facility)}</td></tr>
-  <tr><th>${onePlace ? 'المكان / القسم' : 'أماكن التفتيش'}</th><td colspan="3">${sectorLines(groups)}</td></tr>
+  <tr><th>محاور التقييم</th><td colspan="3">${sectorLines(groups)}</td></tr>
   ${onePlace ? `<tr><th>عدد العاملين</th><td>${hv('staff')}</td><th>عدد الورديات</th><td>${hv('shifts')}</td></tr>
   <tr><th>المسؤول عن المكان</th><td colspan="3">${hv('responsible')}</td></tr>` : ''}
   <tr><th>التاريخ</th><td>${esc(h.date)}</td><th>الساعة</th><td>${times}</td></tr></table>
