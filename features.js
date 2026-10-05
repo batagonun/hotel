@@ -241,7 +241,7 @@ function reportSection(i, multi, o) {
   const axes = th === 'exec' ? `<div class="card"><h3>أداء المحاور</h3>${r.axes.map(a => `<div class="hb"><span>${esc(a.name)} <span class="mut">(${a.weight})</span></span><span class="tr">${a.pct === null ? '' : `<i class="${barCls(a.pct)}" style="width:${a.pct.toFixed(1)}%"></i>`}</span><b>${a.pct === null ? 'غ' : a.pct.toFixed(0) + '%'}</b></div>`).join('')}</div>`
     : `<table class="rep"><tr><th>المحور</th><th>الوزن</th><th>النسبة</th></tr>${r.axes.map(a => `<tr><td>${esc(a.name)}</td><td>${a.weight}</td><td>${a.pct === null ? 'غير منطبق' : a.pct.toFixed(1) + '%'}</td></tr>`).join('')}</table>`;
   return `<div class="${multi ? 'pb' : ''}"><h2 class="lt" style="text-align:center">${esc(i.snap.title)}</h2>
-  ${multi ? `<table class="rep"><tr><th>القائم بالتفتيش</th><td>${esc(hh.inspector)}</td><th>الساعة</th><td>${esc(hh.time)}</td></tr><tr><th>عدد العاملين</th><td>${esc(hh.staff)}</td><th>عدد الورديات</th><td>${esc(hh.shifts)}</td></tr><tr><th>المسؤول عن المكان</th><td colspan="3">${esc(hh.responsible)}</td></tr></table>` : ''}
+  ${multi ? `<table class="rep"><tr><th>عدد العاملين</th><td>${esc(hh.staff)}</td><th>عدد الورديات</th><td>${esc(hh.shifts)}</td></tr><tr><th>المسؤول عن المكان</th><td colspan="3">${esc(hh.responsible)}</td></tr></table>` : ''}
   ${scoreBox}
   ${r.veto ? `<div class="veto"><b>البوابة الحرجة مفعّلة</b>${r.critFails.map(c => `<div>• ${esc(c.text)}</div>`).join('')}${r.escHits.map(c => `<div>• تصعيد فوري: ${esc(c)}</div>`).join('')}</div>` : ''}
   ${axes}

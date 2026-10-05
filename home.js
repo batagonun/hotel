@@ -367,7 +367,7 @@ function viewReport() {
   S.heads = S.heads || {}; const hk = rkey(i0);
   const hd = onePlace ? (S.heads[hk] = Object.assign({ staff: h.staff, shifts: h.shifts, responsible: h.responsible }, S.heads[hk] || {})) : h; V.hd = hd;
   const hv = k => sup && onePlace ? `<input type="text" data-tgt="hd" data-bind="${k}" value="${esc(hd[k] ?? '')}" style="padding:4px 6px">` : esc(hd[k]);
-  const inspectors = distinct(list.map(i => i.header.inspector)).map(esc).join('، '), times = distinct(list.map(i => i.header.time)).map(esc).join('، ');
+  const times = distinct(list.map(i => i.header.time)).map(esc).join('، ');
   const minI = list.reduce((m, i) => (i.result.score < m.result.score ? i : m), list[0]); const overall = bandFor(minI.result.score);
   const missing = multi ? missingInVisit(list) : [];
   const overallCard = multi ? `<div class="card"><div class="mut" style="text-align:center">التقدير العام (أدنى تقدير بين القوائم)</div><div style="text-align:center;margin-top:6px"><span class="tag ${overall[2]}" style="font-size:18px">${overall[1]}</span></div><div class="mut" style="text-align:center;margin-top:6px">أدنى درجة: ${minI.result.score}% في «${esc(listLabel(minI.snap))}»</div></div>
@@ -386,7 +386,7 @@ function viewReport() {
   <table class="rep"><tr><th>المنشأة</th><td colspan="3">${esc(h.facility)}</td></tr>
   <tr><th>${onePlace ? 'المكان / القسم' : 'أماكن التفتيش'}</th><td colspan="3">${sectorLines(groups)}</td></tr>
   ${onePlace ? `<tr><th>عدد العاملين</th><td>${hv('staff')}</td><th>عدد الورديات</th><td>${hv('shifts')}</td></tr>
-  <tr><th>المسؤول عن المكان</th><td>${hv('responsible')}</td><th>${multi ? 'القائمون بالتفتيش' : 'القائم بالتفتيش'}</th><td>${inspectors}</td></tr>` : `<tr><th>${multi ? 'القائمون بالتفتيش' : 'القائم بالتفتيش'}</th><td colspan="3">${inspectors}</td></tr>`}
+  <tr><th>المسؤول عن المكان</th><td colspan="3">${hv('responsible')}</td></tr>` : ''}
   <tr><th>التاريخ</th><td>${esc(h.date)}</td><th>الساعة</th><td>${times}</td></tr></table>
   ${th === 'exec' ? execDashboard(list) : summary}${missing.length ? `<p class="mut">قوائم لم يُستلم تفتيشها في هذه الزيارة: ${missing.map(esc).join('، ')}</p>` : ''}${sections}
   ${th === 'formal' ? approvalBlock(list) : finalSigs(list)}</div></div>`;
