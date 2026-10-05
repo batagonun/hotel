@@ -52,16 +52,24 @@ const me = () => S.users.find(u => u.id === S.session);
 const normPin = v => String(v == null ? '' : v).replace(/[\u0660-\u0669]/g, d => d.charCodeAt(0) - 0x660).replace(/[\u06F0-\u06F9]/g, d => d.charCodeAt(0) - 0x6F0).replace(/\s+/g, '');
 const isSup = () => me() && me().role === 'supervisor';
 
+/* تحديث القوائم المضمّنة دون المساس بما عدّله المشرف: تُضاف القوائم الجديدة فقط،
+   ولا تُستبدل قائمة إلا إذا كان إصدارها المضمّن أحدث، ولا تعود قائمة حذفها المشرف */
+function applySeedUpgrade() {
+  const known = new Set(S.seedIds || ['L_housekeeping', 'L_kitchen', 'L_frontoffice', 'L_restaurant']);
+  SEED.lists.forEach(l => {
+    const k = S.lists.findIndex(x => x.id === l.id);
+    if (k >= 0) { if ((l.version || 1) > (S.lists[k].version || 1)) S.lists[k] = Object.assign(clone(l), S.lists[k].sector ? { sector: S.lists[k].sector } : {}); }
+    else if (!known.has(l.id)) S.lists.push(clone(l));
+  });
+  S.places = S.places.filter(p => p.id !== 'P1');
+  SEED.places.forEach(p => { if (!S.places.some(x => x.id === p.id)) S.places.push(clone(p)); });
+  S.seedIds = SEED.lists.map(l => l.id); S.seedVersion = SEED.version;
+}
 async function init() {
   await DB.open();
   S = await DB.get('state');
-  if (!S) { S = { ...clone(SEED), inspections: [], session: null, seedVersion: SEED.version }; await save(); }
-  if (S.seedVersion !== SEED.version) { // تحديث قوائم المنشأة المضمّنة دون المساس بالتفتيشات المحفوظة
-    SEED.lists.forEach(l => { const k = S.lists.findIndex(x => x.id === l.id); if (k >= 0) S.lists[k] = clone(l); else S.lists.push(clone(l)); });
-    S.places = S.places.filter(p => p.id !== 'P1');
-    SEED.places.forEach(p => { if (!S.places.some(x => x.id === p.id)) S.places.push(clone(p)); });
-    S.seedVersion = SEED.version; await save();
-  }
+  if (!S) { S = { ...clone(SEED), inspections: [], session: null, seedVersion: SEED.version, seedIds: SEED.lists.map(l => l.id) }; await save(); }
+  if (S.seedVersion !== SEED.version) { applySeedUpgrade(); await save(); }
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
   V.view = S.session && me() ? 'home' : 'login';
   render();
