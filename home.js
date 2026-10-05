@@ -91,7 +91,16 @@ function render() {
   V.keepScroll = false;
   document.body.classList.toggle('noprint-user', !isSup());
   if (V.view === 'finish') initSig();
+  groupHeads();
 }
+/* تحويل الصف الأول من كل جدول (إن كان رؤوس أعمدة) إلى thead، حتى لا يُطبع رأس الجدول وحده في آخر الصفحة ويتكرر في أعلى الصفحة التالية */
+function groupHeads() {
+  document.querySelectorAll('#app table.rep').forEach(t => {
+    if (t.tHead) return; const r = t.rows[0]; if (!r || r.cells.length < 2 || [...r.cells].some(c => c.tagName !== 'TH')) return;
+    const h = t.createTHead(); h.appendChild(r);
+  });
+}
+document.addEventListener('input', e => { const t = e.target; if (t.dataset && t.dataset.tgt === 'hd' && t.nextElementSibling && t.nextElementSibling.classList.contains('printonly')) t.nextElementSibling.textContent = t.value; });
 
 /* ===== الرئيسية ===== */
 function viewHome() { return isSup() ? viewSupHome() : viewInspHome(); }
@@ -318,7 +327,7 @@ function execDashboard(list) {
   const top = all.sort((a, b) => 'ces'.indexOf(a.it.cls) - 'ces'.indexOf(b.it.cls) || (a.x.v === 'ف' ? -1 : 1) - (b.x.v === 'ف' ? -1 : 1)).slice(0, 10);
   return `<div class="card"><h3>لوحة المؤشرات التنفيذية</h3><div class="kpis">
   <div class="kpi"><b class="t-${ov[2]}">${ov[1]}</b><span>التقدير العام (الأدنى)</span></div><div class="kpi"><b>${avg.toFixed(1)}%</b><span>متوسط الدرجات</span></div><div class="kpi"><b>${list.length}</b><span>قوائم مُنفذة</span></div>
-  <div class="kpi"><b>${all.length}</b><span>إجمالي الملاحظات</span></div><div class="kpi"><b class="${crit ? 't-bad' : ''}">${crit}</b><span>بنود حرجة غير مطابقة</span></div><div class="kpi"><b class="${escN ? 't-bad' : ''}">${escN}</b><span>حالات تصعيد</span></div></div></div>
+  <div class="kpi"><b>${all.length}</b><span>إجمالي الملاحظات</span></div><div class="kpi"><b class="${crit ? 't-bad' : ''}">${crit}</b><span>بنود حرجة غير مطابقة</span></div>${escN ? `<div class="kpi"><b class="t-bad">${escN}</b><span>حالات تصعيد</span></div>` : ''}</div></div>
   <div class="card"><h3>أداء القوائم</h3>${list.map(i => `<div class="hb"><span>${esc(listLabel(i.snap))}</span><span class="tr"><i class="${barCls(i.result.score)}" style="width:${i.result.score}%"></i></span><b>${i.result.score.toFixed(0)}%</b></div>`).join('')}
   <p class="mut" style="margin:6px 0 0">الأخضر 80% فأكثر · البرتقالي 70% إلى أقل من 80% · الأحمر أقل من 70%</p></div>
   ${top.length ? `<div class="card"><h3>أولويات الإجراءات التصحيحية (أهم ${top.length})</h3><table class="rep"><tr><th>م</th><th>البند</th><th>القائمة</th><th>الأولوية</th><th>المهلة</th></tr>${top.map((o, k) => `<tr><td>${k + 1}</td><td>${esc(o.it.text)}${o.x.note ? `<div class="mut">${esc(o.x.note)}</div>` : ''}</td><td>${esc(listLabel(o.i.snap))}</td><td><span class="tag ${o.it.cls}">${PRIO[o.it.cls][0]}</span></td><td>${PRIO[o.it.cls][1]}</td></tr>`).join('')}</table></div>` : ''}`;
@@ -366,7 +375,7 @@ function viewReport() {
   /* بيانات المكان قابلة للتعديل من المشرف وتُحفظ لكل مكان ويوم */
   S.heads = S.heads || {}; const hk = rkey(i0);
   const hd = onePlace ? (S.heads[hk] = Object.assign({ staff: h.staff, shifts: h.shifts, responsible: h.responsible }, S.heads[hk] || {})) : h; V.hd = hd;
-  const hv = k => sup && onePlace ? `<input type="text" data-tgt="hd" data-bind="${k}" value="${esc(hd[k] ?? '')}" style="padding:4px 6px">` : esc(hd[k]);
+  const hv = k => sup && onePlace ? `<input class="noprint" type="text" data-tgt="hd" data-bind="${k}" value="${esc(hd[k] ?? '')}" style="padding:4px 6px"><span class="printonly">${esc(hd[k] ?? '')}</span>` : esc(hd[k]);
   const times = distinct(list.map(i => i.header.time)).map(esc).join('، ');
   const minI = list.reduce((m, i) => (i.result.score < m.result.score ? i : m), list[0]); const overall = bandFor(minI.result.score);
   const missing = multi ? missingInVisit(list) : [];
@@ -389,7 +398,7 @@ function viewReport() {
   <tr><th>المسؤول عن المكان</th><td colspan="3">${hv('responsible')}</td></tr>` : ''}
   <tr><th>التاريخ</th><td>${esc(h.date)}</td><th>الساعة</th><td>${times}</td></tr></table>
   ${th === 'exec' ? execDashboard(list) : summary}${missing.length ? `<p class="mut">قوائم لم يُستلم تفتيشها في هذه الزيارة: ${missing.map(esc).join('، ')}</p>` : ''}${sections}
-  ${th === 'formal' ? approvalBlock(list) : finalSigs(list)}</div></div>`;
+  ${finalSigs(list)}</div></div>`;
 }
 
 /* ===== الإعدادات ===== */

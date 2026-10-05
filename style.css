@@ -157,3 +157,27 @@ table.lh-meta{width:100%;margin-top:8px;font-size:14px}table.lh-meta td{text-ali
   table.rep th.sidehd,table.rep td.side{width:110pt!important}
   h2.sector.sub{font-size:14pt!important}
 }
+
+/* حقول قابلة للتعديل على الشاشة، تُطبع نصاً واضحاً */
+.printonly{display:none}
+@media print{
+  .printonly{display:inline}
+  input.noprint{display:none!important}
+  /* حجم موحّد 14 لكل النصوص في كل التصاميم، ومنها الرسمي */
+  .wrap,.rep-formal,.wrap p,.wrap td,.wrap th,.wrap div,.wrap span,.wrap li,.secline,table.lh-meta{font-size:14pt!important}
+  .wrap h1,.wrap h2,.lh-title{font-size:16pt!important}.lh-org{font-size:18pt!important}
+  .wrap .score{font-size:24pt!important}.wrap .kpi b{font-size:16pt!important}
+  .wrap .mut{font-size:12pt!important}
+  table.rep{width:100%;table-layout:auto}
+  table.rep td,table.rep th{word-break:break-word}
+  /* منع رؤوس الجداول والعناوين من الظهور وحدها في آخر الصفحة */
+  thead{display:table-header-group}
+  tr,thead,tr.axrow{break-inside:avoid;page-break-inside:avoid}
+  tr.axrow{break-after:avoid;page-break-after:avoid}
+  .wrap h2,.wrap h3,h2.lt,h2.sector,.lh,.wrap h2 + p.mut{break-after:avoid;page-break-after:avoid}
+  .card,.veto,.finsig,.kpis{break-inside:avoid;page-break-inside:avoid}
+}
+@media print{
+  table.rep .nw{white-space:nowrap;width:1%;word-break:normal}
+  table.lh-meta td{font-size:12pt!important}table.lh-meta b{white-space:nowrap;unicode-bidi:isolate}
+}
