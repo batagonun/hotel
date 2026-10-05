@@ -103,6 +103,9 @@ function visitFor(facId) {
   const mine = S.inspections.filter(i => i.inspectorId === S.session && i.header.date === today && (((i.fac && i.fac.id) || (S.places.find(p => p.id === i.placeId) || {}).facilityId) === facId));
   return groupBatches(mine).sort((a, b) => Math.max(...b.map(i => i.startedAt || 0)) - Math.max(...a.map(i => i.startedAt || 0)))[0] || [];
 }
+/* المفتش يعدّل تفتيشه المكتمل ما دام لم يُصدِّره */
+const canEdit = i => i && i.status === 'done' && i.inspectorId === S.session && !i.sharedAt;
+const editBtn = i => (canEdit(i) ? `<button class="btn sec sm" data-act="editinsp" data-id="${i.id}">تعديل</button>` : '');
 function placeRows(facId, places, showInspectors) {
   const visit = visitFor(facId); const rows = [];
   places.forEach(p => (p.listIds || []).forEach(lid => { const l = S.lists.find(x => x.id === lid); if (l) rows.push({ p, l, insp: visit.find(i => i.placeId === p.id && i.listId === lid) }); }));
@@ -112,7 +115,7 @@ function placeRows(facId, places, showInspectors) {
   const html = rows.map(({ p, l, insp }) => {
     const gl = groupLabel(l); const gh = gl !== lastG ? `<div class="mut" style="margin:10px 0 2px;font-weight:700;color:var(--pri)">${esc(gl)}</div>` : ''; lastG = gl;
     let st = '', btn = `<button class="btn sm" data-act="startone" data-id="${p.id}" data-l="${l.id}">ابدأ التفتيش</button>`;
-    if (insp && insp.status === 'done') { st = `<span class="tag ${insp.result.bandCls}">تم · ${insp.result.score}%</span>`; btn = `<button class="btn sec sm" data-act="rep" data-ids="${insp.id}" data-back="home">التقرير</button>`; }
+    if (insp && insp.status === 'done') { st = `<span class="tag ${insp.result.bandCls}">تم · ${insp.result.score}%</span>`; btn = `<div class="row" style="gap:6px">${editBtn(insp)}<button class="btn sec sm" data-act="rep" data-ids="${insp.id}" data-back="home">التقرير</button></div>`; }
     else if (insp) { const r = compute(insp.snap, insp.answers, insp.esc); st = `<span class="mut">قيد التنفيذ: ${r.answered} من ${r.total}</span>`; btn = `<button class="btn sm" data-act="open" data-id="${insp.id}">متابعة</button>`; }
     return gh + `<div class="listrow"><div class="sp"><b>${esc(p.name)}</b><div class="mut">${esc(l.title)}</div>${showInspectors ? `<div class="mut">المفتشون: ${esc(namesOf(p.inspectorIds).join('، ') || 'غير محدد')}</div>` : ''}<div style="margin-top:2px">${st}</div></div>${btn}</div>`;
   }).join('');
@@ -135,7 +138,7 @@ function finalize() {
   const miss = i.snap.axes.flatMap(a => a.items.filter(it => !(i.answers[it.id] && i.answers[it.id].v))).length;
   const nn = i.snap.axes.flatMap(a => a.items.filter(it => { const x = i.answers[it.id]; return x && (x.v === 'ف' || x.v === 'ت') && !(x.note || '').trim(); })).length;
   if (miss || nn) return toast(miss ? `لا يمكن الحفظ: بقي ${miss} بنداً بلا إجابة` : `لا يمكن الحفظ: ${nn} بنداً يحتاج ملاحظة`);
-  i.result = compute(i.snap, i.answers, i.esc); i.status = 'done'; i.finishedAt = Date.now(); i.synced = false; save();
+  i.result = compute(i.snap, i.answers, i.esc); i.status = 'done'; i.finishedAt = Date.now(); i.synced = false; delete i.reopened; save();
   const rest = placeRowsLeft(i);
   toast(rest ? 'تم حفظ التفتيش. اختر القائمة التالية' : isSup() ? 'تم حفظ التفتيش. اكتملت كل القوائم' : 'اكتملت كل القوائم. صدّرها للمشرف من زر «تصدير وإرسال»');
   autoSync(); V.view = 'home'; render();
@@ -266,7 +269,7 @@ function viewInspections() {
   const done = S.inspections.filter(i => i.status === 'done');
   const card = (b, btns, sub) => { const h = b[0].header; return `<div class="card"><div class="row"><b class="sp">${esc(h.facility || '')}${h.facility ? ' · ' : ''}${esc(placeLabel(b))}</b>${b.some(i => i.result.veto) ? '<span class="tag bad">بوابة حرجة</span>' : ''}</div>
     <div class="mut">${sub}</div>
-    ${b.map(i => `<div class="row" style="margin-top:6px"><span class="sp">${esc(i.snap.title)}${isSup() ? `<span class="mut"> · ${esc(i.header.inspector)} · ${esc(i.header.time)}</span>` : ''}</span><span class="tag ${i.result.bandCls}">${i.result.score}%</span></div>`).join('')}
+    ${b.map(i => `<div class="row" style="margin-top:6px"><span class="sp">${esc(i.snap.title)}${isSup() ? `<span class="mut"> · ${esc(i.header.inspector)} · ${esc(i.header.time)}</span>` : i.sharedAt ? '<span class="mut"> · صُدِّر</span>' : ''}</span>${isSup() ? '' : editBtn(i)}<span class="tag ${i.result.bandCls}">${i.result.score}%</span></div>`).join('')}
     <div class="row" style="margin-top:8px">${btns}</div></div>`; };
   const latest = b => Math.max(...b.map(i => i.finishedAt || 0));
   if (!isSup()) {
@@ -295,7 +298,7 @@ function viewBatch() {
   return bar('قوائم هذا التفتيش', 'home') + `<div class="wrap"><div class="card"><b>${esc(h.facility || '')}</b><div class="mut">${esc(h.date)} ${esc(h.time)} · ${esc(h.inspector)}</div></div>
   ${arr.map(i => { const r = compute(i.snap, i.answers, i.esc); return `<div class="card"><div class="row"><div class="sp"><b>${esc(i.header.place)}</b><div class="mut">${esc(i.snap.title)}</div></div>${i.status === 'done' ? `<span class="tag ${i.result.bandCls}">${i.result.score}%</span>` : `<span class="mut">${r.answered} من ${r.total}</span>`}</div>
    <div class="pbar" style="margin:8px 0"><i style="width:${i.status === 'done' ? 100 : (r.total ? r.answered / r.total * 100 : 0)}%"></i></div>
-   <div class="row">${i.status === 'done' ? `<button class="btn sm" data-act="rep" data-ids="${i.id}" data-back="batch">التقرير</button>` : `<button class="btn sm" data-act="open" data-id="${i.id}">${r.answered ? 'متابعة' : 'ابدأ'}</button>`}</div></div>`; }).join('')}
+   <div class="row">${i.status === 'done' ? `<button class="btn sm" data-act="rep" data-ids="${i.id}" data-back="batch">التقرير</button>${editBtn(i)}` : `<button class="btn sm" data-act="open" data-id="${i.id}">${r.answered ? 'متابعة' : 'ابدأ'}</button>`}</div></div>`; }).join('')}
   ${isSup() ? `<button class="btn block" data-act="rep" data-ids="${done.map(i => i.id).join(',')}" data-back="batch" ${done.length ? '' : 'disabled'}>التقرير الشامل (${done.length} من ${arr.length})</button><button class="btn sec block" style="margin-top:8px" data-act="repall" data-ids="${done.map(i => i.id).join(',')}" data-back="batch" ${done.length ? '' : 'disabled'}>طباعة كل القوائم (${done.length})</button>` : `<button class="btn block" data-act="share" data-ids="${done.map(i => i.id).join(',')}" ${done.length ? '' : 'disabled'}>مشاركة مع المشرف (${done.length} من ${arr.length})</button>`}</div>`;
 }
 
@@ -441,6 +444,10 @@ function fileToHero(file) {
 document.addEventListener('click', async e => {
   const t = e.target.closest('[data-act]'); if (!t) return; const a = t.dataset.act, d = t.dataset;
   switch (a) {
+    case 'editinsp': { const i = S.inspections.find(x => x.id === d.id);
+      if (!canEdit(i)) { toast('لا يمكن تعديل تفتيش بعد تصديره'); break; }
+      if (!confirm('سيُعاد فتح التفتيش للتعديل. بعد التعديل اضغط «مراجعة وإنهاء» واحفظه من جديد، ثم صدّره للمشرف. متابعة؟')) break;
+      i.status = 'draft'; i.reopened = true; await save(); V.cur = i.id; V.batch = i.batchId || i.id; V.view = 'insp'; render(); break; }
     case 'reptheme': S.settings.repTheme = d.t; await save(); rerender(); break;
     case 'repfull': V.rep = Object.assign({}, V.rep || { ids: [V.cur] }, { full: t.checked }); rerender(); break;
     case 'repall': V.rep = { ids: d.ids.split(',').filter(Boolean), full: true }; V.back = d.back || 'inspections'; V.view = 'report'; render(); break;
