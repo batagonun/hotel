@@ -181,3 +181,21 @@ table.lh-meta{width:100%;margin-top:8px;font-size:14px}table.lh-meta td{text-ali
   table.rep .nw{white-space:nowrap;width:1%;word-break:normal}
   table.lh-meta td{font-size:12pt!important}table.lh-meta b{white-space:nowrap;unicode-bidi:isolate}
 }
+
+/* ===== شاشة التقرير: ورقة بيضاء دائماً (حتى في الوضع الداكن) بنفس خط الطباعة وأحجام أكبر ===== */
+.overlay:has(.wrap[class*="rep-"]){background:#eef1f2}
+.wrap[class*="rep-"]{--bg:#fff;--card:#fff;--ink:#000;--mut:#333;--line:#000;--pri2:#e6e6e6;--na:#555;
+  background:#fff;color:#000;font-family:"Simplified Arabic","Traditional Arabic","Arabic Typesetting","Noto Naskh Arabic","Times New Roman",serif;font-size:17px;line-height:1.45;box-shadow:0 0 0 1px #000;margin-top:10px;margin-bottom:10px}
+.wrap[class*="rep-"] table.rep{font-size:16px;border:1.5px solid #000}
+.wrap[class*="rep-"] table.rep th,.wrap[class*="rep-"] table.rep td{border:1px solid #000;color:#000}
+.wrap[class*="rep-"] table.rep th{background:#e6e6e6;font-weight:700}
+.wrap[class*="rep-"] h2,.wrap[class*="rep-"] h3,.wrap[class*="rep-"] b{font-weight:700;color:#000}
+.wrap[class*="rep-"] h2{font-size:20px}.wrap[class*="rep-"] h3{font-size:18px}
+.wrap[class*="rep-"] .mut{color:#333}
+.wrap[class*="rep-"] .card{background:#fff;border-color:#000}
+.wrap[class*="rep-"] .themepick,.wrap[class*="rep-"] .dlcard{font-family:"Segoe UI",Tahoma,"Noto Sans Arabic",Arial,sans-serif;font-size:15px}
+.wrap.rep-formal{font-size:17px}
+/* حقول التعديل داخل التقرير: بيضاء بخط واضح */
+.wrap[class*="rep-"] input[data-tgt="hd"]{background:#fffbe6;color:#000;border:1px dashed #555;border-radius:4px;font:inherit;font-weight:700;width:100%;min-width:60px;padding:2px 6px}
+.wrap[class*="rep-"] input[data-tgt="hd"]::placeholder{color:#999;font-weight:400}
+@media print{.wrap[class*="rep-"]{box-shadow:none!important;margin:0!important}}

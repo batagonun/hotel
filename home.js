@@ -330,7 +330,7 @@ function execDashboard(list) {
   <div class="kpi"><b>${all.length}</b><span>إجمالي الملاحظات</span></div><div class="kpi"><b class="${crit ? 't-bad' : ''}">${crit}</b><span>بنود حرجة غير مطابقة</span></div>${escN ? `<div class="kpi"><b class="t-bad">${escN}</b><span>حالات تصعيد</span></div>` : ''}</div></div>
   <div class="card"><h3>أداء القوائم</h3>${list.map(i => `<div class="hb"><span>${esc(listLabel(i.snap))}</span><span class="tr"><i class="${barCls(i.result.score)}" style="width:${i.result.score}%"></i></span><b>${i.result.score.toFixed(0)}%</b></div>`).join('')}
   <p class="mut" style="margin:6px 0 0">الأخضر 80% فأكثر · البرتقالي 70% إلى أقل من 80% · الأحمر أقل من 70%</p></div>
-  ${top.length ? `<div class="card"><h3>أولويات الإجراءات التصحيحية (أهم ${top.length})</h3><table class="rep"><tr><th>م</th><th>البند</th><th>القائمة</th><th>الأولوية</th><th>المهلة</th></tr>${top.map((o, k) => `<tr><td>${k + 1}</td><td>${esc(o.it.text)}${o.x.note ? `<div class="mut">${esc(o.x.note)}</div>` : ''}</td><td>${esc(listLabel(o.i.snap))}</td><td><span class="tag ${o.it.cls}">${PRIO[o.it.cls][0]}</span></td><td>${PRIO[o.it.cls][1]}</td></tr>`).join('')}</table></div>` : ''}`;
+  ${top.length ? `<div class="card"><h3>أولويات الإجراءات التصحيحية (أهم ${top.length})</h3><table class="rep"><tr><th>م</th><th>البند</th><th class="nw">الأولوية</th><th class="nw">المهلة</th></tr>${top.map((o, k) => `<tr><td>${k + 1}</td><td>${esc(o.it.text)}${o.x.note ? `<div class="mut">${esc(o.x.note)}</div>` : ''}</td><td class="nw"><span class="tag ${o.it.cls}">${PRIO[o.it.cls][0]}</span></td><td class="nw">${PRIO[o.it.cls][1]}</td></tr>`).join('')}</table></div>` : ''}`;
 }
 function letterhead(list, multi, full) {
   const h = list[0].header; const ref = 'INS-' + String(h.date || '').replace(/-/g, '') + '-' + hashStr(list.map(i => i.id).join(',')).split(':')[0].replace('-', '').slice(-4);
@@ -425,7 +425,7 @@ function viewReport() {
   /* بيانات المكان قابلة للتعديل من المشرف وتُحفظ لكل مكان ويوم */
   S.heads = S.heads || {}; const hk = rkey(i0);
   const hd = onePlace ? (S.heads[hk] = Object.assign({ staff: h.staff, shifts: h.shifts, responsible: h.responsible }, S.heads[hk] || {})) : h; V.hd = hd;
-  const hv = k => sup && onePlace ? `<input class="noprint" type="text" data-tgt="hd" data-bind="${k}" value="${esc(hd[k] ?? '')}" style="padding:4px 6px"><span class="printonly">${esc(hd[k] ?? '')}</span>` : esc(hd[k]);
+  const hv = k => sup && onePlace ? `<input class="noprint" type="text" data-tgt="hd" data-bind="${k}" value="${esc(hd[k] ?? '')}" placeholder="اكتب هنا"><span class="printonly">${esc(hd[k] ?? '')}</span>` : esc(hd[k]);
   const times = distinct(list.map(i => i.header.time)).map(esc).join('، ');
   const minI = list.reduce((m, i) => (i.result.score < m.result.score ? i : m), list[0]); const overall = bandFor(minI.result.score);
   const missing = multi ? missingInVisit(list) : [];
