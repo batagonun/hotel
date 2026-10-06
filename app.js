@@ -188,7 +188,8 @@ function itemHtml(i, it, k) {
   <div class="ans">${OPTS[it.cls].map(o => `<button class="${a.v === o ? 'on ' + cls[o] : ''}" data-act="ans" data-it="${it.id}" data-v="${o}">${o}</button>`).join('')}</div>
   ${needNote ? `<textarea placeholder="اكتب الملاحظة أو الإجراء المطلوب (إلزامي)" data-note="${it.id}" style="margin-top:8px">${esc(a.note || '')}</textarea>` : ''}
   <div class="ph">${(a.photos || []).map((p, pi) => `<div class="x"><img src="${p}" alt=""><b data-act="delph" data-it="${it.id}" data-pi="${pi}">×</b></div>`).join('')}
-   <label class="btn sec sm" style="cursor:pointer">📷 صورة<input type="file" accept="image/*" capture="environment" multiple hidden data-photo="${it.id}"></label></div></div>`;
+   <label class="btn sec sm" style="cursor:pointer">📷 كاميرا<input type="file" accept="image/*" capture="environment" hidden data-photo="${it.id}"></label>
+   <label class="btn sec sm" style="cursor:pointer">🖼️ من المعرض<input type="file" accept="image/*" multiple hidden data-photo="${it.id}"></label></div></div>`;
 }
 function setAnswer(itId, v) {
   const i = cur(); const a = i.answers[itId] || (i.answers[itId] = {});
@@ -196,14 +197,16 @@ function setAnswer(itId, v) {
 }
 function captureOpen() { V.open = {}; document.querySelectorAll('details.axis[open]').forEach(d => V.open[d.dataset.ax] = true); }
 
+/* تصغير الصورة قبل حفظها. يُقرأ الملف برابط مؤقت لتوفير الذاكرة في صور الكاميرا الكبيرة على الهواتف الضعيفة */
 function compress(file, max = 1024, q = 0.6) {
-  return new Promise(res => {
-    const fr = new FileReader();
-    fr.onload = () => { const im = new Image(); im.onload = () => {
-      const k = Math.min(1, max / Math.max(im.width, im.height)); const c = document.createElement('canvas');
+  const draw = (src, done) => { const im = new Image(); im.onload = () => {
+    try { const k = Math.min(1, max / Math.max(im.width, im.height)); const c = document.createElement('canvas');
       c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
-      res(c.toDataURL('image/jpeg', q)); }; im.onerror = () => res(null); im.src = fr.result; };
-    fr.onerror = () => res(null); fr.readAsDataURL(file);
+      done(c.toDataURL('image/jpeg', q)); } catch (e) { done(null); } }; im.onerror = () => done(null); im.src = src; };
+  return new Promise(res => {
+    if (window.URL && URL.createObjectURL) { const u = URL.createObjectURL(file); draw(u, r => { URL.revokeObjectURL(u); if (r) return res(r);
+      const fr = new FileReader(); fr.onload = () => draw(fr.result, res); fr.onerror = () => res(null); fr.readAsDataURL(file); }); return; }
+    const fr = new FileReader(); fr.onload = () => draw(fr.result, res); fr.onerror = () => res(null); fr.readAsDataURL(file);
   });
 }
 
@@ -420,8 +423,11 @@ document.addEventListener('change', async e => {
   else if (t.dataset.esc !== undefined) { const i = cur(); i.esc[t.dataset.esc] = t.checked; await save(); V.keepScroll = true; render(); }
   else if (t.dataset.photo) {
     const i = cur(); const x = i.answers[t.dataset.photo] || (i.answers[t.dataset.photo] = {}); x.photos = x.photos || [];
-    for (const f of t.files) { const p = await compress(f); if (p) x.photos.push(p); }
+    if (!t.files || !t.files.length) return;
+    const files = [...t.files]; let bad = 0; for (const f of files) { const p = await compress(f); if (p) x.photos.push(p); else bad++; }
+    t.value = '';
     await save(); captureOpen(); V.keepScroll = true; render();
+    if (bad) toast(bad === files.length ? 'تعذر قراءة الصورة. جرّب «من المعرض»، أو غيّر صيغة الكاميرا إلى JPEG' : `تعذر قراءة ${bad} من الصور`);
   } else if (t.id === 'imp') {
     const f = t.files[0]; if (!f) return; try { const j = JSON.parse(await f.text()); if (!j.lists || !j.users) throw 0; S = j; await save(); toast('تم الاستيراد'); V.view = 'login'; S.session = null; render(); } catch { toast('ملف غير صالح'); }
   }
