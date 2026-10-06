@@ -200,7 +200,8 @@ const scenes = {
       <rect width="${W}" height="${H}" fill="url(#bg)"/>
       <rect width="${W}" height="${H}" fill="url(#grid)" opacity=".55"/>
       <rect x="40" y="40" width="${W - 80}" height="${H - 80}" fill="none" stroke="#d9b25f" stroke-opacity=".35" stroke-width="2"/>`
-  }
+  },
+  photo: { ink: '#f7f0e2', accent: '#e2bd6a', pos: 'top', svg: '' }
 };
 
 function page(post) {
@@ -225,11 +226,15 @@ function page(post) {
   .num{display:block;font:700 170px 'Amiri',serif;color:${s.accent};line-height:1;margin-bottom:10px}
   .swipe{position:fixed;left:0;right:0;bottom:100px;text-align:center;font:700 32px 'Cairo',sans-serif;color:${s.accent}}
   .arnote{margin-top:30px;direction:rtl;font:700 40px 'Amiri',serif;color:${s.accent}}
+  .ph{position:absolute;inset:0;background-size:cover;background-repeat:no-repeat}
+  .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,14,24,.92) 0%,rgba(8,14,24,.78) 38%,rgba(8,14,24,.15) 62%,rgba(8,14,24,.55) 100%)}
+  .box{position:absolute;left:60px;width:960px;object-fit:cover;border:3px solid ${s.accent};border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+  .credit{position:absolute;bottom:92px;left:60px;right:60px;text-align:center;direction:rtl;font:400 22px 'Cairo',sans-serif;color:#f7f0e2;opacity:.8}
   .handle{direction:ltr;position:absolute;bottom:44px;left:0;right:0;text-align:center;font:600 26px 'Cormorant',serif;letter-spacing:4px;color:${s.ink};opacity:.75}
   </style></head><body>
-  <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${s.svg}${post.svg || ''}</svg>
+  ${post.photo ? `<div class="ph" style="background-image:url('${'file://' + path.join(root, post.photo)}');background-position:${post.photoPos || 'center'}"></div><div class="shade"></div>` : ''}<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${s.svg}${post.svg || ''}</svg>
   <div class="txt"><div class="tag">${post.tag}</div><h1>${post.headline}</h1><div class="sub">${post.sub}</div>${post.ar_note ? `<div class="arnote">${post.ar_note}</div>` : ''}${post.swipe ? `<div class="swipe">${post.swipe}</div>` : ''}</div>
-  <div class="handle">@batagonun</div>
+  ${post.box ? `<img class="box" src="${'file://' + path.join(root, post.box)}" style="top:${post.boxTop || 640}px;height:${post.boxH || 560}px;object-position:${post.boxPos || 'center'}">` : ''}${post.credit ? `<div class="credit">${post.credit}</div>` : ''}<div class="handle">@batagonun</div>
   </body></html>`;
 }
 

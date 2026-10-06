@@ -2,30 +2,46 @@
   "batch": "2026-10-badr-plan",
   "status": "pending_review",
   "publish": "immediately_after_approval",
-  "caption": "كيف عبر المصريون قناة السويس وأسقطوا خط بارليف؟ 🇪🇬\nاسحب ← واقرأ خطة «بدر» في 9 شرائح.\n\n🔸 العائق: خط بارليف، ساتر ترابي بارتفاع 20 إلى 25 مترًا على الضفة الشرقية، تعلوه نقاط حصينة.\n🔸 الإعداد: تدريبات منذ 1968، وتخطيط منذ 1971، وخطة خداع استراتيجي أخفت موعد الهجوم.\n🔸 الموعد: 6 أكتوبر 1973 (10 رمضان)، لملاءمة التيار والمدّ وضوء القمر، وبالتنسيق مع سوريا.\n🔸 ساعة الصفر 14:00: ضربة جوية بأكثر من 200 طائرة، ثم تمهيد نيراني من نحو 2000 قطعة مدفعية لمدة 53 دقيقة.\n🔸 14:20: الموجة الأولى من 4000 مقاتل تعبر في نحو 2500 قارب.\n🔸 خراطيم المياه تفتح ثغرات في الساتر، بفكرة المهندس باقي زكي يوسف.\n🔸 10 كباري ثقيلة و5 خفيفة و10 عائمة و35 معدية، وعبر نحو 80 ألف جندي بحلول منتصف الليل.\n🔸 بحلول 8 أكتوبر: رأس جسر بعمق نحو 15 كم على طول الضفة الشرقية.\n\nاحفظ البوست 🔖 وشاركه مع من يحب التاريخ.\nما الدرس الذي تتعلمه من أكتوبر؟ 👇\n\nالمصادر: موسوعة ويكيبيديا (Operation Badr 1973، Bar Lev Line)، ودراسة مكتبة الكونغرس عن مصر.\n\n#نصر_أكتوبر #خط_بارليف #العبور #مصر #6_أكتوبر",
+  "caption": "كيف عبر المصريون قناة السويس وأسقطوا خط بارليف؟ 🇪🇬\nاسحب ← واقرأ خطة «بدر» في 10 شرائح بالصور.\n\n🔸 العائق: خط بارليف، ساتر ترابي بارتفاع 20 إلى 25 مترًا على الضفة الشرقية، تعلوه نقاط حصينة.\n🔸 الإعداد: تدريبات منذ 1968، وتخطيط منذ 1971، وخطة خداع استراتيجي أخفت موعد الهجوم.\n🔸 الموعد: 6 أكتوبر 1973 (10 رمضان)، لملاءمة التيار والمدّ وضوء القمر، وبالتنسيق مع سوريا.\n🔸 ساعة الصفر 14:00: ضربة جوية بأكثر من 200 طائرة، ثم تمهيد نيراني من نحو 2000 قطعة مدفعية لمدة 53 دقيقة.\n🔸 14:20: الموجة الأولى من 4000 مقاتل تعبر في نحو 2500 قارب.\n🔸 خراطيم المياه تفتح ثغرات في الساتر، بفكرة المهندس باقي زكي يوسف.\n🔸 10 كباري ثقيلة و5 خفيفة و10 عائمة و35 معدية، وعبر نحو 80 ألف جندي بحلول منتصف الليل.\n🔸 بحلول 8 أكتوبر: رأس جسر بعمق نحو 15 كم على طول الضفة الشرقية.\n\nاحفظ البوست 🔖 وشاركه مع من يحب التاريخ.\nما الدرس الذي تتعلمه من أكتوبر؟ 👇\n\nالمصادر: موسوعة ويكيبيديا (Operation Badr 1973، Bar Lev Line)، ودراسة مكتبة الكونغرس عن مصر.\nالصور: ويكيميديا كومنز (ملكية عامة)، منها صور من كتاب «المعارك الحربية على الجبهة المصرية» لجمال حماد، ولوحة من بانوراما حرب أكتوبر.\n\n#نصر_أكتوبر #خط_بارليف #العبور #مصر #6_أكتوبر",
   "posts": [
     {
-      "id": "b1",
-      "scene": "boats",
+      "id": "s01",
+      "scene": "photo",
+      "photo": "assets/photos/panorama.png",
+      "photoPos": "center 75%",
       "tag": "٦ أكتوبر ١٩٧٣ | ١٠ رمضان ١٣٩٣",
-      "headline": "كيف عبرنا؟<br>خطة «بدر»<br>في ٩ شرائح",
+      "headline": "كيف عبرنا؟<br>خطة «بدر»<br>في ١٠ شرائح",
       "size": 88,
       "sub": "اسحب ← وتعرّف على أعظم عملية عبور في التاريخ الحديث",
+      "credit": "لوحة العبور من بانوراما حرب أكتوبر بالقاهرة · ويكيميديا كومنز · ملكية عامة",
       "lang": "ar"
     },
     {
-      "id": "b2",
-      "scene": "brief",
+      "id": "s02",
+      "scene": "photo",
+      "photo": "assets/photos/barlev_fort.png",
+      "photoPos": "center 80%",
       "tag": "١ | العائق",
       "headline": "خط بارليف",
       "size": 96,
-      "sub": "ساتر ترابي على الضفة الشرقية للقناة،<br>تعلوه نقاط حصينة، واعتُبر عائقًا يستحيل اختراقه",
+      "sub": "ساتر ترابي على الضفة الشرقية للقناة،<br>تعلوه نقاط حصينة وخنادق، واعتُبر عائقًا يستحيل اختراقه",
       "subSize": 32,
+      "credit": "خندق ونقطة حصينة من خط بارليف · من كتاب «المعارك الحربية على الجبهة المصرية» لجمال حماد · ويكيميديا كومنز · ملكية عامة",
+      "lang": "ar"
+    },
+    {
+      "id": "s03",
+      "scene": "brief",
+      "tag": "١ | العائق · مقطع توضيحي",
+      "headline": "ساتر بارتفاع<br>٧ أدوار تقريبًا",
+      "size": 78,
+      "sub": "رسم توضيحي لمقطع الساتر الترابي على الضفة الشرقية",
+      "subSize": 30,
       "svg": "\n<g>\n <rect x=\"80\" y=\"1060\" width=\"920\" height=\"10\" fill=\"#2a3d57\"/>\n <path d=\"M640 1060 L1000 1060 L1000 1120 L640 1120Z\" fill=\"#3f6f96\"/>\n <path d=\"M660 1085 q15 -8 30 0 t30 0\" stroke=\"#8fb5d6\" stroke-width=\"3\" fill=\"none\"/><path d=\"M720 1085 q15 -8 30 0 t30 0\" stroke=\"#8fb5d6\" stroke-width=\"3\" fill=\"none\"/><path d=\"M780 1085 q15 -8 30 0 t30 0\" stroke=\"#8fb5d6\" stroke-width=\"3\" fill=\"none\"/><path d=\"M840 1085 q15 -8 30 0 t30 0\" stroke=\"#8fb5d6\" stroke-width=\"3\" fill=\"none\"/><path d=\"M900 1085 q15 -8 30 0 t30 0\" stroke=\"#8fb5d6\" stroke-width=\"3\" fill=\"none\"/>\n <path d=\"M640 1060 L560 760 L380 760 L300 1060Z\" fill=\"#d8b47a\"/>\n <path d=\"M640 1060 L560 760 L585 760 L660 1060Z\" fill=\"#f0d39d\" opacity=\".5\"/>\n <rect x=\"410\" y=\"715\" width=\"120\" height=\"45\" fill=\"#6b7686\"/><rect x=\"430\" y=\"700\" width=\"20\" height=\"15\" fill=\"#6b7686\"/><rect x=\"490\" y=\"700\" width=\"20\" height=\"15\" fill=\"#6b7686\"/>\n <path d=\"M300 1060 L80 1060 L80 1040 L300 1040Z\" fill=\"#c9a46a\"/>\n <rect x=\"150\" y=\"1010\" width=\"90\" height=\"30\" rx=\"6\" fill=\"#525c6a\"/><rect x=\"185\" y=\"996\" width=\"45\" height=\"16\" fill=\"#525c6a\"/><rect x=\"225\" y=\"1000\" width=\"45\" height=\"5\" fill=\"#525c6a\"/>\n <line x1=\"700\" y1=\"760\" x2=\"700\" y2=\"1060\" stroke=\"#d9b25f\" stroke-width=\"3\"/><line x1=\"688\" y1=\"760\" x2=\"712\" y2=\"760\" stroke=\"#d9b25f\" stroke-width=\"3\"/><line x1=\"688\" y1=\"1060\" x2=\"712\" y2=\"1060\" stroke=\"#d9b25f\" stroke-width=\"3\"/>\n <text x=\"800\" y=\"900\" font-family=\"Cairo\" font-weight=\"700\" font-size=\"32\" fill=\"#d9b25f\" text-anchor=\"middle\" direction=\"rtl\">من 20 إلى 25 م</text><text x=\"800\" y=\"945\" font-family=\"Cairo\" font-weight=\"400\" font-size=\"26\" fill=\"#9fb0c6\" text-anchor=\"middle\" direction=\"rtl\">ارتفاع الساتر</text>\n <text x=\"470\" y=\"690\" font-family=\"Cairo\" font-weight=\"700\" font-size=\"26\" fill=\"#f2ead8\" text-anchor=\"middle\" direction=\"rtl\">نقطة حصينة</text>\n <text x=\"470\" y=\"880\" font-family=\"Cairo\" font-weight=\"700\" font-size=\"30\" fill=\"#3a2a14\" text-anchor=\"middle\" direction=\"rtl\">ساتر ترابي</text><text x=\"470\" y=\"920\" font-family=\"Cairo\" font-weight=\"400\" font-size=\"24\" fill=\"#3a2a14\" text-anchor=\"middle\" direction=\"rtl\">ميل من 45° إلى 65°</text>\n <text x=\"820\" y=\"1170\" font-family=\"Cairo\" font-weight=\"700\" font-size=\"30\" fill=\"#8fb5d6\" text-anchor=\"middle\" direction=\"rtl\">قناة السويس</text>\n <text x=\"195\" y=\"975\" font-family=\"Cairo\" font-weight=\"400\" font-size=\"24\" fill=\"#9fb0c6\" text-anchor=\"middle\" direction=\"rtl\">دبابات للدعم</text>\n <text x=\"950\" y=\"1240\" font-family=\"Cairo\" font-weight=\"400\" font-size=\"24\" fill=\"#9fb0c6\" text-anchor=\"middle\" direction=\"rtl\">الضفة الغربية ←</text><text x=\"170\" y=\"1240\" font-family=\"Cairo\" font-weight=\"400\" font-size=\"24\" fill=\"#9fb0c6\" text-anchor=\"middle\" direction=\"rtl\">→ سيناء</text>\n</g>",
       "lang": "ar"
     },
     {
-      "id": "b3",
+      "id": "s04",
       "scene": "brief",
       "tag": "٢ | الإعداد",
       "headline": "سنوات من التدريب<br>وخطة خداع محكمة",
@@ -37,7 +53,7 @@
       "lang": "ar"
     },
     {
-      "id": "b4",
+      "id": "s05",
       "scene": "brief",
       "tag": "٣ | اختيار الموعد",
       "headline": "لماذا ٦ أكتوبر؟",
@@ -49,7 +65,7 @@
       "lang": "ar"
     },
     {
-      "id": "b5",
+      "id": "s06",
       "scene": "brief",
       "tag": "٤ | ساعة الصفر",
       "headline": "الساعة الثانية ظهرًا",
@@ -60,18 +76,22 @@
       "lang": "ar"
     },
     {
-      "id": "b6",
+      "id": "s07",
       "scene": "brief",
+      "box": "assets/photos/suez_cia.png",
+      "boxTop": 690,
+      "boxH": 470,
+      "boxPos": "center 70%",
       "tag": "٥ | الموجة الأولى",
       "headline": "٤٠٠٠ مقاتل<br>في الموجة الأولى",
       "size": 82,
       "sub": "عبروا القناة في نحو 2500 قارب مطاطي وخشبي،<br>وتسلّقوا الساتر بسلالم الحبال",
       "subSize": 32,
-      "svg": "<rect x=\"80\" y=\"880\" width=\"920\" height=\"300\" fill=\"#3f6f96\" opacity=\".85\"/>\n<path d=\"M80 880 L1000 880 L1000 860 L80 860Z\" fill=\"#d8b47a\"/><g transform=\"translate(300,960) scale(1)\"><path d=\"M-90 0 Q0 30 90 0 L78 22 Q0 44 -78 22Z\" fill=\"#0b1422\"/><circle cx=\"-48\" cy=\"-16\" r=\"9\" fill=\"#0b1422\"/><rect x=\"-55\" y=\"-10\" width=\"14\" height=\"14\" fill=\"#0b1422\"/><circle cx=\"-16\" cy=\"-16\" r=\"9\" fill=\"#0b1422\"/><rect x=\"-23\" y=\"-10\" width=\"14\" height=\"14\" fill=\"#0b1422\"/><circle cx=\"16\" cy=\"-16\" r=\"9\" fill=\"#0b1422\"/><rect x=\"9\" y=\"-10\" width=\"14\" height=\"14\" fill=\"#0b1422\"/><circle cx=\"48\" cy=\"-16\" r=\"9\" fill=\"#0b1422\"/><rect x=\"41\" y=\"-10\" width=\"14\" height=\"14\" fill=\"#0b1422\"/></g><g transform=\"translate(620,1010) scale(1.1)\"><path d=\"M-90 0 Q0 30 90 0 L78 22 Q0 44 -78 22Z\" fill=\"#0b1422\"/><circle cx=\"-48\" cy=\"-16\" r=\"9\" fill=\"#0b1422\"/><rect x=\"-55\" y=\"-10\" width=\"14\" height=\"14\" fill=\"#0b1422\"/><circle cx=\"-16\" cy=\"-16\" r=\"9\" fill=\"#0b1422\"/><rect x=\"-23\" y=\"-10\" width=\"14\" height=\"14\" fill=\"#0b1422\"/><circle cx=\"16\" cy=\"-16\" r=\"9\" fill=\"#0b1422\"/><rect x=\"9\" y=\"-10\" width=\"14\" height=\"14\" fill=\"#0b1422\"/><circle cx=\"48\" cy=\"-16\" r=\"9\" fill=\"#0b1422\"/><rect x=\"41\" y=\"-10\" width=\"14\" height=\"14\" fill=\"#0b1422\"/></g><g transform=\"translate(860,940) scale(0.9)\"><path d=\"M-90 0 Q0 30 90 0 L78 22 Q0 44 -78 22Z\" fill=\"#0b1422\"/><circle cx=\"-48\" cy=\"-16\" r=\"9\" fill=\"#0b1422\"/><rect x=\"-55\" y=\"-10\" width=\"14\" height=\"14\" fill=\"#0b1422\"/><circle cx=\"-16\" cy=\"-16\" r=\"9\" fill=\"#0b1422\"/><rect x=\"-23\" y=\"-10\" width=\"14\" height=\"14\" fill=\"#0b1422\"/><circle cx=\"16\" cy=\"-16\" r=\"9\" fill=\"#0b1422\"/><rect x=\"9\" y=\"-10\" width=\"14\" height=\"14\" fill=\"#0b1422\"/><circle cx=\"48\" cy=\"-16\" r=\"9\" fill=\"#0b1422\"/><rect x=\"41\" y=\"-10\" width=\"14\" height=\"14\" fill=\"#0b1422\"/></g><g transform=\"translate(450,1110) scale(1.15)\"><path d=\"M-90 0 Q0 30 90 0 L78 22 Q0 44 -78 22Z\" fill=\"#0b1422\"/><circle cx=\"-48\" cy=\"-16\" r=\"9\" fill=\"#0b1422\"/><rect x=\"-55\" y=\"-10\" width=\"14\" height=\"14\" fill=\"#0b1422\"/><circle cx=\"-16\" cy=\"-16\" r=\"9\" fill=\"#0b1422\"/><rect x=\"-23\" y=\"-10\" width=\"14\" height=\"14\" fill=\"#0b1422\"/><circle cx=\"16\" cy=\"-16\" r=\"9\" fill=\"#0b1422\"/><rect x=\"9\" y=\"-10\" width=\"14\" height=\"14\" fill=\"#0b1422\"/><circle cx=\"48\" cy=\"-16\" r=\"9\" fill=\"#0b1422\"/><rect x=\"41\" y=\"-10\" width=\"14\" height=\"14\" fill=\"#0b1422\"/></g>\n<path d=\"M80 1180 L1000 1180 L1000 1200 L80 1200Z\" fill=\"#c9a46a\"/>",
+      "credit": "قناة السويس قرب الإسماعيلية، أكتوبر 1973 · وكالة المخابرات المركزية الأمريكية · ويكيميديا كومنز · ملكية عامة",
       "lang": "ar"
     },
     {
-      "id": "b7",
+      "id": "s08",
       "scene": "brief",
       "tag": "٦ | الفكرة العبقرية",
       "headline": "الماء يهزم الرمل",
@@ -82,24 +102,31 @@
       "lang": "ar"
     },
     {
-      "id": "b8",
+      "id": "s09",
       "scene": "brief",
+      "box": "assets/photos/bridge.png",
+      "boxTop": 640,
+      "boxH": 560,
       "tag": "٧ | الكباري والمعديات",
       "headline": "جسور فوق القناة",
       "size": 90,
-      "sub": "إلى جانب 5 كباري خفيفة، ليعبر المشاة والمدرعات إلى سيناء",
-      "subSize": 30,
-      "svg": "<rect x=\"560\" y=\"750\" width=\"400\" height=\"190\" rx=\"14\" fill=\"#13233a\" stroke=\"#d9b25f\" stroke-opacity=\".4\"/><text x=\"760\" y=\"845\" font-family=\"Cairo\" font-weight=\"700\" font-size=\"68\" fill=\"#d9b25f\" text-anchor=\"middle\" direction=\"rtl\">10</text><text x=\"760\" y=\"905\" font-family=\"Cairo\" font-weight=\"400\" font-size=\"26\" fill=\"#f2ead8\" text-anchor=\"middle\" direction=\"rtl\">كباري ثقيلة</text><rect x=\"120\" y=\"750\" width=\"400\" height=\"190\" rx=\"14\" fill=\"#13233a\" stroke=\"#d9b25f\" stroke-opacity=\".4\"/><text x=\"320\" y=\"845\" font-family=\"Cairo\" font-weight=\"700\" font-size=\"68\" fill=\"#d9b25f\" text-anchor=\"middle\" direction=\"rtl\">10</text><text x=\"320\" y=\"905\" font-family=\"Cairo\" font-weight=\"400\" font-size=\"26\" fill=\"#f2ead8\" text-anchor=\"middle\" direction=\"rtl\">كباري عائمة</text><rect x=\"560\" y=\"980\" width=\"400\" height=\"190\" rx=\"14\" fill=\"#13233a\" stroke=\"#d9b25f\" stroke-opacity=\".4\"/><text x=\"760\" y=\"1075\" font-family=\"Cairo\" font-weight=\"700\" font-size=\"68\" fill=\"#d9b25f\" text-anchor=\"middle\" direction=\"rtl\">35</text><text x=\"760\" y=\"1135\" font-family=\"Cairo\" font-weight=\"400\" font-size=\"26\" fill=\"#f2ead8\" text-anchor=\"middle\" direction=\"rtl\">معدية</text><rect x=\"120\" y=\"980\" width=\"400\" height=\"190\" rx=\"14\" fill=\"#13233a\" stroke=\"#d9b25f\" stroke-opacity=\".4\"/><text x=\"320\" y=\"1075\" font-family=\"Cairo\" font-weight=\"700\" font-size=\"68\" fill=\"#d9b25f\" text-anchor=\"middle\" direction=\"rtl\">≈ 80 ألف</text><text x=\"320\" y=\"1135\" font-family=\"Cairo\" font-weight=\"400\" font-size=\"26\" fill=\"#f2ead8\" text-anchor=\"middle\" direction=\"rtl\">جندي عبروا بحلول منتصف الليل</text>",
+      "sub": "10 كباري ثقيلة • 5 خفيفة • 10 عائمة • 35 معدية<br>ونحو 80 ألف جندي عبروا بحلول منتصف الليل",
+      "subSize": 32,
+      "credit": "مركبات مصرية تعبر قناة السويس في 7 أكتوبر 1973 · ويكيميديا كومنز · ملكية عامة",
       "lang": "ar"
     },
     {
-      "id": "b9",
-      "scene": "dawn",
+      "id": "s10",
+      "scene": "brief",
+      "box": "assets/photos/armor.png",
+      "boxTop": 780,
+      "boxH": 420,
       "tag": "٨ | النتيجة",
       "headline": "بحلول ٨ أكتوبر<br>رأس جسر بعمق ١٥ كم<br>على طول الضفة الشرقية",
       "size": 70,
       "sub": "التخطيط الدقيق + السرية + الإرادة = نصر<br>شاركنا: ما الدرس الذي تتعلمه من أكتوبر؟",
       "subSize": 32,
+      "credit": "دبابات مصرية تتقدم في سيناء، أكتوبر 1973 · ويكيميديا كومنز · ملكية عامة",
       "lang": "ar"
     }
   ]
