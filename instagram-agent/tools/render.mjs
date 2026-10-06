@@ -191,6 +191,15 @@ const scenes = {
         <circle cx="650" cy="1210" r="210" fill="#8fb8b3"/>
       </g>
       <rect x="60" y="60" width="${W - 120}" height="${H - 120}" fill="none" stroke="#d9cbb8" stroke-width="3" rx="18"/>`
+  },
+  brief: {
+    ink: '#f2ead8', accent: '#d9b25f', pos: 'top',
+    svg: `
+      <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0e1a2b"/><stop offset="1" stop-color="#16263b"/></linearGradient>
+      <pattern id="grid" width="54" height="54" patternUnits="userSpaceOnUse"><path d="M54 0H0V54" fill="none" stroke="#2a3d57" stroke-width="1"/></pattern></defs>
+      <rect width="${W}" height="${H}" fill="url(#bg)"/>
+      <rect width="${W}" height="${H}" fill="url(#grid)" opacity=".55"/>
+      <rect x="40" y="40" width="${W - 80}" height="${H - 80}" fill="none" stroke="#d9b25f" stroke-opacity=".35" stroke-width="2"/>`
   }
 };
 
@@ -208,17 +217,17 @@ function page(post) {
   *{margin:0;padding:0;box-sizing:border-box}
   body{width:${W}px;height:${H}px;overflow:hidden;position:relative;color:${s.ink}}
   svg{position:absolute;inset:0}
-  .txt{position:absolute;left:90px;right:90px;top:${post.scene === 'card' ? 230 : 120}px;text-align:center}
+  .txt{position:absolute;left:90px;right:90px;top:${post.top || (post.scene === 'card' ? 230 : 120)}px;text-align:center}
   .tag{font:700 30px 'Cairo',sans-serif;letter-spacing:${ar ? 0 : 6}px;color:${s.accent};margin-bottom:38px}
   .tag:after{content:'';display:block;width:70px;height:3px;background:${s.accent};margin:22px auto 0}
   h1{font-family:${headFont};font-weight:${ar ? 700 : 500};font-style:${ar ? 'normal' : 'italic'};font-size:${headSize}px;line-height:${ar ? 1.55 : 1.18}}
-  .sub{margin-top:34px;font:${ar ? 400 : 600} ${ar ? (post.scene === 'card' ? 40 : post.sub.length > 50 ? 28 : 34) : 28}px ${ar ? "'Cairo'" : "'Cormorant'"},serif;letter-spacing:${ar ? 0 : 5}px;opacity:.88}
+  .sub{margin-top:34px;font:${ar ? 400 : 600} ${ar ? (post.subSize || (post.scene === 'card' ? 40 : post.sub.length > 50 ? 28 : 34)) : 28}px ${ar ? "'Cairo'" : "'Cormorant'"},serif;letter-spacing:${ar ? 0 : 5}px;opacity:.88}
   .num{display:block;font:700 170px 'Amiri',serif;color:${s.accent};line-height:1;margin-bottom:10px}
   .swipe{position:fixed;left:0;right:0;bottom:100px;text-align:center;font:700 32px 'Cairo',sans-serif;color:${s.accent}}
   .arnote{margin-top:30px;direction:rtl;font:700 40px 'Amiri',serif;color:${s.accent}}
   .handle{direction:ltr;position:absolute;bottom:44px;left:0;right:0;text-align:center;font:600 26px 'Cormorant',serif;letter-spacing:4px;color:${s.ink};opacity:.75}
   </style></head><body>
-  <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${s.svg}</svg>
+  <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${s.svg}${post.svg || ''}</svg>
   <div class="txt"><div class="tag">${post.tag}</div><h1>${post.headline}</h1><div class="sub">${post.sub}</div>${post.ar_note ? `<div class="arnote">${post.ar_note}</div>` : ''}${post.swipe ? `<div class="swipe">${post.swipe}</div>` : ''}</div>
   <div class="handle">@batagonun</div>
   </body></html>`;
