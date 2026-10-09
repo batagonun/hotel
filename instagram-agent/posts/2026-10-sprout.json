@@ -1,7 +1,12 @@
 {
  "batch": "2026-10-sprout",
  "date": "2026-10-16T09:00",
- "status": "pending_review",
+ "status": "scheduled",
+ "metricool": {
+  "carousel": 391999971,
+  "reel": 392000024,
+  "reel_time": "2026-10-16T19:00"
+ },
  "replaces": {
   "metricool_id": 387937215,
   "post": "p07-food"

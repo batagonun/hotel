@@ -93,7 +93,7 @@ caption = '''بروتين أرخص بحوالي 10 مرات من علبة الو
 
 #اليوم_العالمي_للأغذية #عادات_صحية #الفول_النابت #أكل_صحي'''
 
-batch = dict(batch='2026-10-sprout', date='2026-10-16T09:00', status='pending_review',
+batch = dict(batch='2026-10-sprout', date='2026-10-16T09:00', status='scheduled', metricool=dict(carousel=391999971, reel=392000024, reel_time='2026-10-16T19:00'),
              replaces=dict(metricool_id=387937215, post='p07-food'),
              caption=caption, posts=slides)
 pathlib.Path(__file__).with_name('2026-10-sprout.json').write_text(json.dumps(batch, ensure_ascii=False, indent=1))
