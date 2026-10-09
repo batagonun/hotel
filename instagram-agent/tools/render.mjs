@@ -16,7 +16,7 @@ const batch = JSON.parse(fs.readFileSync(path.resolve(root, batchFile), 'utf8'))
 fs.mkdirSync(path.resolve(root, outDir), { recursive: true });
 const fontDir = 'file://' + path.join(root, 'fonts');
 
-const W = 1080, H = 1350;
+const W = batch.width || 1080, H = batch.height || 1350;
 
 // Each scene: background SVG + text colours + where the text sits.
 const scenes = {
@@ -201,7 +201,16 @@ const scenes = {
       <rect width="${W}" height="${H}" fill="url(#grid)" opacity=".55"/>
       <rect x="40" y="40" width="${W - 80}" height="${H - 80}" fill="none" stroke="#d9b25f" stroke-opacity=".35" stroke-width="2"/>`
   },
-  photo: { ink: '#f7f0e2', accent: '#e2bd6a', pos: 'top', svg: '' }
+  photo: { ink: '#f7f0e2', accent: '#e2bd6a', pos: 'top', svg: '' },
+  earth: {
+    ink: '#f7efe1', accent: '#e2bd6a', pos: 'top',
+    svg: `
+      <defs><linearGradient id="eg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b1510"/><stop offset=".6" stop-color="#241b13"/><stop offset="1" stop-color="#2f2417"/></linearGradient>
+      <radialGradient id="ew" cx=".85" cy=".1" r=".6"><stop offset="0" stop-color="#7a9a4a" stop-opacity=".22"/><stop offset="1" stop-color="#7a9a4a" stop-opacity="0"/></radialGradient></defs>
+      <rect width="${W}" height="${H}" fill="url(#eg)"/><rect width="${W}" height="${H}" fill="url(#ew)"/>
+      <rect x="40" y="40" width="${W - 80}" height="${H - 80}" fill="none" stroke="#e2bd6a" stroke-opacity=".3" stroke-width="2" rx="14"/>`
+  },
+  none: { ink: '#fbf5ea', accent: '#f0c96b', pos: 'top', svg: '' }
 };
 
 function page(post) {
@@ -228,13 +237,22 @@ function page(post) {
   .arnote{margin-top:30px;direction:rtl;font:700 40px 'Amiri',serif;color:${s.accent}}
   .ph{position:absolute;inset:0;background-size:cover;background-repeat:no-repeat}
   .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,14,24,.92) 0%,rgba(8,14,24,.78) 38%,rgba(8,14,24,.15) 62%,rgba(8,14,24,.55) 100%)}
-  .box{position:absolute;left:60px;width:960px;object-fit:cover;border:3px solid ${s.accent};border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+  .box{position:absolute;left:${(W - (post.boxW || 960)) / 2}px;width:${post.boxW || 960}px;object-fit:cover;border:3px solid ${s.accent};border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.45)}
   .credit{position:absolute;bottom:92px;left:60px;right:60px;text-align:center;direction:rtl;font:400 22px 'Cairo',sans-serif;color:#f7f0e2;opacity:.8}
+  .rows{margin-top:34px;text-align:right;direction:rtl;font:400 ${post.rowSize || 33}px/1.5 'Cairo',sans-serif}
+  .rows>div{display:flex;justify-content:space-between;gap:24px;align-items:center;padding:16px 6px;border-bottom:1px solid rgba(226,189,106,.28)}
+  .rows>div:last-child{border-bottom:0}
+  .rows b{color:${s.accent};font-weight:700;white-space:nowrap}
+  .rows .n{flex:0 0 58px;height:58px;border-radius:50%;background:${s.accent};color:#1b1510;font:700 30px/58px 'Cairo';text-align:center}
+  .rows .t{flex:1}
+  .note{margin-top:22px;direction:rtl;font:400 ${post.noteSize || 22}px/1.6 'Cairo',sans-serif;opacity:.72}
+  body.tr{background:transparent}
+  .glow h1,.glow .sub,.glow .tag{text-shadow:0 3px 18px rgba(0,0,0,.85),0 1px 3px rgba(0,0,0,.9)}
   .handle{direction:ltr;position:absolute;bottom:44px;left:0;right:0;text-align:center;font:600 26px 'Cormorant',serif;letter-spacing:4px;color:${s.ink};opacity:.75}
-  </style></head><body>
+  </style></head><body class="${post.transparent ? 'tr' : ''} ${post.glow ? 'glow' : ''}">
   ${post.photo ? `<div class="ph" style="background-image:url('${'file://' + path.join(root, post.photo)}');background-position:${post.photoPos || 'center'}"></div><div class="shade"></div>` : ''}<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${s.svg}${post.svg || ''}</svg>
-  <div class="txt"><div class="tag">${post.tag}</div><h1>${post.headline}</h1><div class="sub">${post.sub}</div>${post.ar_note ? `<div class="arnote">${post.ar_note}</div>` : ''}${post.swipe ? `<div class="swipe">${post.swipe}</div>` : ''}</div>
-  ${post.box ? `<img class="box" src="${'file://' + path.join(root, post.box)}" style="top:${post.boxTop || 640}px;height:${post.boxH || 560}px;object-position:${post.boxPos || 'center'}">` : ''}${post.credit ? `<div class="credit">${post.credit}</div>` : ''}<div class="handle">@batagonun</div>
+  <div class="txt${post.glow ? ' glow' : ''}"><div class="tag">${post.tag}</div><h1>${post.headline}</h1><div class="sub">${post.sub}</div>${post.html || ''}${post.ar_note ? `<div class="arnote">${post.ar_note}</div>` : ''}${post.swipe ? `<div class="swipe">${post.swipe}</div>` : ''}</div>
+  ${post.box ? `<img class="box" src="${'file://' + path.join(root, post.box)}" style="top:${post.boxTop || 640}px;height:${post.boxH || 560}px;object-position:${post.boxPos || 'center'}">` : ''}${post.credit ? `<div class="credit">${post.credit}</div>` : ''}${post.noHandle ? '' : '<div class="handle">@batagonun</div>'}
   </body></html>`;
 }
 
@@ -246,7 +264,7 @@ for (const post of batch.posts) {
   await pg.goto('file://' + tmp, { waitUntil: 'load' });
   await pg.evaluate(() => document.fonts.ready);
   const out = path.resolve(root, outDir, `${post.id}.png`);
-  await pg.screenshot({ path: out });
+  await pg.screenshot({ path: out, omitBackground: !!post.transparent });
   console.log('rendered', out);
 }
 fs.rmSync(path.resolve(root, outDir, '_render.html'), { force: true });

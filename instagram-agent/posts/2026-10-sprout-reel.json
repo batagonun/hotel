@@ -1,0 +1,49 @@
+{
+ "fade": 0.45,
+ "scenes": [
+  {
+   "frames": [
+    "assets/photos/sprout/timelapse/f09.png",
+    "assets/photos/sprout/timelapse/f10.png",
+    "assets/photos/sprout/timelapse/f11.png",
+    "assets/photos/sprout/timelapse/f12.png",
+    "assets/photos/sprout/timelapse/f13.png",
+    "assets/photos/sprout/timelapse/f14.png",
+    "assets/photos/sprout/timelapse/f15.png"
+   ],
+   "overlay": "out/2026-10-sprout-reel/ov/o1.png",
+   "dur": 3.6,
+   "crop": "crop=600:330:180:205"
+  },
+  {
+   "photo": "assets/photos/sprout/sprouts01.png",
+   "overlay": "out/2026-10-sprout-reel/ov/o2.png",
+   "dur": 3.2
+  },
+  {
+   "photo": "assets/photos/sprout/fuul.png",
+   "overlay": "out/2026-10-sprout-reel/ov/o3.png",
+   "dur": 3.6
+  },
+  {
+   "photo": "assets/photos/sprout/sprouted.png",
+   "overlay": "out/2026-10-sprout-reel/ov/o4.png",
+   "dur": 3.6
+  },
+  {
+   "photo": "assets/photos/sprout/fava_seedling.png",
+   "overlay": "out/2026-10-sprout-reel/ov/o5.png",
+   "dur": 3.2
+  },
+  {
+   "photo": "assets/photos/sprout/cairo_breakfast.png",
+   "overlay": "out/2026-10-sprout-reel/ov/o6.png",
+   "dur": 3.4
+  },
+  {
+   "photo": "assets/photos/sprout/sprouts02.png",
+   "overlay": "out/2026-10-sprout-reel/ov/o7.png",
+   "dur": 3.6
+  }
+ ]
+}
