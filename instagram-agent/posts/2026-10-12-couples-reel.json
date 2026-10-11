@@ -1,35 +1,35 @@
 {
- "fade": 0.45,
+ "fade": 0.7,
  "scenes": [
   {
    "photo": "assets/photos/couple/hands_wedding.png",
    "overlay": "out/2026-10-12-couples/ov/o1.png",
-   "dur": 3.6
+   "dur": 5.5
   },
   {
    "photo": "assets/photos/couple/tea_glasses.png",
    "overlay": "out/2026-10-12-couples/ov/o2.png",
-   "dur": 4.2
+   "dur": 7
   },
   {
    "photo": "assets/photos/couple/tea_cookies.png",
    "overlay": "out/2026-10-12-couples/ov/o3.png",
-   "dur": 3.6
+   "dur": 6
   },
   {
    "photo": "assets/photos/couple/hands_wall.png",
    "overlay": "out/2026-10-12-couples/ov/o4.png",
-   "dur": 3.8
+   "dur": 6.5
   },
   {
    "photo": "assets/photos/couple/tea_glasses.png",
    "overlay": "out/2026-10-12-couples/ov/o5.png",
-   "dur": 3.8
+   "dur": 6.5
   },
   {
    "photo": "assets/photos/couple/hands_wedding.png",
    "overlay": "out/2026-10-12-couples/ov/o6.png",
-   "dur": 3.6
+   "dur": 6.5
   }
  ]
 }

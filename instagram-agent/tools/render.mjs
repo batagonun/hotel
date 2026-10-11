@@ -228,7 +228,7 @@ function page(post) {
   body{width:${W}px;height:${H}px;overflow:hidden;position:relative;color:${s.ink}}
   svg{position:absolute;inset:0}
   .txt{position:absolute;left:90px;right:90px;top:${post.top || (post.scene === 'card' ? 230 : 120)}px;text-align:center}
-  .tag{font:700 30px 'Cairo',sans-serif;letter-spacing:${ar ? 0 : 6}px;color:${s.accent};margin-bottom:38px}
+  .tag{font:700 ${post.tagSize || 30}px 'Cairo',sans-serif;letter-spacing:${ar ? 0 : 6}px;color:${s.accent};margin-bottom:38px}
   .tag:after{content:'';display:block;width:70px;height:3px;background:${s.accent};margin:22px auto 0}
   h1{font-family:${headFont};font-weight:${ar ? 700 : 500};font-style:${ar ? 'normal' : 'italic'};font-size:${headSize}px;line-height:${ar ? 1.55 : 1.18}}
   .sub{margin-top:34px;font:${ar ? 400 : 600} ${ar ? (post.subSize || (post.scene === 'card' ? 40 : post.sub.length > 50 ? 28 : 34)) : 28}px ${ar ? "'Cairo'" : "'Cormorant'"},serif;letter-spacing:${ar ? 0 : 5}px;opacity:.88}
@@ -238,7 +238,7 @@ function page(post) {
   .ph{position:absolute;inset:0;background-size:cover;background-repeat:no-repeat}
   .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,14,24,.92) 0%,rgba(8,14,24,.78) 38%,rgba(8,14,24,.15) 62%,rgba(8,14,24,.55) 100%)}
   .box{position:absolute;left:${(W - (post.boxW || 960)) / 2}px;width:${post.boxW || 960}px;object-fit:cover;border:3px solid ${s.accent};border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.45)}
-  .credit{position:absolute;bottom:92px;left:60px;right:60px;text-align:center;direction:rtl;font:400 22px 'Cairo',sans-serif;color:#f7f0e2;opacity:.8}
+  .credit{position:absolute;bottom:${post.creditBottom || 92}px;left:60px;right:60px;text-align:center;direction:rtl;font:400 ${post.creditSize || 22}px 'Cairo',sans-serif;color:#f7f0e2;opacity:.8}
   .rows{margin-top:34px;text-align:right;direction:rtl;font:400 ${post.rowSize || 33}px/1.5 'Cairo',sans-serif}
   .rows>div{display:flex;justify-content:space-between;gap:24px;align-items:center;padding:16px 6px;border-bottom:1px solid rgba(226,189,106,.28)}
   .rows>div:last-child{border-bottom:0}
