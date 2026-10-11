@@ -1,0 +1,98 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><style>
+@font-face{font-family:'Amiri';src:url('../../fonts/Amiri-Bold.ttf');font-weight:700}
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Bold.ttf');font-weight:700}
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Regular.ttf');font-weight:400}
+@font-face{font-family:'Cormorant';src:url('../../fonts/Cormorant-SemiBold.ttf');font-weight:600}
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1350px;position:relative;overflow:hidden;background:#f6efe3;font-family:'Cairo'}
+svg{position:absolute;left:0;top:0}
+.top{position:absolute;top:56px;left:60px;right:60px;text-align:center}
+.tag{display:inline-block;font:700 30px 'Cairo';color:#fff;background:#2b2b2b;padding:8px 26px;border-radius:40px}
+.tag b{color:#ff6b6b}
+h1{margin-top:22px;font:700 76px/1.3 'Amiri';color:#2b2622}
+.bottom{position:absolute;bottom:92px;left:60px;right:60px;text-align:center;font:700 64px/1.3 'Amiri';color:#b3151f}
+.bub{position:absolute;background:#fff;border:5px solid #2b2622;border-radius:34px;padding:18px 26px;font:700 36px/1.45 'Cairo';color:#2b2622;text-align:center}
+.bub:after{content:'';position:absolute;width:34px;height:34px;background:#fff;border-right:5px solid #2b2622;border-bottom:5px solid #2b2622}
+.b1{top:350px;right:70px;width:430px}.b1:after{bottom:-21px;right:150px;transform:rotate(45deg)}
+.b2{top:420px;left:50px;width:390px}.b2:after{bottom:-21px;left:110px;transform:rotate(45deg)}
+.handle{position:absolute;bottom:40px;left:0;right:0;text-align:center;direction:ltr;font:600 28px 'Cormorant';letter-spacing:4px;color:#2b2622;opacity:.7}
+</style></head><body>
+<svg width="1080" height="1350" viewBox="0 0 1080 1350">
+ <!-- room -->
+ <rect x="0" y="330" width="1080" height="590" fill="#efd9b8"/>
+ <g opacity=".18" stroke="#b98d55" stroke-width="3">
+  <path d="M0 400H1080M0 470H1080M0 540H1080M0 610H1080M0 680H1080M0 750H1080M0 820H1080M0 890H1080"/></g>
+ <rect x="0" y="920" width="1080" height="240" fill="#a8703f"/>
+ <g stroke="#8a5a30" stroke-width="4"><path d="M0 980H1080M0 1050H1080M0 1120H1080"/></g>
+ <rect x="0" y="1150" width="1080" height="16" fill="#2b2622" opacity=".15"/>
+ <!-- door (left) -->
+ <rect x="40" y="560" width="250" height="370" fill="#7a4b2a" stroke="#2b2622" stroke-width="6"/>
+ <rect x="60" y="580" width="210" height="350" fill="#fff4e0"/>
+ <!-- wall scoreboard between door and sofa -->
+ <rect x="318" y="600" width="236" height="136" rx="12" fill="#1e1e1e" stroke="#2b2622" stroke-width="6"/>
+ <rect x="330" y="612" width="106" height="112" fill="#c8102e"/>
+ <rect x="436" y="612" width="106" height="112" fill="#ffffff"/>
+ <rect x="436" y="628" width="106" height="10" fill="#c8102e"/><rect x="436" y="646" width="106" height="10" fill="#c8102e"/>
+ <text x="383" y="705" font-family="Cairo" font-weight="700" font-size="78" fill="#fff" text-anchor="middle">2</text>
+ <text x="489" y="712" font-family="Cairo" font-weight="700" font-size="78" fill="#2b2622" text-anchor="middle">0</text>
+ <path d="M400 600 L436 570 L472 600" fill="none" stroke="#2b2622" stroke-width="5"/><circle cx="436" cy="568" r="7" fill="#2b2622"/>
+ <!-- sofa -->
+ <rect x="470" y="830" width="560" height="170" rx="40" fill="#5b7f86" stroke="#2b2622" stroke-width="6"/>
+ <rect x="440" y="800" width="90" height="210" rx="40" fill="#4c6d73" stroke="#2b2622" stroke-width="6"/>
+ <rect x="980" y="800" width="90" height="210" rx="40" fill="#4c6d73" stroke="#2b2622" stroke-width="6"/>
+ <rect x="500" y="1000" width="30" height="40" fill="#2b2622"/><rect x="990" y="1000" width="30" height="40" fill="#2b2622"/>
+ <!-- coffee table -->
+ <rect x="330" y="1015" width="300" height="26" rx="8" fill="#7a4b2a" stroke="#2b2622" stroke-width="5"/>
+ <rect x="350" y="1040" width="20" height="70" fill="#2b2622"/><rect x="590" y="1040" width="20" height="70" fill="#2b2622"/>
+ <!-- GUEST in red, lounging -->
+ <g stroke="#2b2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+  <!-- legs on table -->
+  <path d="M640 930 L520 960 L420 990" fill="none" stroke="#1d2f5a" stroke-width="44"/>
+  <path d="M640 930 L520 960 L420 990" fill="none" stroke="#2b2622" stroke-width="6" opacity="0"/>
+  <ellipse cx="400" cy="995" rx="38" ry="20" fill="#2b2622"/>
+  <!-- body -->
+  <path d="M600 760 Q690 730 760 770 L780 930 L620 945 Z" fill="#c8102e"/>
+  <path d="M640 760 L700 800 L740 765" fill="none" stroke="#fff" stroke-width="5"/>
+  <!-- arm with remote -->
+  <path d="M760 800 Q840 820 860 760" fill="none" stroke="#c8102e" stroke-width="40"/>
+  <rect x="845" y="700" width="30" height="74" rx="8" fill="#333" transform="rotate(15 860 737)"/>
+  <circle cx="862" cy="772" r="22" fill="#e8b48a"/>
+  <!-- other arm behind head -->
+  <path d="M620 790 Q560 720 620 690" fill="none" stroke="#c8102e" stroke-width="38"/>
+  <!-- head -->
+  <circle cx="680" cy="690" r="68" fill="#e8b48a"/>
+  <path d="M615 670 Q640 610 700 620 Q745 625 748 675 Q720 645 690 650 Q650 645 615 670Z" fill="#2b2622"/>
+  <path d="M650 690 q10 -8 20 0" fill="none"/><path d="M695 690 q10 -8 20 0" fill="none"/>
+  <path d="M655 718 q28 26 56 0" fill="#fff"/>
+  <path d="M650 712 q35 -6 70 0" fill="none" stroke-width="8"/>
+ </g>
+ <!-- tea glass on table -->
+ <g stroke="#2b2622" stroke-width="4"><path d="M470 965 L478 1015 L506 1015 L514 965 Z" fill="#c9762f" opacity=".9"/></g>
+ <!-- HOST in white with 2 red stripes, at the door, stunned -->
+ <g stroke="#2b2622" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M110 1150 L120 960 L170 960 L175 1150Z" fill="#3a3a3a"/>
+  <path d="M190 1150 L190 960 L240 960 L250 1150Z" fill="#3a3a3a"/>
+  <path d="M95 800 Q175 760 260 800 L250 970 L105 970 Z" fill="#ffffff"/>
+  <path d="M100 840 L255 840" stroke="#c8102e" stroke-width="12"/>
+  <path d="M102 868 L254 868" stroke="#c8102e" stroke-width="12"/>
+  <!-- arms holding tray -->
+  <path d="M105 820 Q60 880 120 900" fill="none" stroke="#fff" stroke-width="36"/>
+  <path d="M250 820 Q300 880 240 900" fill="none" stroke="#fff" stroke-width="36"/>
+  <rect x="90" y="885" width="180" height="16" rx="6" fill="#c9a24a"/>
+  <path d="M120 850 L126 885 L148 885 L154 850Z" fill="#c9762f"/>
+  <path d="M200 850 L206 885 L228 885 L234 850Z" fill="#c9762f"/>
+  <!-- head -->
+  <circle cx="178" cy="720" r="66" fill="#e8b48a"/>
+  <path d="M118 700 Q130 650 180 652 Q232 650 240 705 Q210 680 178 684 Q145 680 118 700Z" fill="#5a3b25"/>
+  <circle cx="155" cy="712" r="12" fill="#fff"/><circle cx="200" cy="712" r="12" fill="#fff"/>
+  <circle cx="155" cy="714" r="5" fill="#2b2622"/><circle cx="200" cy="714" r="5" fill="#2b2622"/>
+  <ellipse cx="178" cy="755" rx="16" ry="20" fill="#7a1a1a"/>
+  <path d="M248 680 q14 22 0 34 q-14 -12 0 -34z" fill="#7cc6ff"/>
+ </g>
+</svg>
+<div class="top"><div class="tag">القمة 133 · <b>الأهلي 2</b> – 0 الزمالك</div><h1>الزمالك كان صاحب الأرض…</h1></div>
+<div class="bub b2">البيت بيتك…<br>بس مش للدرجة دي! 😳</div>
+<div class="bub b1">ما هو أنا قعدت مرتاح…<br>والريموت معايا 😌</div>
+<div class="bottom">بس الأهلي هو اللي قعد في الصالون 😂</div>
+<div class="handle">@batagonun</div>
+</body></html>
