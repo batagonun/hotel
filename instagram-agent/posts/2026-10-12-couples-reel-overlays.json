@@ -1,0 +1,85 @@
+{
+ "width": 1080,
+ "height": 1920,
+ "posts": [
+  {
+   "id": "o1",
+   "scene": "none",
+   "lang": "ar",
+   "transparent": true,
+   "glow": true,
+   "top": 300,
+   "size": 88,
+   "tag": "بين الزوجين",
+   "headline": "أول 3 دقايق<br>في أي خناقة بينكم…",
+   "sub": "ممكن تتنبأ بمستقبل جوازكم",
+   "svg": "<defs><linearGradient id='t' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#000' stop-opacity='.82'/><stop offset='.45' stop-color='#000' stop-opacity='.4'/><stop offset='.6' stop-color='#000' stop-opacity='0'/><stop offset='.86' stop-color='#000' stop-opacity='0'/><stop offset='1' stop-color='#000' stop-opacity='.7'/></linearGradient></defs><rect width='1080' height='1920' fill='url(#t)'/>"
+  },
+  {
+   "id": "o2",
+   "scene": "none",
+   "lang": "ar",
+   "transparent": true,
+   "glow": true,
+   "top": 300,
+   "size": 74,
+   "tag": "العلم بيقول",
+   "headline": "دراسة تابعت متزوجين جُدد<br>6 سنين كاملة",
+   "sub": "طريقة بداية النقاش في أول 3 دقايق تنبأت مين هيكمل ومين هينفصل<br><span style='font-size:26px;opacity:.8'>Carrère &amp; Gottman · Family Process · 1999</span>",
+   "svg": "<defs><linearGradient id='t' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#000' stop-opacity='.82'/><stop offset='.45' stop-color='#000' stop-opacity='.4'/><stop offset='.6' stop-color='#000' stop-opacity='0'/><stop offset='.86' stop-color='#000' stop-opacity='0'/><stop offset='1' stop-color='#000' stop-opacity='.7'/></linearGradient></defs><rect width='1080' height='1920' fill='url(#t)'/>"
+  },
+  {
+   "id": "o3",
+   "scene": "none",
+   "lang": "ar",
+   "transparent": true,
+   "glow": true,
+   "top": 300,
+   "size": 80,
+   "tag": "❌ البداية الهجومية",
+   "headline": "«إنت عمرك<br>ما بتساعد في البيت!»",
+   "sub": "هجوم على الشخص نفسه… فالطرف التاني يدافع ويهاجم",
+   "svg": "<defs><linearGradient id='t' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#000' stop-opacity='.82'/><stop offset='.45' stop-color='#000' stop-opacity='.4'/><stop offset='.6' stop-color='#000' stop-opacity='0'/><stop offset='.86' stop-color='#000' stop-opacity='0'/><stop offset='1' stop-color='#000' stop-opacity='.7'/></linearGradient></defs><rect width='1080' height='1920' fill='url(#t)'/>"
+  },
+  {
+   "id": "o4",
+   "scene": "none",
+   "lang": "ar",
+   "transparent": true,
+   "glow": true,
+   "top": 300,
+   "size": 74,
+   "tag": "✅ البداية الهادية",
+   "headline": "«أنا تعبانة النهارده…<br>ممكن تساعدني في المواعين؟»",
+   "sub": "شكوى من موقف محدد + طلب واضح",
+   "svg": "<defs><linearGradient id='t' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#000' stop-opacity='.82'/><stop offset='.45' stop-color='#000' stop-opacity='.4'/><stop offset='.6' stop-color='#000' stop-opacity='0'/><stop offset='.86' stop-color='#000' stop-opacity='0'/><stop offset='1' stop-color='#000' stop-opacity='.7'/></linearGradient></defs><rect width='1080' height='1920' fill='url(#t)'/>"
+  },
+  {
+   "id": "o5",
+   "scene": "none",
+   "lang": "ar",
+   "transparent": true,
+   "glow": true,
+   "top": 300,
+   "size": 84,
+   "tag": "جرّبوا الصيغة دي",
+   "headline": "أنا حاسس بـ …<br>لما …<br>ومحتاج …",
+   "sub": "من غير «إنت دايمًا» ولا «إنت عمرك ما»",
+   "svg": "<defs><linearGradient id='t' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#000' stop-opacity='.82'/><stop offset='.45' stop-color='#000' stop-opacity='.4'/><stop offset='.6' stop-color='#000' stop-opacity='0'/><stop offset='.86' stop-color='#000' stop-opacity='0'/><stop offset='1' stop-color='#000' stop-opacity='.7'/></linearGradient></defs><rect width='1080' height='1920' fill='url(#t)'/>"
+  },
+  {
+   "id": "o6",
+   "scene": "none",
+   "lang": "ar",
+   "transparent": true,
+   "glow": true,
+   "top": 300,
+   "size": 86,
+   "tag": "احفظه",
+   "headline": "ابعته لشريك حياتك 🤍",
+   "sub": "وجرّبوا البداية الهادية المرة الجاية",
+   "svg": "<defs><linearGradient id='t' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#000' stop-opacity='.82'/><stop offset='.45' stop-color='#000' stop-opacity='.4'/><stop offset='.6' stop-color='#000' stop-opacity='0'/><stop offset='.86' stop-color='#000' stop-opacity='0'/><stop offset='1' stop-color='#000' stop-opacity='.7'/></linearGradient></defs><rect width='1080' height='1920' fill='url(#t)'/>",
+   "credit": "صور حقيقية من ويكيميديا كومنز: Shixart1985 (CC BY 2.0) · AdhiRajamanickam (CC BY-SA 4.0) · freestocks.org (CC0)"
+  }
+ ]
+}
