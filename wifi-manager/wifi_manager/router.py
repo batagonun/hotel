@@ -1,21 +1,20 @@
 """Router integration point for pausing and resuming a device's connection.
 
-The prototype ships without a real router adapter. A concrete adapter will use
-the router's official API (or its documented admin interface) to add the
-device's MAC address to the router's block list and remove it again.
+Only routers with an official API get a blocking adapter. The user's router
+(Soyealink B311-922, supplied by Vodafone) has no published API, so the app
+runs view-only and sends the user to the router's own admin page to block a
+device there.
 """
 
 from __future__ import annotations
 
+import webbrowser
 from abc import ABC, abstractmethod
-
-
-class RouterNotConfigured(RuntimeError):
-    pass
 
 
 class RouterAdapter(ABC):
     name = "router"
+    supports_blocking = False
 
     @abstractmethod
     def block(self, mac: str) -> None:
@@ -26,17 +25,23 @@ class RouterAdapter(ABC):
         """Allow the device with this MAC address back onto the network."""
 
 
-class PlaceholderRouter(RouterAdapter):
-    """Used until a router model is chosen; every action reports it is not set up."""
+class ViewOnlyRouter(RouterAdapter):
+    """A router without an official API: blocking happens in its own admin page."""
 
-    name = "غير مُعدّ"
+    supports_blocking = False
+
+    def __init__(self, name: str, admin_url: str) -> None:
+        self.name = name
+        self.admin_url = admin_url
+
+    def open_admin_page(self) -> None:
+        webbrowser.open(self.admin_url)
 
     def block(self, mac: str) -> None:
-        raise RouterNotConfigured(
-            f"لم يُربط التطبيق بالراوتر بعد، لذلك لم يُوقف اتصال الجهاز {mac}."
-        )
+        raise NotImplementedError("هذا الراوتر لا يوفّر واجهة رسمية للحظر.")
 
-    def unblock(self, mac: str) -> None:
-        raise RouterNotConfigured(
-            f"لم يُربط التطبيق بالراوتر بعد، لذلك لم يُعد اتصال الجهاز {mac}."
-        )
+    unblock = block
+
+
+def default_router() -> ViewOnlyRouter:
+    return ViewOnlyRouter("Soyealink B311-922 (عرض فقط)", "http://192.168.8.1/")

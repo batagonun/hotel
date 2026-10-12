@@ -6,16 +6,16 @@ import threading
 import tkinter as tk
 from tkinter import messagebox, ttk
 
-from .router import PlaceholderRouter, RouterAdapter, RouterNotConfigured
+from .router import ViewOnlyRouter, default_router
 from .scanner import Device, local_network, scan
 
 COLUMNS = (("name", "اسم الجهاز", 240), ("ip", "عنوان IP", 140), ("mac", "عنوان MAC", 170))
 
 
 class App(tk.Tk):
-    def __init__(self, router: RouterAdapter | None = None) -> None:
+    def __init__(self, router: ViewOnlyRouter | None = None) -> None:
         super().__init__()
-        self.router = router or PlaceholderRouter()
+        self.router = router or default_router()
         self.devices: dict[str, Device] = {}
         self.title("الأجهزة المتصلة بالشبكة")
         self.geometry("620x440")
@@ -25,10 +25,8 @@ class App(tk.Tk):
         bar.pack(fill="x")
         self.scan_btn = ttk.Button(bar, text="فحص الشبكة", command=self.start_scan)
         self.scan_btn.pack(side="right")
-        self.block_btn = ttk.Button(bar, text="إيقاف الاتصال", command=lambda: self.router_action(True))
-        self.block_btn.pack(side="right", padx=6)
-        self.unblock_btn = ttk.Button(bar, text="إعادة الاتصال", command=lambda: self.router_action(False))
-        self.unblock_btn.pack(side="right")
+        self.router_btn = ttk.Button(bar, text="فتح صفحة الحظر في الراوتر", command=self.open_router_page)
+        self.router_btn.pack(side="right", padx=6)
         self.status = tk.StringVar(value=f"الراوتر: {self.router.name}")
         ttk.Label(bar, textvariable=self.status, anchor="w").pack(side="left", fill="x", expand=True)
 
@@ -37,19 +35,11 @@ class App(tk.Tk):
             self.tree.heading(key, text=label)
             self.tree.column(key, width=width, anchor="center")
         self.tree.pack(fill="both", expand=True, padx=8, pady=(0, 8))
-        self.tree.bind("<<TreeviewSelect>>", lambda _e: self._update_buttons())
-        self._update_buttons()
         self.after(100, self.start_scan)
 
     def _selected(self) -> Device | None:
         sel = self.tree.selection()
         return self.devices.get(sel[0]) if sel else None
-
-    def _update_buttons(self) -> None:
-        dev = self._selected()
-        state = "normal" if dev and dev.mac and not dev.is_this_pc else "disabled"
-        self.block_btn.configure(state=state)
-        self.unblock_btn.configure(state=state)
 
     def start_scan(self) -> None:
         self.scan_btn.configure(state="disabled")
@@ -84,18 +74,20 @@ class App(tk.Tk):
                 name += " (هذا الجهاز)"
             self.tree.insert("", "end", iid=iid, values=(name, d.ip, d.mac or "—"))
         self.status.set(f"عدد الأجهزة: {len(devices)}  ·  الراوتر: {self.router.name}")
-        self._update_buttons()
 
-    def router_action(self, block: bool) -> None:
+    def open_router_page(self) -> None:
+        """Copy the selected device's MAC, then open the router's admin page to block it there."""
         dev = self._selected()
-        if not dev:
-            return
-        try:
-            (self.router.block if block else self.router.unblock)(dev.mac)
-        except RouterNotConfigured as exc:
-            messagebox.showinfo("الراوتر غير مُعدّ", str(exc))
-            return
-        messagebox.showinfo("تم", "تم إيقاف الاتصال." if block else "تمت إعادة الاتصال.")
+        if dev and dev.mac and not dev.is_this_pc:
+            self.clipboard_clear()
+            self.clipboard_append(dev.mac)
+            messagebox.showinfo(
+                "الحظر من صفحة الراوتر",
+                f"نُسخ عنوان MAC للجهاز ({dev.mac}).\n"
+                "سجّل الدخول إلى صفحة الراوتر، ثم الصقه في قائمة تصفية MAC (القائمة السوداء) "
+                "لإيقاف اتصاله، واحذفه منها لإعادة الاتصال.",
+            )
+        self.router.open_admin_page()
 
 
 def main() -> None:
