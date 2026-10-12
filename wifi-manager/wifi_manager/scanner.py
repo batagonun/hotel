@@ -1,8 +1,10 @@
-"""Discover devices on the local network using a ping sweep plus the OS ARP table.
+"""Discover devices on the local network using ARP requests, ping and the OS ARP table.
 
-Only standard-library tools and the operating system's own `ping` / `arp`
-commands are used, so nothing is sent beyond ordinary ICMP echo requests on the
-user's own subnet.
+Phones often ignore ping (and sleep their Wi-Fi with the screen off), but every
+device must answer an ARP request to stay on the network. On Windows each
+address is therefore resolved with the system's SendARP call, the same lookup
+Windows does before talking to any neighbour. Ping is still sent so the OS ARP
+table fills on other platforms.
 """
 
 from __future__ import annotations
@@ -11,6 +13,7 @@ import ipaddress
 import platform
 import re
 import socket
+import struct
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
@@ -83,6 +86,31 @@ def ping_sweep(network: ipaddress.IPv4Network, workers: int = 64) -> None:
         list(pool.map(_ping, (str(h) for h in network.hosts())))
 
 
+def arp_resolve(ip: str) -> str:
+    """Ask Windows to resolve ip with an ARP request; return its MAC or "" if no answer."""
+    import ctypes
+
+    buf = (ctypes.c_ubyte * 8)()
+    length = ctypes.c_ulong(6)
+    dest = struct.unpack("<I", socket.inet_aton(ip))[0]
+    if ctypes.windll.iphlpapi.SendARP(dest, 0, ctypes.byref(buf), ctypes.byref(length)) != 0:
+        return ""
+    return ":".join(f"{b:02X}" for b in buf[: length.value])
+
+
+def arp_sweep(network: ipaddress.IPv4Network, rounds: int = 2, workers: int = 64) -> dict[str, str]:
+    """Resolve every host by ARP; a second round catches phones that were dozing."""
+    found: dict[str, str] = {}
+    pending = [str(h) for h in network.hosts()]
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        for _ in range(rounds):
+            for ip, mac in zip(pending, pool.map(arp_resolve, pending)):
+                if mac and _is_unicast(ip, mac):
+                    found[ip] = mac
+            pending = [ip for ip in pending if ip not in found]
+    return found
+
+
 def read_arp_table() -> list[tuple[str, str]]:
     out = subprocess.run(["arp", "-a"], capture_output=True, text=True,
                          creationflags=_NO_WINDOW, check=False).stdout
@@ -98,14 +126,21 @@ def resolve_name(ip: str) -> str:
 
 def scan(network: ipaddress.IPv4Network | None = None, sweep: bool = True) -> list[Device]:
     network = network or local_network()
+    found: dict[str, str] = {}
     if sweep:
+        if IS_WINDOWS:
+            found = arp_sweep(network)
         ping_sweep(network)
     me = local_ip()
-    entries = [(ip, mac) for ip, mac in read_arp_table()
-               if ipaddress.ip_address(ip) in network]
+    for ip, mac in read_arp_table():
+        found.setdefault(ip, mac)
+    entries = sorted(((ip, mac) for ip, mac in found.items()
+                      if ipaddress.ip_address(ip) in network),
+                     key=lambda p: ipaddress.ip_address(p[0]))
     with ThreadPoolExecutor(max_workers=16) as pool:
         names = list(pool.map(resolve_name, (ip for ip, _ in entries)))
-    devices = [Device(ip=ip, mac=mac, name=name) for (ip, mac), name in zip(entries, names)]
+    devices = [Device(ip=ip, mac=mac, name=name, is_this_pc=(ip == me))
+               for (ip, mac), name in zip(entries, names)]
     # This PC never appears in its own ARP table, so add it explicitly.
     if all(d.ip != me for d in devices):
         devices.insert(0, Device(ip=me, mac="", name=socket.gethostname(), is_this_pc=True))
