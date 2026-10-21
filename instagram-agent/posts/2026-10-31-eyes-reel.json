@@ -1,0 +1,30 @@
+{
+ "fade": 0.7,
+ "scenes": [
+  {
+   "photo": "assets/photos/b28/ey_dark.png",
+   "overlay": "out/2026-10-31-eyes/ov/o1.png",
+   "dur": 7
+  },
+  {
+   "photo": "assets/photos/b28/ey_eye.png",
+   "overlay": "out/2026-10-31-eyes/ov/o2.png",
+   "dur": 8.5
+  },
+  {
+   "photo": "assets/photos/b28/ey_desk.png",
+   "overlay": "out/2026-10-31-eyes/ov/o3.png",
+   "dur": 9
+  },
+  {
+   "photo": "assets/photos/b28/ey_sea.png",
+   "overlay": "out/2026-10-31-eyes/ov/o4.png",
+   "dur": 9
+  },
+  {
+   "photo": "assets/photos/b28/ey_dark.png",
+   "overlay": "out/2026-10-31-eyes/ov/o5.png",
+   "dur": 7
+  }
+ ]
+}
