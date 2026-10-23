@@ -2,10 +2,12 @@
  "batch": "2026-10-19-batch",
  "post": "2026-10-22-durant",
  "date": "2026-10-22T10:00",
- "status": "scheduled",
+ "status": "failed",
  "format": "REEL",
  "caption": "“We are what we repeatedly do. Excellence, then, is not an act, but a habit.”\n— Will Durant, The Story of Philosophy (1926)\n\nIt’s usually credited to Aristotle, but the words are Durant’s. He wrote them to sum up Aristotle’s idea that we become good at things by doing them, again and again.\n\nYou don’t become a writer the day you publish. You become one on every ordinary morning you sit down and write.\n\n🔸 نحن ما نفعله مرارًا؛ فالتميّز ليس فعلًا عابرًا، بل عادة.\n\nWhat’s one small habit you’re repeating this week? 👇\n\n📚 Source: Will Durant, The Story of Philosophy (1926); Quote Investigator\n📷 Photos: Wikimedia Commons (Quino Al · Jared Sluyter · João Silas · Tamarcus Brown · Thought Catalog, CC0)\n\n#WeeklyWisdom #Habits #Aristotle #WillDurant",
  "media": "out/2026-10-22-durant/2026-10-22-durant.mp4",
  "metricool_id": 399387863,
- "approved": "2026-10-18"
+ "approved": "2026-10-18",
+ "media_url": "https://raw.githubusercontent.com/batagonun/hotel/1f067bdb8849b97fc1e200981e8a0b8d4608e1c8/instagram-agent/out/2026-10-22-durant/2026-10-22-durant.mp4",
+ "failure": "Metricool free plan limit (20 posts/month) reached"
 }
