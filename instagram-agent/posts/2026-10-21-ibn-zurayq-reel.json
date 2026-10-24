@@ -1,0 +1,40 @@
+{
+ "fade": 0.7,
+ "scenes": [
+  {
+   "photo": "assets/photos/b19/iz_baghdad.png",
+   "overlay": "out/2026-10-21-ibn-zurayq/ov/o1.png",
+   "dur": 7
+  },
+  {
+   "photo": "assets/photos/b19/iz_tigris.png",
+   "overlay": "out/2026-10-21-ibn-zurayq/ov/o2.png",
+   "dur": 7.5
+  },
+  {
+   "photo": "assets/photos/b19/iz_cordoba.png",
+   "overlay": "out/2026-10-21-ibn-zurayq/ov/o3.png",
+   "dur": 8
+  },
+  {
+   "photo": "assets/photos/b19/iz_ms.png",
+   "overlay": "out/2026-10-21-ibn-zurayq/ov/o4.png",
+   "dur": 10
+  },
+  {
+   "photo": "assets/photos/b19/iz_arcos.png",
+   "overlay": "out/2026-10-21-ibn-zurayq/ov/o5.png",
+   "dur": 10
+  },
+  {
+   "photo": "assets/photos/b19/iz_tigris.png",
+   "overlay": "out/2026-10-21-ibn-zurayq/ov/o6.png",
+   "dur": 8.5
+  },
+  {
+   "photo": "assets/photos/b19/iz_baghdad.png",
+   "overlay": "out/2026-10-21-ibn-zurayq/ov/o7.png",
+   "dur": 7.5
+  }
+ ]
+}

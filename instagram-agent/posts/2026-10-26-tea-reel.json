@@ -1,0 +1,30 @@
+{
+ "fade": 0.7,
+ "scenes": [
+  {
+   "photo": "assets/photos/b25/te_cup.png",
+   "overlay": "out/2026-10-26-tea/ov/o1.png",
+   "dur": 7
+  },
+  {
+   "photo": "assets/photos/b25/te_lentil.png",
+   "overlay": "out/2026-10-26-tea/ov/o2.png",
+   "dur": 9
+  },
+  {
+   "photo": "assets/photos/b25/te_beans.png",
+   "overlay": "out/2026-10-26-tea/ov/o3.png",
+   "dur": 9
+  },
+  {
+   "photo": "assets/photos/b25/te_clock.png",
+   "overlay": "out/2026-10-26-tea/ov/o4.png",
+   "dur": 8.5
+  },
+  {
+   "photo": "assets/photos/b25/te_pitcher.png",
+   "overlay": "out/2026-10-26-tea/ov/o5.png",
+   "dur": 7.5
+  }
+ ]
+}
