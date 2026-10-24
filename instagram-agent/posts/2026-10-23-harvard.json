@@ -2,7 +2,7 @@
  "batch": "2026-10-19-batch",
  "post": "2026-10-23-harvard",
  "date": "2026-10-23T10:00",
- "status": "rescheduled_evening",
+ "status": "published",
  "format": "REEL",
  "caption": "لو سألتك: إيه اللي بيخلّي الواحد يعجّز وهو مبسوط وصحته كويسة… هتقول إيه؟\n\nسنة 1938 جامعة هارفارد بدأت تتابع 268 طالب عندها، وبعدين انضم للدراسة 456 راجل من أفقر أحياء بوسطن. وفضلوا يتابعوهم عشرات السنين.\n\nالنتيجة؟ مش الفلوس ولا الشهرة. روبرت والدينجر، مدير الدراسة، بيقول إن اللي كانوا أرضى عن علاقاتهم وهم عندهم 50 سنة كانوا الأصحّ لما وصلوا 80.\n\nيعني القعدة مع صحابك، والتليفون لأخوك، والعشا مع أهلك… مش رفاهية.\n\nكلّم حد وحشك النهارده. ومين أول حد جه في بالك؟ 👇\n\n📚 المصدر: Harvard Gazette (أبريل 2017)، «Over nearly 80 years, Harvard study has been showing how to live a healthy and happy life»\n📷 الصور: ويكيميديا كومنز (Lotte Meijer · Aman Shrivastava · Priscilla Du Preez · Scott Webb، CC0)\n\n#سعادة #علاقات #صحة_نفسية #دراسة_هارفارد",
  "media": "out/2026-10-23-harvard/2026-10-23-harvard.mp4",
@@ -11,5 +11,10 @@
  "media_url": "https://raw.githubusercontent.com/batagonun/hotel/1f067bdb8849b97fc1e200981e8a0b8d4608e1c8/instagram-agent/out/2026-10-23-harvard/2026-10-23-harvard.mp4",
  "failure": "Metricool free plan limit (20 posts/month) reached",
  "rescheduled_to": "2026-10-24T19:00",
- "publish_via": "composio"
+ "publish_via": "composio",
+ "ig_media_id": "18130212013867537",
+ "url": "https://www.instagram.com/reel/De4qq2TjV06/",
+ "published_via": "composio",
+ "published_at": "2026-10-24T17:27:33Z",
+ "note": "تأخر لـ19:27 لأن جلسة إنستقرام اتلغت بعد تعديلات ميتا وتمت إعادة الربط"
 }
