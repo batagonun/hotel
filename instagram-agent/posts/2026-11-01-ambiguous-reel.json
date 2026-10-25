@@ -1,0 +1,35 @@
+{
+ "fade": 0.7,
+ "scenes": [
+  {
+   "photo": "assets/photos/b32/ab_window.png",
+   "overlay": "out/2026-11-01-ambiguous/ov/o1.png",
+   "dur": 7
+  },
+  {
+   "photo": "assets/photos/b32/ab_chair.png",
+   "overlay": "out/2026-11-01-ambiguous/ov/o2.png",
+   "dur": 8
+  },
+  {
+   "photo": "assets/photos/b32/ab_phone.png",
+   "overlay": "out/2026-11-01-ambiguous/ov/o3.png",
+   "dur": 8.5
+  },
+  {
+   "photo": "assets/photos/b32/ab_door.png",
+   "overlay": "out/2026-11-01-ambiguous/ov/o4.png",
+   "dur": 8.5
+  },
+  {
+   "photo": "assets/photos/b32/ab_beach.png",
+   "overlay": "out/2026-11-01-ambiguous/ov/o5.png",
+   "dur": 9
+  },
+  {
+   "photo": "assets/photos/b32/ab_town.png",
+   "overlay": "out/2026-11-01-ambiguous/ov/o6.png",
+   "dur": 7.5
+  }
+ ]
+}
