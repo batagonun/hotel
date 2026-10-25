@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__composio_4_u__COMPOSIO_MULTI_EXECUTE_TOOL",
+      "mcp__composio_4_u__COMPOSIO_MANAGE_CONNECTIONS",
+      "mcp__composio_4_u__COMPOSIO_SEARCH_TOOLS",
+      "mcp__composio_4_u__COMPOSIO_GET_TOOL_SCHEMAS",
+      "mcp__Firecrawl__firecrawl_search",
+      "mcp__Firecrawl__firecrawl_scrape",
+      "PushNotification",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(node tools/render.mjs:*)",
+      "Bash(python3 tools/story.py:*)"
+    ]
+  }
+}
