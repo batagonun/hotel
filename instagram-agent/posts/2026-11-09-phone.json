@@ -2,10 +2,11 @@
  "batch": "2026-11-w45",
  "post": "2026-11-09-phone",
  "date": "2026-11-09T10:00",
- "status": "draft",
+ "status": "scheduled",
  "format": "REEL",
  "caption": "بتاكل وعينك على الموبايل؟ زي معظمنا 📱\n\nمراجعة جمعت 24 دراسة لقت إن اللي بياكل وهو مشغول، قدام شاشة أو تليفون، مخه ما بيسجّلش الأكل كويس. فبعد ساعتين تقريبًا بيجوع أسرع، وبياكل أكتر في الوجبة اللي بعدها.\n\nوالعكس صحيح: اللي ركّز في أكله وافتكره كويس أكل أقل بعدها.\n\nجرّب في الوجبة الجاية: الموبايل بعيد، و10 دقايق للأكل بس.\n\nابعته لحد بياكل قدام التليفون 👇\n\n📚 المصدر: Robinson et al., «Eating attentively», American Journal of Clinical Nutrition (2013)\n🎬 الفيديو: Pexels (MART PRODUCTION · Tima Miroshnichenko · Mizuno K)\n\n#عادات_صحية #أكل_صحي #الموبايل #صحة",
  "media": "out/2026-11-09-phone/2026-11-09-phone.mp4",
  "publish_via": "composio",
- "media_url": "https://raw.githubusercontent.com/batagonun/hotel/40cc0ad8800901c1c553aa4f3892be4ebd83d57a/instagram-agent/out/2026-11-09-phone/2026-11-09-phone.mp4"
+ "media_url": "https://raw.githubusercontent.com/batagonun/hotel/40cc0ad8800901c1c553aa4f3892be4ebd83d57a/instagram-agent/out/2026-11-09-phone/2026-11-09-phone.mp4",
+ "approved": "2026-10-29"
 }

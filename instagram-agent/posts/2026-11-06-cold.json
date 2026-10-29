@@ -2,10 +2,11 @@
  "batch": "2026-11-w45",
  "post": "2026-11-06-cold",
  "date": "2026-11-06T10:00",
- "status": "draft",
+ "status": "scheduled",
  "format": "REEL",
  "caption": "البرد هو اللي بيعيّيك؟ مش بالظبط 🤧\n\nاللي بيعيّيك هو الفيروس. بس البرد بيضعّف خط الدفاع اللي جوّه مناخيرك.\n\nفي تجربة نُشرت سنة 2023، متطوعين قعدوا ربع ساعة في جو 4.4 درجة، فحرارة مناخيرهم نزلت حوالي 5 درجات. والنتيجة؟ الجزيئات الصغيرة اللي الأنف بيطلّعها عشان تمسك الفيروسات قلّت حوالي 42%.\n\nعشان كده في الشتا:\n🔹 غطّي مناخيرك ووشّك بكوفية لما تخرج في البرد\n🔹 واغسل إيدك كويس، لأن الفيروس لازم يوصل الأول\n\nابعته لحد بيخرج من غير جاكيت 👇\n\nملحوظة: دي معلومة عامة، ومش بديل لكلام دكتورك.\n\n📚 المصدر: Huang et al., Journal of Allergy and Clinical Immunology (2023) · ملخص AAAAI · EurekAlert\n🎬 الفيديو: Pexels (Евгений Шухман · Polina Kovaleva · cottonbro studio)\n\n#الشتا #البرد #صحة #معلومة",
  "media": "out/2026-11-06-cold/2026-11-06-cold.mp4",
  "publish_via": "composio",
- "media_url": "https://raw.githubusercontent.com/batagonun/hotel/ac33548f60812304a3feeb9599c2bb3e2de786cc/instagram-agent/out/2026-11-06-cold/2026-11-06-cold.mp4"
+ "media_url": "https://raw.githubusercontent.com/batagonun/hotel/ac33548f60812304a3feeb9599c2bb3e2de786cc/instagram-agent/out/2026-11-06-cold/2026-11-06-cold.mp4",
+ "approved": "2026-10-29"
 }
