@@ -22,7 +22,7 @@ const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
 await page.goto('file://' + path.resolve(html), { waitUntil: 'load' });
 await page.evaluate(() => document.fonts.ready);
 const size = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.scrollHeight]);
-await page.setViewportSize({ width: size[0], height: Math.min(size[1], 1920) });
+await page.setViewportSize({ width: Math.min(size[0], 1080), height: Math.min(size[1], 1920) });
 
 let ff;
 if (out.endsWith('/')) fs.mkdirSync(out, { recursive: true });

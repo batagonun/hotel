@@ -1,0 +1,47 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Regular.ttf');font-weight:400}
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Bold.ttf');font-weight:700}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#f6efe3;color:#2a1f1a;direction:rtl;font-family:'Cairo'}
+.c{position:absolute;left:0;right:0;text-align:center}
+#hook{top:180px;font:700 84px/1.45 'Cairo';padding:0 60px}
+#hook b{color:#c4473a}
+#stages{position:absolute;top:840px;left:90px;right:90px}
+.st{display:flex;align-items:center;gap:30px;margin-bottom:90px;opacity:0}
+.num{flex:0 0 330px;font:700 150px/1 'Cairo';direction:ltr;text-align:left;color:#2f8f6b}
+.num small{font-size:56px;margin-left:10px;color:#7a4b2a}
+.lab{font:700 58px/1.35 'Cairo'}
+.lab span{display:block;font:400 42px 'Cairo';color:#7a4b2a}
+#bar{position:absolute;top:1620px;left:90px;right:90px;height:44px;border-radius:22px;background:#e4d8c6;overflow:hidden;direction:ltr}
+#fill{height:100%;width:0;background:linear-gradient(90deg,#2f8f6b,#e9a23b,#c4473a)}
+#end{top:1300px;font:700 70px/1.5 'Cairo';padding:0 70px;opacity:0}
+#end b{color:#2f8f6b}
+#src{bottom:120px;font:400 34px/1.5 'Cairo';padding:0 60px;opacity:0;color:#5a4636}
+#h{bottom:50px;font:600 30px 'Cairo';letter-spacing:4px;opacity:.55;direction:ltr}
+</style></head><body>
+<div class="c" id="hook">عشان حد يبقى<br><b>صاحبك بجد</b>…<br>محتاجين نقعد مع بعض قد إيه؟</div>
+<div id="stages">
+ <div class="st" id="s1"><div class="num"><span id="n1">0</span><small>ساعة</small></div><div class="lab">من معرفة لـ«زميل»<span>بنهزر ونتكلم</span></div></div>
+ <div class="st" id="s2"><div class="num"><span id="n2">0</span><small>ساعة</small></div><div class="lab">لـ«صاحب»<span>بنخرج ونحكي</span></div></div>
+ <div class="st" id="s3"><div class="num"><span id="n3">0</span><small>+ساعة</small></div><div class="lab">لـ«صاحب قريب»<span>اللي بتكلمه وقت الشدة</span></div></div>
+</div>
+<div id="bar"><div id="fill"></div></div>
+<div class="c" id="end">الصحاب مش بتتلاقي…<br><b>بتتبني بالوقت</b><br>كلّم صاحبك النهارده</div>
+<div class="c" id="src">المصدر: Jeffrey Hall، Journal of Social and Personal Relationships (2018)، جامعة كانساس</div>
+<div class="c" id="h">@batagonun</div>
+<script>
+const cl=v=>Math.max(0,Math.min(1,v)),ease=v=>1-Math.pow(1-cl(v),3);
+const $=id=>document.getElementById(id);
+function show(el,a,y=0){el.style.opacity=a;el.style.transform='translateY('+y+'px)'}
+const S=[[1,'n1',50,2.6],[2,'n2',90,5.6],[3,'n3',200,8.6]];
+window.frame=function(t){
+ const out=cl((t-14.6)/0.6);
+ show($('hook'),ease(t/0.6)*(1-out*0.0),(1-ease(t/0.6))*30);
+ S.forEach(([i,id,v,t0])=>{const k=ease((t-t0)/0.6);show($('s'+i),k*(1-out),(1-k)*40);$(id).textContent=Math.round(v*ease((t-t0)/1.6))});
+ const kb=cl((t-2.6)/8);$('bar').style.opacity=1-out;$('fill').style.width=(100*ease(kb))+'%';
+ $('stages').style.opacity=1-out;
+ const ke=ease((t-15.2)/0.8);show($('end'),ke,(1-ke)*30);
+ if(t>15)$('end').style.top='760px';
+ show($('src'),ease((t-11.5)/0.8));
+};
+window.frame(0);
+</script></body></html>
