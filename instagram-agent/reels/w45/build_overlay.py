@@ -10,7 +10,7 @@ html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:transpa
 .cap{position:absolute;top:230px;left:60px;right:60px;text-align:center;color:#fff;font:700 88px/1.45 'Cairo';text-shadow:0 4px 24px rgba(0,0,0,.6);display:none}
 .cap span{display:inline-block;margin:0 10px}
 .cap .y{color:#ffd166}
-.sub{position:absolute;left:80px;right:80px;text-align:center;color:#fff;font:400 54px/1.55 'Cairo';text-shadow:0 3px 16px rgba(0,0,0,.75);display:none}
+.sub{position:absolute;left:70px;right:70px;text-align:center;color:#fff;font:400 62px/1.5 'Cairo';text-shadow:0 3px 16px rgba(0,0,0,.75);display:none}
 .sub b{color:#ffd166}
 .pill{display:inline-block;background:#ffd166;color:#1d1a16;border-radius:40px;padding:4px 34px;font:700 46px 'Cairo';margin-bottom:22px}
 .src{position:absolute;bottom:120px;left:50px;right:50px;text-align:center;color:#fff;font:400 31px/1.5 'Cairo';opacity:0}

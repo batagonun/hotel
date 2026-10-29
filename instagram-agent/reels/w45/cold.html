@@ -7,21 +7,21 @@ html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:transpa
 .cap{position:absolute;top:230px;left:60px;right:60px;text-align:center;color:#fff;font:700 88px/1.45 'Cairo';text-shadow:0 4px 24px rgba(0,0,0,.6);display:none}
 .cap span{display:inline-block;margin:0 10px}
 .cap .y{color:#ffd166}
-.sub{position:absolute;left:80px;right:80px;text-align:center;color:#fff;font:400 54px/1.55 'Cairo';text-shadow:0 3px 16px rgba(0,0,0,.75);display:none}
+.sub{position:absolute;left:70px;right:70px;text-align:center;color:#fff;font:400 62px/1.5 'Cairo';text-shadow:0 3px 16px rgba(0,0,0,.75);display:none}
 .sub b{color:#ffd166}
 .pill{display:inline-block;background:#ffd166;color:#1d1a16;border-radius:40px;padding:4px 34px;font:700 46px 'Cairo';margin-bottom:22px}
 .src{position:absolute;bottom:120px;left:50px;right:50px;text-align:center;color:#fff;font:400 31px/1.5 'Cairo';opacity:0}
 .h{position:absolute;bottom:50px;left:0;right:0;text-align:center;color:#fff;font:600 30px 'Cairo';letter-spacing:4px;opacity:.7;direction:ltr}
 </style></head><body><div class="shade"></div><div class="shadeb"></div>
-<div class="cap" id="c0"><span class="">البرد</span> <span class="">هو</span> <span class="y">اللي</span><br><span class="y">بيعيّيك؟</span></div>
-<div class="cap" id="c1"><span class="">اللي</span> <span class="">بيعيّيك</span><br><span class="">هو</span> <span class="y">الفيروس…</span></div>
-<div class="cap" id="c2" style="font-size:76px"><div class="pill">مجلة الحساسية والمناعة · 2023</div><br><span class="">لما</span> <span class="">مناخيرك</span> <span class="y">تبرد</span><br><span class="">حوالي</span> <span class="">5</span> <span class="">درجات</span> <span class="">بس</span></div>
+<div class="cap" id="c0" style="font-size:102px"><span class="">البرد</span> <span class="">هو</span> <span class="y">اللي</span><br><span class="y">بيعيّيك؟</span></div>
+<div class="cap" id="c1" style="font-size:102px"><span class="">اللي</span> <span class="">بيعيّيك</span><br><span class="">هو</span> <span class="y">الفيروس…</span></div>
+<div class="cap" id="c2" style="font-size:90px"><div class="pill">مجلة الحساسية والمناعة · 2023</div><br><span class="">لما</span> <span class="">مناخيرك</span> <span class="y">تبرد</span><br><span class="">حوالي</span> <span class="">5</span> <span class="">درجات</span> <span class="">بس</span></div>
 <div class="sub" id="x0" style="top:620px">مش بالظبط…</div>
 <div class="sub" id="x1" style="top:620px">بس البرد بيضعّف <b>خط الدفاع</b><br>اللي جوّه مناخيرك</div>
 <div class="sub" id="x2" style="top:720px">الجزيئات اللي بتصطاد الفيروسات<br>بتقلّ <b>حوالي 42%</b></div>
 <div class="sub" id="x3" style="top:720px">غطّي مناخيرك بكوفية في البرد<br><b>وابعته لحد بيخرج من غير جاكيت</b></div>
 <div class="src" id="src">المصدر: Huang وزملاؤه، J Allergy Clin Immunol (2023) · ملخص AAAAI · الفيديو: Pexels (Евгений Шухман · Polina Kovaleva · cottonbro studio)</div><div class="h">@batagonun</div><script>
-const C=[[0, 5.4, 0.28], [5.7, 11.6, 0.28], [11.9, 21, 0.28]],S=[[2.4, 5.4], [7.4, 11.6], [13.6, 17.4], [17.6, 21]],SRC_AT=15.5;
+const C=[[0, 5.4, 0.28], [5.7, 11.6, 0.28], [11.9, 23, 0.28]],S=[[2.4, 5.4], [7.4, 11.6], [13.6, 18.6], [18.8, 23]],SRC_AT=15.5;
 const cl=v=>Math.max(0,Math.min(1,v)),ease=v=>1-Math.pow(1-cl(v),3);
 function show(el,a,y=0,s=1){el.style.opacity=a;el.style.transform='translateY('+y+'px) scale('+s+')'}
 window.frame=function(t){
