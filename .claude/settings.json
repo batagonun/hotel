@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "ToolSearch",
+      "ReadNotifications",
+      "PushNotification",
+      "mcp__composio_4_u__*",
+      "mcp__Firecrawl__*",
+      "Bash"
+    ]
+  }
+}

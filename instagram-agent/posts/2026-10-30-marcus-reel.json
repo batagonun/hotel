@@ -1,0 +1,30 @@
+{
+ "fade": 0.7,
+ "scenes": [
+  {
+   "photo": "assets/photos/b28/ma_bust.png",
+   "overlay": "out/2026-10-30-marcus/ov/o1.png",
+   "dur": 10
+  },
+  {
+   "photo": "assets/photos/b28/ma_rider.png",
+   "overlay": "out/2026-10-30-marcus/ov/o2.png",
+   "dur": 10
+  },
+  {
+   "photo": "assets/photos/b28/ma_yarn.png",
+   "overlay": "out/2026-10-30-marcus/ov/o3.png",
+   "dur": 10
+  },
+  {
+   "photo": "assets/photos/b28/ma_ball.png",
+   "overlay": "out/2026-10-30-marcus/ov/o4.png",
+   "dur": 10
+  },
+  {
+   "photo": "assets/photos/b28/ma_bust.png",
+   "overlay": "out/2026-10-30-marcus/ov/o5.png",
+   "dur": 9
+  }
+ ]
+}

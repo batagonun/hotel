@@ -1,0 +1,35 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Regular.ttf');font-weight:400}
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Bold.ttf');font-weight:700}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:transparent;direction:rtl}
+.shade{position:absolute;left:0;right:0;top:0;height:1150px;background:linear-gradient(180deg,rgba(0,0,0,.8),rgba(0,0,0,.6) 65%,rgba(0,0,0,0))}
+.shadeb{position:absolute;left:0;right:0;bottom:0;height:440px;background:linear-gradient(0deg,rgba(0,0,0,.72),rgba(0,0,0,0))}
+.cap{position:absolute;top:230px;left:60px;right:60px;text-align:center;color:#fff;font:700 88px/1.45 'Cairo';text-shadow:0 4px 24px rgba(0,0,0,.6);display:none}
+.cap span{display:inline-block;margin:0 10px}
+.cap .y{color:#ffd166}
+.sub{position:absolute;left:80px;right:80px;text-align:center;color:#fff;font:400 54px/1.55 'Cairo';text-shadow:0 3px 16px rgba(0,0,0,.75);display:none}
+.sub b{color:#ffd166}
+.pill{display:inline-block;background:#ffd166;color:#1d1a16;border-radius:40px;padding:4px 34px;font:700 46px 'Cairo';margin-bottom:22px}
+.src{position:absolute;bottom:120px;left:50px;right:50px;text-align:center;color:#fff;font:400 31px/1.5 'Cairo';opacity:0}
+.h{position:absolute;bottom:50px;left:0;right:0;text-align:center;color:#fff;font:600 30px 'Cairo';letter-spacing:4px;opacity:.7;direction:ltr}
+</style></head><body><div class="shade"></div><div class="shadeb"></div>
+<div class="cap" id="c0"><span class="">بتاكل</span> <span class="">وعينك</span><br><span class="">على</span> <span class="y">الموبايل؟</span></div>
+<div class="cap" id="c1"><span class="">مخك</span> <span class="y">مش</span> <span class="y">واخد</span> <span class="y">باله</span><br><span class="">من</span> <span class="">اللي</span> <span class="">كلته</span></div>
+<div class="cap" id="c2" style="font-size:76px"><div class="pill">مراجعة لـ24 دراسة · 2013</div><br><span class="">وبعدها</span> <span class="">بساعتين</span><br><span class="y">بتاكل</span> <span class="y">أكتر</span></div>
+<div class="sub" id="x0" style="top:620px">زي معظمنا</div>
+<div class="sub" id="x1" style="top:620px">فما بيفتكرش إنك شبعت</div>
+<div class="sub" id="x2" style="top:720px">اللي أكلوا وهم مشغولين<br>أكلوا <b>أكتر في الوجبة اللي بعدها</b></div>
+<div class="sub" id="x3" style="top:720px">الوجبة الجاية: الموبايل بعيد<br><b>وابعته لحد بياكل قدام التليفون</b></div>
+<div class="src" id="src">المصدر: Robinson وزملاؤه، American Journal of Clinical Nutrition (2013) · الفيديو: Pexels (MART PRODUCTION · Tima Miroshnichenko · Mizuno K)</div><div class="h">@batagonun</div><script>
+const C=[[0, 5.4, 0.28], [5.7, 11.6, 0.28], [11.9, 21, 0.28]],S=[[2.4, 5.4], [7.4, 11.6], [13.6, 17.4], [17.6, 21]],SRC_AT=15.5;
+const cl=v=>Math.max(0,Math.min(1,v)),ease=v=>1-Math.pow(1-cl(v),3);
+function show(el,a,y=0,s=1){el.style.opacity=a;el.style.transform='translateY('+y+'px) scale('+s+')'}
+window.frame=function(t){
+ C.forEach((c,i)=>{const el=document.getElementById('c'+i);const on=t>=c[0]&&t<c[1];el.style.display=on?'block':'none';if(!on)return;
+  const out=cl((c[1]-t)/0.4);[...el.querySelectorAll('span')].forEach((w,j)=>{const k=ease((t-c[0]-0.15-j*c[2])/0.45);show(w,k*out,(1-k)*30,0.85+0.15*k)});
+  const p=el.querySelector('.pill');if(p)show(p,ease((t-c[0])/0.5)*out)});
+ S.forEach((s,i)=>{const el=document.getElementById('x'+i);const on=t>=s[0]&&t<s[1];el.style.display=on?'block':'none';if(on){const k=ease((t-s[0])/0.6);show(el,k*cl((s[1]-t)/0.4),(1-k)*20)}});
+ document.getElementById('src').style.opacity=ease((t-SRC_AT)/0.8);
+};
+window.frame(0);
+</script></body></html>
