@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة المشرف</title>
+<style>
+  :root { --ink:#15233C; --gold:#B9953F; --bg:#f4f6f8; --card:#fff; --mut:#6b7280; --ok:#1f7a4d; --bad:#b42318; --warn:#b26b00; --line:#e3e7ec; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: "Segoe UI", Tahoma, Arial, sans-serif; background:var(--bg); color:#1b1f24; }
+  header { background:var(--ink); color:#fff; padding:14px 22px; display:flex; align-items:center; gap:16px; border-bottom:4px solid var(--gold); }
+  header h1 { font-size:20px; margin:0; flex:1; }
+  header .net { font-size:13px; opacity:.9; }
+  main { max-width:1150px; margin:18px auto; padding:0 16px; display:grid; gap:16px; grid-template-columns: 1fr 1fr; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; }
+  section.wide { grid-column: 1 / -1; }
+  h2 { font-size:16px; margin:0 0 10px; color:var(--ink); display:flex; align-items:center; gap:8px; }
+  .badge { background:var(--gold); color:#fff; border-radius:12px; padding:1px 9px; font-size:13px; }
+  .row { display:flex; align-items:center; gap:10px; padding:10px 0; border-top:1px solid var(--line); }
+  .row:first-of-type { border-top:none; }
+  .who { flex:1; }
+  .who b { display:block; font-size:15px; }
+  .who span { color:var(--mut); font-size:13px; }
+  button { font:inherit; border:0; border-radius:7px; padding:7px 14px; cursor:pointer; color:#fff; background:var(--ink); }
+  button.ok { background:var(--ok); } button.bad { background:var(--bad); } button.sec { background:#e8ebf0; color:var(--ink); }
+  .empty { color:var(--mut); font-size:14px; padding:6px 0; }
+  .pending { background:#fff8e6; border-radius:8px; padding:10px; border-top:none; margin-bottom:6px; animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 50% { background:#ffefc2; } }
+  .dot { width:9px; height:9px; border-radius:50%; background:var(--ok); display:inline-block; }
+  .dot.idle { background:var(--warn); }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  td { padding:5px 4px; border-top:1px solid var(--line); vertical-align:top; }
+  td.t { color:var(--mut); white-space:nowrap; width:120px; }
+  .help { color:var(--mut); font-size:13px; line-height:1.7; margin:0; }
+</style>
+</head>
+<body>
+<header><h1>لوحة المشرف – خادم التفتيش المحلي</h1><div class="net" id="net"></div></header>
+<main>
+  <section><h2>طلبات الاتصال <span class="badge" id="nreq">0</span></h2><div id="reqs"></div></section>
+  <section><h2>المتصلون الآن <span class="badge" id="nses">0</span></h2><div id="sess"></div>
+    <div style="margin-top:8px"><button class="bad" id="endall" hidden>إنهاء كل الاتصالات</button></div></section>
+  <section><h2>الأندية</h2><div id="clubs"></div></section>
+  <section><h2>السجل</h2><table id="log"></table></section>
+  <section class="wide"><p class="help">
+    يتصل المفتش بـ Wi-Fi الإدارة، ثم يفتح في البرنامج «الاتصال بالإدارة» ويختار هذا الخادم ويضغط «طلب اتصال»، فيظهر طلبه هنا.
+    الاعتماد صالح لجلسة واحدة فقط: ينتهي عندما تضغط «إنهاء»، أو عندما يُنهيه المفتش، أو بعد <span id="idle">15</span> دقيقة من انقطاع هاتفه عن الشبكة.
+    بعد ذلك يطلب المفتش الاتصال من جديد. التفتيشات المرفوعة تُحفظ في مجلد كل نادي داخل مجلد <b>الأندية</b>.
+  </p></section>
+</main>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ago = sec => sec < 60 ? 'الآن' : sec < 3600 ? `منذ ${Math.floor(sec/60)} د` : `منذ ${Math.floor(sec/3600)} س`;
+const tm = t => new Date(t*1000).toLocaleString('ar-EG', {hour:'2-digit', minute:'2-digit', day:'numeric', month:'numeric'});
+const EV = { access_requested:'طلب اتصال', access_approved:'اعتماد', access_rejected:'رفض', session_ended_by_supervisor:'إنهاء من المشرف',
+  session_closed_by_device:'خروج المفتش', session_expired:'انتهاء الجلسة', inspection_received:'استلام تفتيش', inspection_deleted:'حذف تفتيش',
+  config_saved:'حفظ الإعدادات', error:'خطأ' };
+let lastReq = 0;
+async function post(p, b) { const r = await fetch(p, {method:'POST', body: JSON.stringify(b||{})}); return r.json(); }
+async function refresh() {
+  let s; try { s = await (await fetch('/admin/api/state')).json(); } catch (e) { $('#net').textContent = 'تعذر الاتصال بالخادم'; return; }
+  $('#net').textContent = s.ips.length ? 'عنوان الخادم: ' + s.ips.map(i => i + ':' + s.port).join(' · ') : 'غير متصل بشبكة';
+  $('#idle').textContent = s.idleMin;
+  $('#nreq').textContent = s.requests.length;
+  $('#reqs').innerHTML = s.requests.length ? s.requests.map(r => `<div class="row pending"><div class="who"><b>${esc(r.inspectorName || 'مفتش')}</b>
+    <span>${esc(r.deviceName)} · ${esc(r.ip)} · ${ago(Date.now()/1000 - r.at)}</span></div>
+    <button class="ok" data-a="approve" data-id="${r.id}">اعتماد</button><button class="bad" data-a="reject" data-id="${r.id}">رفض</button></div>`).join('')
+    : '<div class="empty">لا توجد طلبات معلّقة</div>';
+  if (s.requests.length > lastReq) { document.title = '(' + s.requests.length + ') طلب اتصال'; try { new AudioContext().resume(); } catch (e) {} }
+  else if (!s.requests.length) document.title = 'لوحة المشرف';
+  lastReq = s.requests.length;
+  $('#nses').textContent = s.sessions.length;
+  $('#endall').hidden = s.sessions.length < 2;
+  $('#sess').innerHTML = s.sessions.length ? s.sessions.map(x => `<div class="row"><span class="dot ${x.idleSec > 120 ? 'idle' : ''}"></span>
+    <div class="who"><b>${esc(x.inspectorName || 'مفتش')}</b><span>${esc(x.deviceName)} · ${esc(x.ip)} · معتمد ${tm(x.approvedAt)} · آخر نشاط ${ago(x.idleSec)}</span></div>
+    <button class="bad" data-a="end" data-id="${esc(x.id)}">إنهاء الاتصال</button></div>`).join('')
+    : '<div class="empty">لا يوجد مفتش متصل</div>';
+  $('#clubs').innerHTML = s.clubs.length ? s.clubs.map(c => `<div class="row"><div class="who"><b>${esc(c.name)}</b><span>${c.inspections} تفتيش · ${c.outputs} ملف مخرجات</span></div>
+    <button class="sec" data-a="openclub" data-name="${esc(c.name)}">فتح المجلد</button></div>`).join('')
+    : '<div class="empty">لم تصل تفتيشات بعد</div>';
+  $('#log').innerHTML = s.log.map(l => `<tr><td class="t">${tm(l.t)}</td><td>${EV[l.event] || esc(l.event)}${l.inspector ? ' – ' + esc(l.inspector) : ''}${l.device ? ' (' + esc(l.device) + ')' : ''}${l.club ? ' – ' + esc(l.club) + (l.place ? ' / ' + esc(l.place) : '') : ''}${l.reason ? ' – ' + esc(l.reason) : ''}${l.error ? ' – ' + esc(l.error) : ''}</td></tr>`).join('');
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  const a = b.dataset.a;
+  if (a === 'end' && !confirm('إنهاء اتصال هذا المفتش؟ سيحتاج إلى طلب اتصال جديد.')) return;
+  const r = await post('/admin/api/' + a, a === 'openclub' ? {name: b.dataset.name} : {id: b.dataset.id});
+  if (!r.ok) alert(r.error || 'تعذر التنفيذ');
+  refresh();
+});
+$('#endall').onclick = async () => { if (confirm('إنهاء اتصال جميع المفتشين؟')) { await post('/admin/api/end', {all: true}); refresh(); } };
+refresh(); setInterval(refresh, 2000);
+</script>
+</body>
+</html>
