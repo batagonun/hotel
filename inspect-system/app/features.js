@@ -228,7 +228,7 @@ function fullChecklist(i) {
   const rows = i.snap.axes.map(a => `<tr class="axrow"><th colspan="5">${esc(a.name)} <span class="mut">(الوزن ${a.weight})</span></th></tr>${a.items.map(it => { const x = i.answers[it.id] || {}; n++;
     return `<tr><td class="num">${n}</td><td>${esc(it.text)}</td><td class="nw">${CLS_NAME[it.cls]}</td><td class="rv nw r-${{ 'م': 'm', 'ت': 't', 'ف': 'f', 'غ': 'g' }[x.v] || 'x'}">${x.v ? esc(x.v) : '-'}</td><td>${esc(x.note || '')}${(x.photos || []).length ? `<div class="rph">${x.photos.map(p => `<img src="${esc(p)}" alt="">`).join('')}</div>` : ''}</td></tr>`; }).join('')}`).join('');
   const escl = (i.snap.escalation || []).filter((t, k) => i.esc && i.esc[k]).map(t => `<tr><td>${esc(t)}</td></tr>`).join(''); // تُدرج حالات التصعيد المفعّلة فقط
-  return `<h3>القائمة الكاملة للبنود</h3><table class="rep full"><tr><th class="num">م</th><th>البند</th><th class="nw">التصنيف</th><th class="nw">التقدير</th><th>الملاحظة والصور</th></tr>${rows}</table>
+  return `<h3>القائمة الكاملة للبنود</h3><table class="rep full"><tr><th class="num">م</th><th>البند</th><th class="nw">التصنيف</th><th class="nw">التقدير</th><th class="note">الملاحظة والصور</th></tr>${rows}</table>
   <p class="mut">م = مُرضٍ · ت = يحتاج إلى تحسين · ف = تصحيح فوري · غ = غير منطبق</p>
   ${escl ? `<h3>حالات التصعيد الفوري المفعّلة</h3><table class="rep">${escl}</table>` : ''}`;
 }
@@ -248,7 +248,7 @@ function reportSection(i, multi, o) {
   ${r.veto ? `<div class="veto"><b>البوابة الحرجة مفعّلة</b>${r.critFails.map(c => `<div>• ${esc(c.text)}</div>`).join('')}${r.escHits.map(c => `<div>• تصعيد فوري: ${esc(c)}</div>`).join('')}</div>` : ''}
   ${axes}
   <h3>الملاحظات والإجراءات المطلوبة (${fails.length})</h3>
-  ${fails.length ? `<table class="rep"><tr><th>البند</th><th class="nw">التصنيف</th><th class="nw">التقدير</th><th>الملاحظة</th></tr>${fails.map(o => `<tr><td>${esc(o.it.text)}${(fullP ? [] : o.x.photos || []).map(p => `<br><img src="${esc(p)}" style="width:90px;margin:3px;border-radius:6px">`).join('')}</td><td class="nw">${CLS_NAME[o.it.cls]}</td><td class="nw">${o.x.v}</td><td>${esc(o.x.note || '')}</td></tr>`).join('')}</table>` : '<p class="mut">لا توجد ملاحظات.</p>'}
+  ${fails.length ? `<table class="rep"><tr><th>البند</th><th class="nw">التصنيف</th><th class="nw">التقدير</th><th class="note">الملاحظة</th></tr>${fails.map(o => `<tr><td>${esc(o.it.text)}${(fullP ? [] : o.x.photos || []).map(p => `<br><img src="${esc(p)}" style="width:90px;margin:3px;border-radius:6px">`).join('')}</td><td class="nw">${CLS_NAME[o.it.cls]}</td><td class="nw">${o.x.v}</td><td>${esc(o.x.note || '')}</td></tr>`).join('')}</table>` : '<p class="mut">لا توجد ملاحظات.</p>'}
   ${o.full ? fullChecklist(i) : ''}
   <div class="grid2 sigs"><div><b>توقيع المفتش</b><br>${i.sig.inspector ? `<img src="${esc(i.sig.inspector)}" style="width:100%;max-height:110px;object-fit:contain">` : ''}</div><div><b>توقيع المسؤول</b><br>${i.sig.responsible ? `<img src="${esc(i.sig.responsible)}" style="width:100%;max-height:110px;object-fit:contain">` : ''}</div></div></div>`;
 }

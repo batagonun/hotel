@@ -407,6 +407,8 @@ th{background:#E6E6E6}
 .mut{color:#333;font-size:12pt}
 .score{font-size:24pt;font-weight:bold;text-align:center}
 .rph img{width:4cm;height:3cm;margin:2pt}
+th.note{width:34%}
+td,th{word-break:normal;overflow-wrap:break-word}
 .veto{border:2px solid #000;padding:4pt;margin-bottom:6pt}
 .lh{text-align:center;border-bottom:3px double #000;margin-bottom:8pt}.lh-org{font-size:18pt}.lh-title{font-size:16pt}
 .tag{font-weight:bold}.secline{margin:0}
