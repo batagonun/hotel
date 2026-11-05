@@ -1,0 +1,45 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Regular.ttf');font-weight:400}
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Bold.ttf');font-weight:700}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:radial-gradient(circle at 50% 40%,#3a2a0e,#120d05 70%);color:#f6efe3;direction:rtl;font-family:'Cairo'}
+.c{position:absolute;left:0;right:0;text-align:center}
+#hook{top:200px;font:700 86px/1.45 'Cairo';padding:0 60px}
+#hook b{color:#f2c75c}
+#lbl{top:640px;font:700 56px 'Cairo';color:#e9d6a6}
+#num{top:730px;font:700 230px/1 'Cairo';color:#f2c75c;text-shadow:0 0 60px rgba(242,199,92,.5);direction:ltr}
+#unit{top:990px;font:400 56px 'Cairo'}
+#bar{position:absolute;left:140px;right:140px;top:1150px;height:40px;background:rgba(255,255,255,.08);border-radius:20px;direction:ltr}
+#fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:20px;background:linear-gradient(90deg,#b8862b,#f2c75c)}
+#x10{top:1260px;font:700 92px 'Cairo';opacity:0}
+#x10 b{color:#f2c75c}
+#end{top:1420px;font:400 54px/1.6 'Cairo';padding:0 80px;opacity:0}
+#src{bottom:120px;font:400 32px/1.5 'Cairo';padding:0 60px;opacity:0}
+#h{bottom:50px;font:600 30px 'Cairo';letter-spacing:4px;opacity:.6;direction:ltr}
+</style></head><body>
+<div class="c" id="hook">لو كنت اشتريت <b>جرام دهب</b><br>من 10 سنين…</div>
+<div class="c" id="lbl">جرام عيار 21</div>
+<div class="c" id="num">630</div>
+<div class="c" id="unit">جنيه · <span id="yr">نوفمبر 2016</span></div>
+<div id="bar"><div id="fill"></div></div>
+<div class="c" id="x10">يعني <b>10 أضعاف</b> تقريبًا</div>
+<div class="c" id="end">ابعته لحد لسه بيقول<br>«الدهب غالي… أستنى ينزل»</div>
+<div class="c" id="src">المصادر: اليوم السابع (1 نوفمبر 2016: عيار 21 = 630 جنيه) · آخر الأخبار (5 نوفمبر 2026: عيار 21 = 6,270 جنيه) · معلومة، مش نصيحة استثمار</div>
+<div class="c" id="h">@batagonun</div>
+<script>
+const cl=v=>Math.max(0,Math.min(1,v)),ease=v=>1-Math.pow(1-cl(v),3),sm=v=>{v=cl(v);return v*v*(3-2*v)};
+const $=id=>document.getElementById(id);
+function show(el,a,y=0){el.style.opacity=a;el.style.transform='translateY('+y+'px)'}
+window.frame=function(t){
+ show($('hook'),ease(t/0.5),(1-ease(t/0.5))*30);
+ const k=ease((t-1.2)/0.6);show($('lbl'),k);show($('num'),k);show($('unit'),k);show($('bar'),k);
+ const p=sm((t-3)/8);
+ const v=Math.round(630+(6270-630)*p);$('num').textContent=v.toLocaleString('en-US');
+ $('fill').style.width=(10+90*p)+'%';
+ $('yr').textContent=p<=0?'نوفمبر 2016':(p<1?'…':'نوفمبر 2026');
+ const kx=ease((t-11.5)/0.7);show($('x10'),kx,(1-kx)*30);
+ const ke=ease((t-14)/0.8);show($('end'),ke,(1-ke)*30);
+ show($('src'),ease((t-15)/0.8));
+};
+window.frame(0);
+</script></body></html>
+<script>/*SLOW-WRAP*/{const _f=window.frame;window.frame=t=>_f(t*19/22);window.frame(0)}</script>

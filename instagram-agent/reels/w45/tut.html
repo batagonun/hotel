@@ -1,0 +1,48 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Regular.ttf');font-weight:400}
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Bold.ttf');font-weight:700}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#0c0a08;direction:rtl;font-family:'Cairo'}
+.ph{position:absolute;inset:0;opacity:0}
+.ph .bg{position:absolute;inset:-60px;background-size:cover;background-position:center;filter:blur(28px) brightness(.45) sepia(.4)}
+.ph .fg{position:absolute;left:30px;right:30px;top:800px;height:780px;background-size:contain;background-repeat:no-repeat;background-position:center;filter:sepia(.3) contrast(1.05)}
+.shade{position:absolute;left:0;right:0;top:0;height:900px;background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.5) 60%,rgba(0,0,0,0))}
+.shadeb{position:absolute;left:0;right:0;bottom:0;height:520px;background:linear-gradient(0deg,rgba(0,0,0,.85),rgba(0,0,0,0))}
+.cap{position:absolute;top:150px;left:70px;right:70px;text-align:center;color:#fff;font:700 86px/1.45 'Cairo';text-shadow:0 4px 24px rgba(0,0,0,.7);opacity:0}
+.cap .y{color:#f2c75c}
+.sub{position:absolute;top:560px;left:80px;right:80px;text-align:center;color:#f3ede2;font:400 54px/1.55 'Cairo';text-shadow:0 3px 16px rgba(0,0,0,.8);opacity:0}
+.date{display:inline-block;background:#f2c75c;color:#1d1a16;border-radius:40px;padding:4px 34px;font:700 48px 'Cairo';margin-bottom:24px}
+#src{position:absolute;bottom:120px;left:60px;right:60px;text-align:center;color:#fff;font:400 32px/1.5 'Cairo';opacity:0}
+#h{position:absolute;bottom:50px;left:0;right:0;text-align:center;color:#fff;font:600 30px 'Cairo';letter-spacing:4px;opacity:.7;direction:ltr}
+</style></head><body>
+<div class="ph" id="p1"><div class="bg" style="background-image:url('../../assets/photos/b35/tut_team.jpg')"></div><div class="fg" style="background-image:url('../../assets/photos/b35/tut_team.jpg')"></div></div>
+<div class="ph" id="p2"><div class="bg" style="background-image:url('../../assets/photos/b35/tut_antechamber.jpg')"></div><div class="fg" style="background-image:url('../../assets/photos/b35/tut_antechamber.jpg')"></div></div>
+<div class="ph" id="p3"><div class="bg" style="background-image:url('../../assets/photos/b35/tut_coffin.jpg')"></div><div class="fg" style="background-image:url('../../assets/photos/b35/tut_coffin.jpg')"></div></div>
+<div class="ph" id="p4"><div class="bg" style="background-image:url('../../assets/photos/b35/tut_mask.jpg')"></div><div class="fg" style="background-image:url('../../assets/photos/b35/tut_mask.jpg')"></div></div>
+<div class="shade"></div><div class="shadeb"></div>
+<div class="cap" id="c1"><div class="date">4 نوفمبر 1922</div><br>درجة سلّم واحدة…<br><span class="y">غيّرت تاريخ مصر</span></div>
+<div class="sub" id="s1" style="top:610px">لقوها في وادي الملوك، تحت أكواخ عمّال قديمة</div>
+<div class="cap" id="c2">بعد 3 أسابيع، كارتر بصّ<br>من فتحة صغيرة بنور شمعة</div>
+<div class="sub" id="s2">— «شايف حاجة؟»<br>— <b style="color:#f2c75c">«أيوه… حاجات رائعة»</b></div>
+<div class="cap" id="c3">مقبرة توت عنخ آمون<br><span class="y">شبه كاملة</span></div>
+<div class="sub" id="s3">أكتر من <b style="color:#f2c75c">5 آلاف</b> قطعة<br>والحفر والتوثيق خدوا 10 سنين</div>
+<div class="cap" id="c4">والنهارده كلها<br>في مكان واحد</div>
+<div class="sub" id="s4"><b style="color:#f2c75c">المتحف المصري الكبير</b><br>ابعته لحد نفسه يزوره 🇪🇬</div>
+<div id="src">المصدر: يوميات هوارد كارتر، معهد جريفيث (أكسفورد) · الصور: هاري برتون، ملكية عامة (ويكيميديا كومنز)</div>
+<div id="h">@batagonun</div>
+<script>
+const cl=v=>Math.max(0,Math.min(1,v)),ease=v=>1-Math.pow(1-cl(v),3);
+const $=id=>document.getElementById(id);
+const P=[[0,6.2,'50% 30%',1.0,1.12],[5.8,11.6,'50% 50%',1.15,1.0],[11.2,16.6,'40% 50%',1.0,1.12],[16.2,23,'50% 25%',1.05,1.18]];
+function show(el,a,y=0){el.style.opacity=a;el.style.transform='translateY('+y+'px)'}
+function seg(id,t,t0,t1){const k=ease((t-t0)/0.6)*cl((t1-t)/0.4);show($(id),t>=t0&&t<t1?k:0,(1-ease((t-t0)/0.6))*25)}
+window.frame=function(t){
+ P.forEach(([a,b,pos,s0,s1],i)=>{const el=$('p'+(i+1));const op=cl((t-a)/0.5)*cl((b-t)/0.5);el.style.opacity=op;
+  const k=cl((t-a)/(b-a));el.querySelector('.fg').style.transform='scale('+(s0+(s1-s0)*k)+')'});
+ seg('c1',t,0.1,5.8); seg('s1',t,2.2,5.8);
+ seg('c2',t,6.0,11.3); seg('s2',t,8.0,11.3);
+ seg('c3',t,11.6,16.4); seg('s3',t,13.0,16.4);
+ seg('c4',t,16.6,23); seg('s4',t,18.0,23);
+ show($('src'),ease((t-18.5)/0.8));
+};
+window.frame(0);
+</script></body></html>
