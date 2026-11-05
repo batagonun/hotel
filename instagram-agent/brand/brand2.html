@@ -1,0 +1,105 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:'Amiri';src:url('../fonts/Amiri-Bold.ttf');font-weight:700}
+@font-face{font-family:'Cairo';src:url('../fonts/Cairo-Bold.ttf');font-weight:700}
+@font-face{font-family:'Corm';src:url('../fonts/Cormorant-SemiBold.ttf');font-weight:600}
+*{margin:0;padding:0}body{background:#000}
+svg{display:block}
+</style></head><body>
+<!-- Shared defs -->
+<svg width="0" height="0" style="position:absolute">
+ <defs>
+  <linearGradient id="foil" x1="0" y1="0" x2="1" y2="1">
+   <stop offset="0" stop-color="#7a5a1e"/><stop offset=".18" stop-color="#e9c873"/>
+   <stop offset=".34" stop-color="#fff2c2"/><stop offset=".5" stop-color="#c99a3e"/>
+   <stop offset=".68" stop-color="#f6dc8c"/><stop offset=".84" stop-color="#9b7228"/>
+   <stop offset="1" stop-color="#e2bd62"/>
+  </linearGradient>
+  <linearGradient id="foilV" x1="0" y1="0" x2="0" y2="1">
+   <stop offset="0" stop-color="#fff0bd"/><stop offset=".45" stop-color="#d9b25a"/>
+   <stop offset=".55" stop-color="#a77c2d"/><stop offset="1" stop-color="#f1d585"/>
+  </linearGradient>
+  <radialGradient id="bg" cx=".5" cy=".42" r=".75">
+   <stop offset="0" stop-color="#16323a"/><stop offset=".55" stop-color="#0a1a20"/><stop offset="1" stop-color="#050c0f"/>
+  </radialGradient>
+  <!-- 8-point star girih tile -->
+  <pattern id="girih" width="120" height="120" patternUnits="userSpaceOnUse">
+   <g fill="none" stroke="#e7c873" stroke-width="1.6" opacity=".55">
+    <rect x="35" y="35" width="50" height="50"/>
+    <rect x="35" y="35" width="50" height="50" transform="rotate(45 60 60)"/>
+    <circle cx="60" cy="60" r="9"/>
+    <path d="M0 0L35 35M120 0L85 35M0 120L35 85M120 120L85 85"/>
+    <path d="M60 0V25M60 95V120M0 60H25M95 60H120"/>
+   </g>
+  </pattern>
+  <filter id="emboss" x="-20%" y="-20%" width="140%" height="140%">
+   <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="b"/>
+   <feSpecularLighting in="b" surfaceScale="5" specularConstant=".9" specularExponent="22" lighting-color="#fff6d8" result="s">
+    <fePointLight x="-300" y="-400" z="500"/>
+   </feSpecularLighting>
+   <feComposite in="s" in2="SourceAlpha" operator="in" result="s2"/>
+   <feComposite in="SourceGraphic" in2="s2" operator="arithmetic" k1="0" k2="1" k3=".55" k4="0" result="lit"/>
+   <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity=".7"/>
+  </filter>
+  <filter id="glow"><feGaussianBlur stdDeviation="30"/></filter>
+ </defs>
+</svg>
+
+<!-- PROFILE: seal with B + ب monogram -->
+<svg id="prof" width="1080" height="1080" viewBox="0 0 1080 1080">
+ <rect width="1080" height="1080" fill="url(#bg)"/>
+ <rect width="1080" height="1080" fill="url(#girih)" opacity=".18"/>
+ <circle cx="540" cy="540" r="470" fill="#081418" opacity=".85"/>
+ <!-- rings -->
+ <circle cx="540" cy="540" r="470" fill="none" stroke="url(#foil)" stroke-width="10"/>
+ <circle cx="540" cy="540" r="448" fill="none" stroke="url(#foil)" stroke-width="2.5"/>
+ <circle cx="540" cy="540" r="330" fill="none" stroke="url(#foil)" stroke-width="3"/>
+ <circle cx="540" cy="540" r="318" fill="none" stroke="url(#foil)" stroke-width="1.2" stroke-dasharray="2 10"/>
+ <!-- arc paths for curved text -->
+ <path id="arcTop" d="M 150 540 A 390 390 0 0 1 930 540" fill="none"/>
+ <path id="arcBot" d="M 175 560 A 365 365 0 0 0 905 560" fill="none"/>
+ <text font-family="Corm" font-weight="600" font-size="78" letter-spacing="20" fill="url(#foil)">
+  <textPath href="#arcTop" startOffset="50%" text-anchor="middle">BATAGONUN</textPath></text>
+ <text font-family="Amiri" font-weight="700" font-size="74" fill="url(#foil)" direction="rtl">
+  <textPath href="#arcBot" startOffset="50%" text-anchor="middle">حكمة · شعر · حكايات</textPath></text>
+ <!-- side diamonds -->
+ <g fill="url(#foil)"><path d="M120 540l16-16 16 16-16 16z"/><path d="M928 540l16-16 16 16-16 16z"/></g>
+ <!-- monogram -->
+ <circle cx="540" cy="520" r="230" fill="#e7c873" opacity=".10" filter="url(#glow)"/>
+ <g filter="url(#emboss)">
+  <text x="540" y="690" text-anchor="middle" font-family="Corm" font-weight="600" font-size="520" fill="url(#foilV)" opacity=".95">B</text>
+ </g>
+ <g filter="url(#emboss)">
+  <text x="560" y="660" text-anchor="middle" font-family="Amiri" font-weight="700" font-size="380" fill="#0a1a20" stroke="#0a1a20" stroke-width="26" stroke-linejoin="round">ب</text>
+  <text x="560" y="660" text-anchor="middle" font-family="Amiri" font-weight="700" font-size="380" fill="url(#foil)">ب</text>
+ </g>
+</svg>
+
+<!-- FACEBOOK COVER -->
+<svg id="cover" width="1640" height="924" viewBox="0 0 1640 924">
+ <rect width="1640" height="924" fill="url(#bg)"/>
+ <rect width="1640" height="924" fill="url(#girih)" opacity=".16"/>
+ <rect x="40" y="40" width="1560" height="844" fill="none" stroke="url(#foil)" stroke-width="3"/>
+ <rect x="56" y="56" width="1528" height="812" fill="none" stroke="url(#foil)" stroke-width="1" opacity=".7"/>
+ <!-- mini seal on the left -->
+ <g transform="translate(310 462)">
+  <circle r="230" fill="#081418" opacity=".9"/>
+  <circle r="230" fill="none" stroke="url(#foil)" stroke-width="6"/>
+  <circle r="214" fill="none" stroke="url(#foil)" stroke-width="1.5"/>
+  <g filter="url(#emboss)"><text x="0" y="95" text-anchor="middle" font-family="Corm" font-weight="600" font-size="300" fill="url(#foilV)">B</text></g>
+  <g filter="url(#emboss)">
+   <text x="12" y="78" text-anchor="middle" font-family="Amiri" font-weight="700" font-size="220" fill="#0a1a20" stroke="#0a1a20" stroke-width="16" stroke-linejoin="round">ب</text>
+   <text x="12" y="78" text-anchor="middle" font-family="Amiri" font-weight="700" font-size="220" fill="url(#foil)">ب</text>
+  </g>
+ </g>
+ <!-- text block on the right -->
+ <g direction="rtl" text-anchor="middle">
+  <text x="1110" y="340" font-family="Corm" font-weight="600" font-size="64" letter-spacing="18" fill="url(#foil)" direction="ltr">BATAGONUN</text>
+  <g filter="url(#emboss)"><text x="1110" y="490" font-family="Amiri" font-weight="700" font-size="112" fill="url(#foil)">حكمة · شعر · حكايات</text></g>
+  <path d="M930 555H1290" stroke="url(#foil)" stroke-width="3"/>
+  <path d="M1110 540l15 15-15 15-15-15z" fill="url(#foil)"/>
+  <text x="1110" y="645" font-family="Cairo" font-weight="700" font-size="54" fill="#f4ede0">من مصر والعالم، في 30 ثانية</text>
+  <text x="1110" y="720" font-family="Cairo" font-weight="700" font-size="36" fill="#e7c873" opacity=".85">ريل جديد كل يوم 10 الصبح · كل معلومة بمصدرها</text>
+ </g>
+</svg>
+</body></html>
