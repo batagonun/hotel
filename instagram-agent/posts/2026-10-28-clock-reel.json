@@ -1,0 +1,35 @@
+{
+ "fade": 0.7,
+ "scenes": [
+  {
+   "photo": "assets/photos/b28/cl_roman.png",
+   "overlay": "out/2026-10-28-clock/ov/o1.png",
+   "dur": 7.5
+  },
+  {
+   "photo": "assets/photos/b28/cl_bed.png",
+   "overlay": "out/2026-10-28-clock/ov/o2.png",
+   "dur": 8
+  },
+  {
+   "photo": "assets/photos/b28/cl_forest.png",
+   "overlay": "out/2026-10-28-clock/ov/o3.png",
+   "dur": 8
+  },
+  {
+   "photo": "assets/photos/b28/cl_laptop.png",
+   "overlay": "out/2026-10-28-clock/ov/o4.png",
+   "dur": 8
+  },
+  {
+   "photo": "assets/photos/b28/cl_peaks.png",
+   "overlay": "out/2026-10-28-clock/ov/o5.png",
+   "dur": 8.5
+  },
+  {
+   "photo": "assets/photos/b28/cl_roman.png",
+   "overlay": "out/2026-10-28-clock/ov/o6.png",
+   "dur": 7
+  }
+ ]
+}

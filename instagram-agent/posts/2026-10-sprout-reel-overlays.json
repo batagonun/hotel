@@ -1,0 +1,98 @@
+{
+ "width": 1080,
+ "height": 1920,
+ "posts": [
+  {
+   "id": "o1",
+   "scene": "none",
+   "lang": "ar",
+   "transparent": true,
+   "glow": true,
+   "top": 300,
+   "size": 84,
+   "tag": "اليوم العالمي للأغذية",
+   "headline": "بروتين أرخص بحوالي<br>10 مرات من علبة الواي؟",
+   "sub": "والسر في مطبخ جدتك",
+   "svg": "<defs><linearGradient id='t' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#000' stop-opacity='.75'/><stop offset='.45' stop-color='#000' stop-opacity='.35'/><stop offset='.6' stop-color='#000' stop-opacity='0'/></linearGradient></defs><rect width='1080' height='1920' fill='url(#t)'/>"
+  },
+  {
+   "id": "o2",
+   "scene": "none",
+   "lang": "ar",
+   "transparent": true,
+   "glow": true,
+   "top": 300,
+   "size": 90,
+   "tag": "الطريقة",
+   "headline": "كوب عدس + مية<br>+ 3 أيام",
+   "sub": "قبل الإنبات… وبعده",
+   "svg": "<defs><linearGradient id='t' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#000' stop-opacity='.75'/><stop offset='.4' stop-color='#000' stop-opacity='.3'/><stop offset='.55' stop-color='#000' stop-opacity='0'/></linearGradient></defs><rect width='1080' height='1920' fill='url(#t)'/>"
+  },
+  {
+   "id": "o3",
+   "scene": "none",
+   "lang": "ar",
+   "transparent": true,
+   "glow": true,
+   "top": 300,
+   "size": 76,
+   "tag": "الحسبة: تمن جرام البروتين",
+   "headline": "عدس ≈ 0.30 جنيه<br>فول ≈ 0.25 جنيه<br>واي من 2 لـ 3.7 جنيه",
+   "sub": "بأسعار السوق المصري 2026",
+   "svg": "<defs><linearGradient id='t' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#000' stop-opacity='.8'/><stop offset='.45' stop-color='#000' stop-opacity='.35'/><stop offset='.6' stop-color='#000' stop-opacity='0'/></linearGradient></defs><rect width='1080' height='1920' fill='url(#t)'/>"
+  },
+  {
+   "id": "o4",
+   "scene": "none",
+   "lang": "ar",
+   "transparent": true,
+   "glow": true,
+   "top": 300,
+   "size": 72,
+   "tag": "العلم بيقول",
+   "headline": "الإنبات بيقلل الفايتيك<br>في العدس حوالي 75%<br>ويرفع فيتامين سي 3.5 أضعاف",
+   "sub": "Food Science &amp; Nutrition 2025 · USDA",
+   "svg": "<defs><linearGradient id='t' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#000' stop-opacity='.8'/><stop offset='.45' stop-color='#000' stop-opacity='.35'/><stop offset='.6' stop-color='#000' stop-opacity='0'/></linearGradient></defs><rect width='1080' height='1920' fill='url(#t)'/>"
+  },
+  {
+   "id": "o5",
+   "scene": "none",
+   "lang": "ar",
+   "transparent": true,
+   "glow": true,
+   "top": 300,
+   "size": 88,
+   "tag": "والفول النابت؟",
+   "headline": "أكلة جداتنا<br>من زمان",
+   "sub": "شوربة الفول النابت… بروتين مصري أصيل",
+   "svg": "<defs><linearGradient id='t' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#000' stop-opacity='.7'/><stop offset='.4' stop-color='#000' stop-opacity='.25'/><stop offset='.55' stop-color='#000' stop-opacity='0'/></linearGradient></defs><rect width='1080' height='1920' fill='url(#t)'/>"
+  },
+  {
+   "id": "o6",
+   "scene": "none",
+   "lang": "ar",
+   "transparent": true,
+   "glow": true,
+   "top": 300,
+   "size": 84,
+   "tag": "قاعدتين ذهبيتين",
+   "headline": "اطبخه دايمًا<br>وكُله مع عيش أو رز",
+   "sub": "عشان الأمان… وعشان البروتين يكمل",
+   "svg": "<defs><linearGradient id='t' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#000' stop-opacity='.8'/><stop offset='.45' stop-color='#000' stop-opacity='.4'/><stop offset='.6' stop-color='#000' stop-opacity='0'/></linearGradient></defs><rect width='1080' height='1920' fill='url(#t)'/>"
+  },
+  {
+   "id": "o7",
+   "scene": "none",
+   "lang": "ar",
+   "transparent": true,
+   "glow": true,
+   "top": 300,
+   "size": 84,
+   "tag": "احفظه",
+   "headline": "الخطوات كاملة<br>والمصادر في البوست",
+   "sub": "وابعته لحد بيصرف كتير على البروتين 💪",
+   "credit": "صور ومقاطع حقيقية من ويكيميديا كومنز: Always Shooting (CC BY 2.0) · L Maule (CC0) · David Stanley (CC BY 2.0) · Veganbaking.net (CC BY-SA 2.0) · J. Schlaghecken و H. Hakan Atik (CC BY-SA 4.0)",
+   "svg": "<defs><linearGradient id='t' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#000' stop-opacity='.8'/><stop offset='.45' stop-color='#000' stop-opacity='.4'/><stop offset='.6' stop-color='#000' stop-opacity='0'/><stop offset='.85' stop-color='#000' stop-opacity='0'/><stop offset='1' stop-color='#000' stop-opacity='.8'/></linearGradient></defs><rect width='1080' height='1920' fill='url(#t)'/>"
+  }
+ ]
+}
