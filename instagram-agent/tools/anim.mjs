@@ -28,9 +28,18 @@ let ff;
 if (out.endsWith('/')) fs.mkdirSync(out, { recursive: true });
 else {
   const d = (n / fps).toFixed(2);
-  const audio = `aevalsrc='0.06*sin(2*PI*220*t)*(0.6+0.4*sin(2*PI*0.25*t))+0.04*sin(2*PI*330*t)+0.03*sin(2*PI*440*t)':s=44100:d=${d},lowpass=f=1200,afade=t=in:d=1,afade=t=out:st=${(d - 1.2).toFixed(2)}:d=1.2`;
+  // --music=file.mp3[@offsetSeconds]: real background track (faded, -6 dB) instead of the synth pad
+  const mArg = process.argv.find(a => a.startsWith('--music='));
+  let audioIn;
+  if (mArg) {
+    const [mf, off] = mArg.slice(8).split('@');
+    audioIn = ['-ss', off || '0', '-i', mf, '-filter:a', `volume=0.5,afade=t=in:d=1,afade=t=out:st=${(d - 1.5).toFixed(2)}:d=1.5`];
+  } else {
+    const audio = `aevalsrc='0.06*sin(2*PI*220*t)*(0.6+0.4*sin(2*PI*0.25*t))+0.04*sin(2*PI*330*t)+0.03*sin(2*PI*440*t)':s=44100:d=${d},lowpass=f=1200,afade=t=in:d=1,afade=t=out:st=${(d - 1.2).toFixed(2)}:d=1.2`;
+    audioIn = ['-f', 'lavfi', '-i', audio];
+  }
   ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(fps), '-c:v', 'mjpeg', '-i', '-',
-    '-f', 'lavfi', '-i', audio, '-c:v', 'libx264', '-crf', '19', '-preset', 'medium', '-pix_fmt', 'yuv420p',
+    ...audioIn, '-map', '0:v', '-map', '1:a', '-t', d, '-c:v', 'libx264', '-crf', '19', '-preset', 'medium', '-pix_fmt', 'yuv420p',
     '-c:a', 'aac', '-b:a', '128k', '-shortest', '-movflags', '+faststart', out], { stdio: ['pipe', 'inherit', 'inherit'] });
 }
 for (let i = 0; i < n; i++) {
