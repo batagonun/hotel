@@ -2,11 +2,11 @@
  "batch": "2026-11-w48",
  "post": "2026-11-24-aghadan",
  "date": "2026-11-24T10:00",
- "status": "draft",
+ "status": "scheduled",
  "format": "REEL",
  "caption": "«أغدًا ألقاك»… كلنا حافظينها، بس اللي كتبها مش مصري 🇸🇩🇪🇬\n\nكتبها الشاعر السوداني الهادي آدم، واسمها الأصلي «الغد».\nلحّنها محمد عبد الوهاب، وغنّتها أم كلثوم سنة 1971.\n\nمصر والسودان في أغنية واحدة.\n\nابعتها لحد مستني بكرة 🤍\n\n📚 المصادر: ويكيبيديا العربية، «أغدا ألقاك» · ألف لام، «قصة أغنية أغدًا ألقاك» (2022)\n🎵 Music: \"Ibn Al-Noor\" Kevin MacLeod (incompetech.com), CC BY 4.0\n\n#حكاية_أغنية #أم_كلثوم #أغدا_ألقاك #الهادي_آدم #شعر",
  "media": "out/w48-aghadan/aghadan.mp4",
  "publish_via": "composio",
  "media_url": "https://raw.githubusercontent.com/batagonun/hotel/ab0b0e44f34342ba2b1619ce890a697d2abd9a46/instagram-agent/out/w48-aghadan/aghadan.mp4",
- "approved_plan": "2026-11-21"
+ "approved_plan": "2026-11-21", "approved": "2026-11-21"
 }
