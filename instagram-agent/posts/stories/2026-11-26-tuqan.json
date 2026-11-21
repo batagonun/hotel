@@ -3,9 +3,10 @@
  "publish_via": "composio",
  "media_url": "https://raw.githubusercontent.com/batagonun/hotel/e8ed184049240dc75ac2c6a3aff5052663a0378a/instagram-agent/out/w48-stories/story-tuqan.jpg",
  "approved_plan": "2026-11-21",
- "status": "draft",
+ "status": "scheduled",
  "post": "2026-11-26-tuqan-story",
  "date": "2026-11-26T19:00",
  "format": "STORY",
- "media": "out/w48-stories/story-tuqan.jpg"
+ "media": "out/w48-stories/story-tuqan.jpg",
+ "approved": "2026-11-21"
 }

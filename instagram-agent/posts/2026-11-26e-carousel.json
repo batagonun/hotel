@@ -2,7 +2,7 @@
  "batch": "2026-11-w48",
  "publish_via": "composio",
  "approved_plan": "2026-11-21",
- "status": "draft",
+ "status": "scheduled",
  "post": "2026-11-26e-carousel",
  "date": "2026-11-26T19:00",
  "format": "CAROUSEL",
@@ -24,5 +24,6 @@
   "https://raw.githubusercontent.com/batagonun/hotel/9be2193838b4278e9a51d743645e144fc692406b/instagram-agent/out/w48-carousel/s4.jpg",
   "https://raw.githubusercontent.com/batagonun/hotel/9be2193838b4278e9a51d743645e144fc692406b/instagram-agent/out/w48-carousel/s5.jpg",
   "https://raw.githubusercontent.com/batagonun/hotel/9be2193838b4278e9a51d743645e144fc692406b/instagram-agent/out/w48-carousel/s6.jpg"
- ]
+ ],
+ "approved": "2026-11-21"
 }
