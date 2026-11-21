@@ -7,7 +7,7 @@ let pw;
 try { pw = require('playwright'); } catch { pw = require(execSync('npm root -g').toString().trim() + '/playwright'); }
 const [html, out] = process.argv.slice(2);
 const b = await pw.chromium.launch();
-const p = await b.newPage({ viewport: { width: 1080, height: 1920 } });
+const p = await b.newPage({ viewport: { width: +(process.argv[4]||1080), height: +(process.argv[5]||1920) } });
 await p.goto('file://' + path.resolve(html), { waitUntil: 'load' });
 await p.evaluate(() => document.fonts.ready);
 await p.screenshot({ path: out, type: 'jpeg', quality: 92 });
