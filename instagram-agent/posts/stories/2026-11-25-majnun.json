@@ -2,10 +2,10 @@
  "batch": "2026-11-w48",
  "post": "2026-11-25-majnun-story",
  "date": "2026-11-25T19:00",
- "status": "draft",
+ "status": "scheduled",
  "format": "STORY",
  "media": "out/w48-stories/story-majnun.jpg",
  "publish_via": "composio",
  "media_url": "https://raw.githubusercontent.com/batagonun/hotel/188bdbb794062cdffeb511dd6fa42f51d3a06414/instagram-agent/out/w48-stories/story-majnun.jpg",
- "approved_plan": "2026-11-21"
+ "approved_plan": "2026-11-21", "approved": "2026-11-21"
 }
