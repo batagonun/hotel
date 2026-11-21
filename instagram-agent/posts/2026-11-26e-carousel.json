@@ -1,7 +1,6 @@
 {
  "batch": "2026-11-w48",
  "publish_via": "composio",
- "media_url": "PENDING",
  "approved_plan": "2026-11-21",
  "status": "draft",
  "post": "2026-11-26e-carousel",
@@ -17,5 +16,13 @@
   "out/w48-carousel/s5.jpg",
   "out/w48-carousel/s6.jpg"
  ],
- "media_urls": "PENDING"
+ "media_urls": [
+  "https://raw.githubusercontent.com/batagonun/hotel/e8ed184049240dc75ac2c6a3aff5052663a0378a/instagram-agent/out/w48-carousel/s0.jpg",
+  "https://raw.githubusercontent.com/batagonun/hotel/e8ed184049240dc75ac2c6a3aff5052663a0378a/instagram-agent/out/w48-carousel/s1.jpg",
+  "https://raw.githubusercontent.com/batagonun/hotel/e8ed184049240dc75ac2c6a3aff5052663a0378a/instagram-agent/out/w48-carousel/s2.jpg",
+  "https://raw.githubusercontent.com/batagonun/hotel/e8ed184049240dc75ac2c6a3aff5052663a0378a/instagram-agent/out/w48-carousel/s3.jpg",
+  "https://raw.githubusercontent.com/batagonun/hotel/e8ed184049240dc75ac2c6a3aff5052663a0378a/instagram-agent/out/w48-carousel/s4.jpg",
+  "https://raw.githubusercontent.com/batagonun/hotel/e8ed184049240dc75ac2c6a3aff5052663a0378a/instagram-agent/out/w48-carousel/s5.jpg",
+  "https://raw.githubusercontent.com/batagonun/hotel/e8ed184049240dc75ac2c6a3aff5052663a0378a/instagram-agent/out/w48-carousel/s6.jpg"
+ ]
 }
