@@ -1,5 +1,5 @@
 # Builds kinetic-typography poem scenes (window.frame(t)) from a short spec; render with tools/anim.mjs.
-import json, sys, html
+import json, sys, html, re
 HEAD = """<!doctype html><html><head><meta charset="utf-8"><style>
 @font-face{font-family:'Amiri';src:url('../../fonts/Amiri-Bold.ttf');font-weight:700}
 @font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Regular.ttf');font-weight:400}
@@ -52,7 +52,7 @@ spec = json.load(open(sys.argv[1]))
 body = []; segs = []
 for i, s in enumerate(spec['segments']):
     kind = s['kind']
-    lines = ''.join('<div class="ln">'+words(l)+'</div>' for l in s['lines'])
+    lines = ''.join(('<div class="ln" style="direction:ltr;font-family:Georgia,serif">' if re.search('[A-Za-z]', l) else '<div class="ln">')+words(l)+'</div>' for l in s['lines'])
     note = f'<div class="note">{s["note"]}</div>' if s.get('note') else ''
     body.append(f'<div class="seg" id="s{i}"><div class="{kind}">{lines}</div>{note}</div>')
     segs.append([s['t0'], s['t1'], s.get('step', 0.4), s.get('note_at', s['t0'] + 2)])
