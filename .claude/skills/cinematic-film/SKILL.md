@@ -93,6 +93,10 @@ Text that holds Arabic (or Hebrew) letters is detected per string (`engine.is_rt
 - Letter tracking applies to Latin runs only (spacing breaks Arabic joins). `doc.W(line, word)` takes Arabic words from the spoken text.
 - Voice: the scratch track is `tts_say.py --voice ar` (espeak-ng, robotic, timing only). For the final voice use an Arabic-capable TTS through `--cmd`, or record a person; the film re-times itself.
 
+## Vertical video (Reels, Stories, Shorts, TikTok)
+
+Render at `--size 1080x1920` (9:16) or `1080x1350` (4:5 feed). The engine is size-agnostic, but a scene laid out as a wide row gets cropped at the sides: for vertical, stack clusters top to bottom, keep each about 2,800 world units wide or less, and zoom in further. `burn_captions.py` detects a vertical frame from the video size and adapts by itself: type sized to the phone's width, fewer words per chunk, any line wider than the safe width shrunk to fit, captions lifted to about 0.72 of the height (9:16) and nudged left, clear of the app's bottom caption band and the like/comment/share column. Landscape captions are unchanged. For a no-box look on photos, use `--style clean`.
+
 ## Shipped projects
 
 - `assets/template/`: "From Cherry to Cup", a 25 second explainer in the studio look, made of cards, arrows and a counter, with no images. `new_project.py my-film` copies it. Give it a scratch voice and it renders.
