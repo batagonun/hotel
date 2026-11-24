@@ -8,6 +8,11 @@ Styles:
   clean        sentence case with a soft shadow over a bottom gradient (classic documentary subtitle)
   paper        typewriter text typing onto a torn paper strip
   redbar       white condensed caps on a red bar (matches name labels)
+
+Vertical frames (Reels, Stories, Shorts 9:16; feed 4:5) are detected from the size: type is sized to the
+phone's width, chunks hold fewer words, a line wider than the safe width shrinks to fit, and captions sit
+above the bottom band the app covers with its caption, name and buttons (9:16: about 0.72 of the height).
+Landscape output is unchanged.
 """
 import re
 
@@ -17,6 +22,7 @@ import skia
 from engine import HILITE, Res, ease_out_cubic, is_rtl, paint, ramp, text_width, draw_text
 
 MAX_WORDS = {"highlighter": 6, "clean": 9, "paper": 8, "redbar": 5}
+MAX_WORDS_PORTRAIT = {"highlighter": 3, "clean": 6, "paper": 4, "redbar": 3}
 
 
 def words_with_times(seg):
@@ -35,16 +41,16 @@ def words_with_times(seg):
     return out
 
 
-def chunks_for(timing, style):
+def chunks_for(timing, style, portrait=False):
     """[{'words': [(w, t)], 't0', 't1'}], breaking at punctuation where possible."""
-    mx = MAX_WORDS[style]
+    mx = (MAX_WORDS_PORTRAIT if portrait else MAX_WORDS)[style]
     out = []
     for seg in timing["segments"]:
         ws = words_with_times(seg)
         cur, line = [], []
         for i, (w, t) in enumerate(ws):
             cur.append((w, t))
-            if len(cur) >= mx or (w[-1] in ".,?!;:" and len(cur) >= max(2, mx // 2)) or i == len(ws) - 1:
+            if len(cur) >= mx or (w[-1] in ".,?!;:،؛؟" and len(cur) >= max(2, mx // 2)) or i == len(ws) - 1:
                 line.append({"words": cur, "t0": cur[0][1]}); cur = []
         for a, b in zip(line, line[1:]):
             a["t1"] = b["t0"]
@@ -56,9 +62,16 @@ def chunks_for(timing, style):
 class Captions:
     def __init__(self, style, width, height, timing, fonts_dir=None):
         self.style, self.W, self.H = style, width, height
-        self.k = width / 1920.0
+        # vertical (9:16 or 4:5): size to the phone's width and lift above the app's bottom overlay
+        self.portrait = height > width
+        self.k = width / 1080.0 if self.portrait else width / 1920.0
+        self.lift = ((0.17 if height >= 1.6 * width else 0.08) * height) if self.portrait else 0.0
+        self.maxw = width * (0.80 if self.portrait else 0.92)
+        self.cx = width * (0.46 if self.portrait else 0.5)       # clear of the like/comment/share column on the right
+        # first row a caption can touch (burn_captions composites only from here down)
+        self.band_top = max(0, int(height * 0.74 - self.lift - (0.12 * height if self.portrait else 0)))
         self.res = Res(width / 3840.0, None, fonts_dir)
-        self.chunks = chunks_for(timing, style)
+        self.chunks = chunks_for(timing, style, self.portrait)
         self.surface = skia.Surface.MakeRaster(skia.ImageInfo.Make(width, height, skia.ColorType.kRGBA_8888_ColorType, skia.AlphaType.kPremul_AlphaType))
 
     def active(self, t):
@@ -77,20 +90,27 @@ class Captions:
             getattr(self, "_" + self.style)(cv, c, t)
         return self.surface.makeImageSnapshot().toarray(colorType=skia.ColorType.kRGBA_8888_ColorType)
 
+    def _fit(self, width):
+        """Scale factor (<= 1) that brings a caption `width` px wide inside the safe width."""
+        return min(1.0, self.maxw / width) if width > 0 else 1.0
+
     def _text(self, c, upper=False):
         txt = " ".join(w for w, _ in c["words"])
         return txt.upper() if upper else txt
 
     def _highlighter(self, cv, c, t):
-        k = self.k; size = 66 * k; y = self.H * 0.897; f = "cond"
+        k = self.k; size = 66 * k; y = self.H * 0.897 - self.lift; f = "cond"
         words = [w.upper() for w, _ in c["words"]]
         gap = size * 0.28
         widths = [text_width(self.res, w, size, f, 0.03) for w in words]
         total = sum(widths) + gap * (len(words) - 1)
+        sc = self._fit(total + 52 * k)                  # too wide for the frame: shrink the whole line
+        if sc < 1:
+            size *= sc; gap *= sc; total *= sc; widths = [wd * sc for wd in widths]
         rtl = is_rtl(" ".join(words))                   # Arabic: words run right to left, the swipe too
-        x = self.W / 2 - total / 2
+        x = self.cx - total / 2
         if rtl:
-            xs, cx = [], self.W / 2 + total / 2
+            xs, cx = [], self.cx + total / 2
             for wd in widths:
                 cx -= wd; xs.append(cx); cx -= gap
         a = ramp(t, c["t0"] - 0.05, 0.12)
@@ -121,27 +141,36 @@ class Captions:
         k = self.k; size = 52 * k; f = "labelm"
         txt = self._text(c)
         a = ramp(t, c["t0"] - 0.05, 0.15) * (1 - ramp(t, c["t1"] - 0.12, 0.12))
-        g = skia.GradientShader.MakeLinear([skia.Point(0, self.H * 0.68), skia.Point(0, self.H)], [skia.Color(0, 0, 0, 0), skia.Color(0, 0, 0, int(190 * a))])
-        gp = skia.Paint(); gp.setShader(g); cv.drawRect(skia.Rect.MakeXYWH(0, self.H * 0.68, self.W, self.H * 0.32), gp)
+        if self.portrait:                               # a soft dark band behind the text, never a box
+            yc = self.H * 0.885 - self.lift
+            g = skia.GradientShader.MakeLinear([skia.Point(0, yc - self.H * 0.16), skia.Point(0, yc + self.H * 0.1)],
+                                               [skia.Color(0, 0, 0, 0), skia.Color(0, 0, 0, int(150 * a)), skia.Color(0, 0, 0, 0)], [0.0, 0.62, 1.0])
+            gp = skia.Paint(); gp.setShader(g); cv.drawRect(skia.Rect.MakeXYWH(0, yc - self.H * 0.16, self.W, self.H * 0.26), gp)
+        else:
+            g = skia.GradientShader.MakeLinear([skia.Point(0, self.H * 0.68), skia.Point(0, self.H)], [skia.Color(0, 0, 0, 0), skia.Color(0, 0, 0, int(190 * a))])
+            gp = skia.Paint(); gp.setShader(g); cv.drawRect(skia.Rect.MakeXYWH(0, self.H * 0.68, self.W, self.H * 0.32), gp)
         lines = [txt]
-        if text_width(self.res, txt, size, f) > self.W * 0.7:
+        if text_width(self.res, txt, size, f) > self.W * (0.78 if self.portrait else 0.7):
             ws = txt.split(); half = len(ws) // 2 + (len(ws) % 2)
             lines = [" ".join(ws[:half]), " ".join(ws[half:])]
-        y0 = self.H * 0.885 - (len(lines) - 1) * size * 1.25
+        size *= self._fit(max(text_width(self.res, ln, size, f) for ln in lines))
+        y0 = self.H * 0.885 - self.lift - (len(lines) - 1) * size * 1.25
         for i, ln in enumerate(lines):
             y = y0 + i * size * 1.25
             cv.save(); cv.translate(0, 3 * k)
-            draw_text(cv, self.res, ln, self.W / 2, y, size, f, (0, 0, 0), 0.85 * a, 0.0, "center", blur=6 * k)
+            draw_text(cv, self.res, ln, self.cx, y, size, f, (0, 0, 0), 0.85 * a, 0.0, "center", blur=6 * k)
             cv.restore()
-            draw_text(cv, self.res, ln, self.W / 2, y, size, f, (252, 250, 245), a, 0.0, "center")
+            draw_text(cv, self.res, ln, self.cx, y, size, f, (252, 250, 245), a, 0.0, "center")
 
     def _paper(self, cv, c, t):
         k = self.k; size = 42 * k; f = "mono"
         txt = self._text(c)
         tw = text_width(self.res, txt, size, f, 0.02)
+        sc = self._fit(tw + 64 * k)
+        size *= sc; tw *= sc
         a = ramp(t, c["t0"] - 0.05, 0.12)
         W, H = tw + 64 * k, size * 1.75
-        cv.save(); cv.translate(self.W / 2, self.H * 0.865); cv.rotate(-0.8)
+        cv.save(); cv.translate(self.cx, self.H * 0.865 - self.lift); cv.rotate(-0.8)
         rng = np.random.default_rng(int(c["t0"] * 10))
         p = skia.Path(); n = 28
         p.moveTo(-W / 2, -H / 2)
@@ -160,13 +189,15 @@ class Captions:
         k = self.k; size = 60 * k; f = "cond"
         txt = self._text(c, upper=True)
         tw = text_width(self.res, txt, size, f, 0.04)
+        sc = self._fit(tw + 50 * k)
+        size *= sc; tw *= sc
         u = ease_out_cubic(ramp(t, c["t0"] - 0.05, 0.22)); a = ramp(t, c["t0"] - 0.05, 0.08)
         W, H = tw + 50 * k, size * 1.22
-        x0, y0 = self.W / 2 - W / 2, self.H * 0.865 - H * 0.72
+        x0, y0 = self.cx - W / 2, self.H * 0.865 - self.lift - H * 0.72
         if is_rtl(txt):                                 # the bar wipes in from the right
             x0 += W * (1 - u)
         cv.drawRect(skia.Rect.MakeXYWH(x0 + 6 * k, y0 + 8 * k, W * u, H), paint((0, 0, 0), 0.45 * a, blur=8 * k))
         cv.drawRect(skia.Rect.MakeXYWH(x0, y0, W * u, H), paint((176, 24, 20), 0.97 * a))
         cv.save(); cv.clipRect(skia.Rect.MakeXYWH(x0, y0, W * u, H))
-        draw_text(cv, self.res, txt, self.W / 2, y0 + H * 0.8, size, f, (252, 249, 242), a, 0.04, "center")
+        draw_text(cv, self.res, txt, self.cx, y0 + H * 0.8, size, f, (252, 249, 242), a, 0.04, "center")
         cv.restore()
