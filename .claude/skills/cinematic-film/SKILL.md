@@ -14,7 +14,7 @@ Built from a 5:22 documentary about Al Capone, then opened up to any subject. Th
 | File | What it does |
 | --- | --- |
 | `scripts/check_setup.py` | Checks Python, skia-python, ffmpeg, fonts and memory; says what to install |
-| `scripts/get_fonts.py` | Fetches open-licensed fonts (Bebas Neue, Homemade Apple) for any text role this machine lacks |
+| `scripts/get_fonts.py` | Fetches open-licensed fonts (Bebas Neue, Homemade Apple) for any text role this machine lacks; `--arabic` adds Arabic faces (Tajawal, Amiri, Aref Ruqaa) |
 | `scripts/new_project.py` | Starts a project from `assets/template/` (a runnable explainer), or the documentary example with `--example` |
 | `scripts/make_beats.py` | Writes `beats.md`, the table you approve; lints chronology, line length, digits in spoken text |
 | `scripts/tts_say.py` | Free scratch voice (macOS `say`, espeak-ng, or any TTS command) to time the film before the final voice |
@@ -83,9 +83,20 @@ Look at the stills before you claim anything works. These are the mistakes that 
 - A cluster straddling the map's edge. Keep clusters either on the map or clearly off it.
 - Highlights a few pixels off their words. Use `PaperDoc.phrase_spans`, and `doc.on(print, fx, fy)` with fractions read off a grid overlay of the image.
 
+## Arabic and right-to-left films
+
+Text that holds Arabic (or Hebrew) letters is detected per string (`engine.is_rtl`) and shaped as a whole by Skia's textlayout: joined letters, right-to-left order, mixed Arabic and Latin in one line. Nothing to switch on: write Arabic in `script.json` and in the scene. Latin-only text renders exactly as before.
+
+- Fonts: Arabic runs use the role's Arabic face (`ARABIC_ROLES` in `engine.py`: Noto Kufi / Cairo / Tajawal for labels and numbers, Noto Naskh / Amiri for document text). `check_setup.py` lists them. If they fall back, run `apt install fonts-noto-core` (Linux) or `get_fonts.py --arabic --project <folder>`. Force a face with `<project>/fonts/<role>_ar.ttf` or `fonts/arabic.ttf`.
+- Mirrored automatically: `Card` (text flush right, accent bar on the right), `PaperDoc` sentence block (flush right; `phrase_spans` measures from the right), `OpenLedger` entry, `BigText` `type_on` (types in from the right), and every caption style (karaoke words and the yellow swipe run right to left, `redbar` wipes from the right).
+- Lay the story out right to left: the first cluster on the right, the next ones to its left, so the camera travels the way an Arabic reader reads.
+- Letter tracking applies to Latin runs only (spacing breaks Arabic joins). `doc.W(line, word)` takes Arabic words from the spoken text.
+- Voice: the scratch track is `tts_say.py --voice ar` (espeak-ng, robotic, timing only). For the final voice use an Arabic-capable TTS through `--cmd`, or record a person; the film re-times itself.
+
 ## Shipped projects
 
 - `assets/template/`: "From Cherry to Cup", a 25 second explainer in the studio look, made of cards, arrows and a counter, with no images. `new_project.py my-film` copies it. Give it a scratch voice and it renders.
+- `assets/arabic-audit/`: "نتائج التدقيق الميداني", a 37 second Arabic explainer (a hotel audit: score counter, three finding cards, a document with a highlighted phrase, a stamp), laid out and filmed right to left. `new_project.py audit-ar --arabic-example`, then `prep_assets.py`, `tts_say.py --voice ar`, `split_takes.py`, `build_narration.py`, `render.py`.
 - `assets/wright-flyer/`: "Twelve Seconds", a 90 second documentary about the first flight and the $50,000 rival who crashed twice. It uses seven public-domain photos, the US map, two typeset documents and every item type.
 
 ```bash

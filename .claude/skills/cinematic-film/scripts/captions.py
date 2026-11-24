@@ -14,7 +14,7 @@ import re
 import numpy as np
 import skia
 
-from engine import HILITE, Res, ease_out_cubic, paint, ramp, text_width, draw_text
+from engine import HILITE, Res, ease_out_cubic, is_rtl, paint, ramp, text_width, draw_text
 
 MAX_WORDS = {"highlighter": 6, "clean": 9, "paper": 8, "redbar": 5}
 
@@ -24,7 +24,7 @@ def words_with_times(seg):
     disp = seg["caption"].replace('"', "").split()
     lens = []
     for w in disp:
-        letters = len(re.sub(r"[^A-Za-z]", "", w))
+        letters = sum(ch.isalpha() for ch in w)
         if re.search(r"\d", w):                      # 1929 is long when spoken ("nineteen twenty-nine")
             letters = max(letters, 6 * len(re.sub(r"[^0-9]", "", w)) // 2 + 4)
         lens.append(max(1, letters))
@@ -87,16 +87,24 @@ class Captions:
         gap = size * 0.28
         widths = [text_width(self.res, w, size, f, 0.03) for w in words]
         total = sum(widths) + gap * (len(words) - 1)
+        rtl = is_rtl(" ".join(words))                   # Arabic: words run right to left, the swipe too
         x = self.W / 2 - total / 2
+        if rtl:
+            xs, cx = [], self.W / 2 + total / 2
+            for wd in widths:
+                cx -= wd; xs.append(cx); cx -= gap
         a = ramp(t, c["t0"] - 0.05, 0.12)
         cur = max(i for i, (_, wt) in enumerate(c["words"]) if wt <= t + 0.02) if t >= c["words"][0][1] else 0
         pad = 26 * k
         cv.drawRoundRect(skia.Rect.MakeXYWH(x - pad, y - size * 0.95, total + 2 * pad, size * 1.25), 6 * k, 6 * k, paint((10, 9, 8), 0.62 * a))
         for i, (w, wd) in enumerate(zip(words, widths)):
+            if rtl:
+                x = xs[i]
             if i == cur:
                 # white word underneath; the yellow swipe reveals it in black only where the swipe has reached
                 u = ease_out_cubic(ramp(t, c["words"][i][1], 0.12))
-                box = skia.Rect.MakeXYWH(x - 10 * k, y - size * 0.78, (wd + 20 * k) * u, size * 0.92)
+                bw = (wd + 20 * k) * u
+                box = skia.Rect.MakeXYWH(x + wd + 10 * k - bw if rtl else x - 10 * k, y - size * 0.78, bw, size * 0.92)
                 draw_text(cv, self.res, w, x, y, size, f, (250, 247, 240), a, 0.03)
                 cv.drawRect(box, paint(HILITE, 0.95 * a))
                 cv.save(); cv.clipRect(box)
@@ -123,8 +131,7 @@ class Captions:
         for i, ln in enumerate(lines):
             y = y0 + i * size * 1.25
             cv.save(); cv.translate(0, 3 * k)
-            tw = text_width(self.res, ln, size, f)
-            cv.drawString(ln, self.W / 2 - tw / 2, y, self.res.font(f, size), paint((0, 0, 0), 0.85 * a, blur=6 * k))
+            draw_text(cv, self.res, ln, self.W / 2, y, size, f, (0, 0, 0), 0.85 * a, 0.0, "center", blur=6 * k)
             cv.restore()
             draw_text(cv, self.res, ln, self.W / 2, y, size, f, (252, 250, 245), a, 0.0, "center")
 
@@ -156,6 +163,8 @@ class Captions:
         u = ease_out_cubic(ramp(t, c["t0"] - 0.05, 0.22)); a = ramp(t, c["t0"] - 0.05, 0.08)
         W, H = tw + 50 * k, size * 1.22
         x0, y0 = self.W / 2 - W / 2, self.H * 0.865 - H * 0.72
+        if is_rtl(txt):                                 # the bar wipes in from the right
+            x0 += W * (1 - u)
         cv.drawRect(skia.Rect.MakeXYWH(x0 + 6 * k, y0 + 8 * k, W * u, H), paint((0, 0, 0), 0.45 * a, blur=8 * k))
         cv.drawRect(skia.Rect.MakeXYWH(x0, y0, W * u, H), paint((176, 24, 20), 0.97 * a))
         cv.save(); cv.clipRect(skia.Rect.MakeXYWH(x0, y0, W * u, H))

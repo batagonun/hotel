@@ -3,6 +3,7 @@
 
   python3 new_project.py my-film --title "The Great Molasses Flood"
   python3 new_project.py wright-demo --example        # the Wright Flyer film, ready to fetch, voice and render
+  python3 new_project.py audit-ar --arabic-example    # Arabic right-to-left explainer (no photos): voice it and render
 
 Layout:
   script.json   narration, one entry per line (text, spoken, hero, typed), grouped into takes
@@ -25,11 +26,12 @@ def main():
     ap.add_argument("folder")
     ap.add_argument("--title", default=None)
     ap.add_argument("--example", action="store_true", help="copy the Wright Flyer example instead of the blank template")
+    ap.add_argument("--arabic-example", action="store_true", help="copy the Arabic right-to-left example (tts_say.py --voice ar)")
     a = ap.parse_args()
     dst = pathlib.Path(a.folder)
     if dst.exists() and any(dst.iterdir()):
         sys.exit(f"{dst} exists and is not empty")
-    src = SKILL / "assets" / ("wright-flyer" if a.example else "template")
+    src = SKILL / "assets" / ("wright-flyer" if a.example else "arabic-audit" if a.arabic_example else "template")
     shutil.copytree(src, dst, dirs_exist_ok=True)
     for sub in ("assets/photos", "assets/prep", "audio/takes", "out"):
         (dst / sub).mkdir(parents=True, exist_ok=True)

@@ -59,6 +59,15 @@ if "skia" in mods:
         print(f"     {role:<7} {desc}")
     if any(resolve_typeface(r)[1].startswith("system default") for r in FONT_ROLES):
         print("     -> run get_fonts.py --project <folder> to fetch open-licensed replacements")
+    from engine import resolve_arabic_typeface
+    print("  arabic fonts (for Arabic text; drop <project>/fonts/<role>_ar.ttf to override):")
+    weak = False
+    for role in FONT_ROLES:
+        desc = resolve_arabic_typeface(role)[1]
+        weak |= desc.startswith(("system fallback", "NO ARABIC", "DejaVu"))
+        print(f"     {role:<7} {desc}")
+    if weak:
+        print("     -> for Arabic films: apt install fonts-noto-core, or get_fonts.py --arabic --project <folder>")
 
 voice = "say" if shutil.which("say") else "espeak-ng" if shutil.which("espeak-ng") else None
 line("ok" if voice else "--", f"scratch voice: {voice}" if voice else "no local voice for scratch tracks",

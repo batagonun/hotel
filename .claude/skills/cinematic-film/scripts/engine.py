@@ -50,6 +50,23 @@ FONT_ROLES = {
     "labelm": [("Avenir Next", 700), ("Montserrat", 600), ("Helvetica Neue", 500), ("Arial", 400), ("DejaVu Sans", 400)],
 }
 
+# Arabic faces per role, used for the Arabic-script runs of any text (Latin runs keep the role's face).
+# Drop <project>/fonts/<role>_ar.ttf (or fonts/arabic.ttf for every role) to force a face.
+# Linux: apt install fonts-noto-core  |  any OS: get_fonts.py --arabic --project <folder>
+ARABIC_ROLES = {
+    "serif": [("Noto Naskh Arabic", 400), ("Amiri", 400), ("Scheherazade New", 400), ("Traditional Arabic", 400),
+              ("Baghdad", 400), ("Geeza Pro", 400), ("DejaVu Sans", 400)],
+    "mono": [("Noto Kufi Arabic", 700), ("Cairo", 700), ("Tajawal", 700), ("Noto Sans Arabic", 700), ("Geeza Pro", 700),
+             ("Segoe UI", 700), ("DejaVu Sans", 700)],
+    "hand": [("Aref Ruqaa", 400), ("Noto Naskh Arabic", 400), ("Amiri", 400), ("Diwan Thuluth", 400), ("DejaVu Sans", 400)],
+    "cond": [("Noto Kufi Arabic", 800), ("Cairo", 800), ("Tajawal", 800), ("Noto Sans Arabic", 800), ("Geeza Pro", 700),
+             ("Segoe UI", 700), ("DejaVu Sans", 700)],
+    "label": [("Noto Kufi Arabic", 700), ("Cairo", 700), ("Tajawal", 700), ("Noto Sans Arabic", 700), ("Geeza Pro", 700),
+              ("Segoe UI", 700), ("DejaVu Sans", 700)],
+    "labelm": [("Noto Kufi Arabic", 400), ("Cairo", 500), ("Tajawal", 500), ("Noto Sans Arabic", 400), ("Geeza Pro", 400),
+               ("Segoe UI", 400), ("DejaVu Sans", 400)],
+}
+
 # Looks: the board under everything plus the film finish. A scene picks one with Film(look=...).
 LOOKS = {
     # evidence wall: dark cork, warm grade (true stories, history, crime)
@@ -156,7 +173,7 @@ class Doc:
         """When `word` is spoken in line i, by its letter share of the line (pauses spread evenly).
         Search the SPOKEN text: "1929" is spoken "nineteen twenty-nine", so ask for "nineteen"."""
         vo = self.seg[i]["vo"]
-        letters = re.sub(r"[^a-z]", "", vo.lower())
+        letters = "".join(ch for ch in vo.lower() if ch.isalpha())     # any script
         idx, start = -1, 0
         for _ in range(nth + 1):
             idx = vo.lower().find(word.lower(), start); start = idx + 1
@@ -164,7 +181,7 @@ class Doc:
                 break
         if idx < 0:
             raise ValueError(f"{word!r} (occurrence {nth}) is not in the spoken text of line {i}: {vo!r}")
-        before = len(re.sub(r"[^a-z]", "", vo[:idx].lower()))
+        before = sum(ch.isalpha() for ch in vo[:idx])
         return self.L(i) + (self.E(i) - self.L(i)) * before / max(1, len(letters)) + 0.04
 
     def on(self, pr, fx, fy):
@@ -232,6 +249,23 @@ class Res:
         f.setSubpixel(True); f.setEdging(skia.Font.Edging.kAntiAlias)
         return f
 
+    def font_collection(self):
+        """textlayout fonts for shaped (Arabic / right-to-left) text: each role's face as "cf-<role>" and its
+        Arabic face as "cf-ar-<role>"."""
+        if getattr(self, "_fc", None) is None:
+            from skia import textlayout as tl
+            prov = tl.TypefaceFontProvider()
+            for role in FONT_ROLES:
+                tf = self.typeface(role)
+                if tf is not None:
+                    prov.registerTypeface(tf, f"cf-{role}")
+                atf = resolve_arabic_typeface(role, self.fonts_dir)[0]
+                if atf is not None:
+                    prov.registerTypeface(atf, f"cf-ar-{role}")
+            fc = tl.FontCollection(); fc.setDefaultFontManager(prov)
+            self._fc, self._prov, self._uni, self._paras = fc, prov, skia.Unicode(), {}
+        return self._fc
+
 
 def resolve_typeface(role, fonts_dir=None):
     """(typeface, description) for a font role: project override file, then the candidates, then the default."""
@@ -251,6 +285,31 @@ def resolve_typeface(role, fonts_dir=None):
     return tf, f"system default ({tf.getFamilyName() if tf else '?'}): install one of {[f for f, _ in FONT_ROLES.get(role, [])][:3]}"
 
 
+def _has_arabic(tf):
+    return tf is not None and tf.unicharToGlyph(0x0628) != 0          # BEH
+
+
+def resolve_arabic_typeface(role, fonts_dir=None):
+    """(typeface, description) of the Arabic face for a role: fonts/<role>_ar, fonts/arabic, candidates, any system face."""
+    if fonts_dir:
+        for stem in (f"{role}_ar", "arabic"):
+            for ext in (".ttf", ".otf"):
+                p = pathlib.Path(fonts_dir) / f"{stem}{ext}"
+                if p.exists():
+                    tf = skia.Typeface.MakeFromFile(str(p))
+                    if _has_arabic(tf):
+                        return tf, f"{p.name} (project file)"
+    mgr = skia.FontMgr.RefDefault()
+    for fam, weight in ARABIC_ROLES.get(role, ARABIC_ROLES["label"]):
+        tf = mgr.matchFamilyStyle(fam, skia.FontStyle(weight, 5, skia.FontStyle.kUpright_Slant))
+        if tf is not None and tf.getFamilyName().lower() == fam.lower() and _has_arabic(tf):
+            return tf, f"{fam} {weight}"
+    tf = mgr.matchFamilyStyleCharacter("", skia.FontStyle.Normal(), ["ar"], 0x0628)
+    if _has_arabic(tf):
+        return tf, f"system fallback ({tf.getFamilyName()}): install one of {[f for f, _ in ARABIC_ROLES.get(role, [])][:3]}"
+    return None, f"NO ARABIC FACE: install one of {[f for f, _ in ARABIC_ROLES.get(role, [])][:3]}"
+
+
 SAMPLING = skia.SamplingOptions(skia.FilterMode.kLinear, skia.MipmapMode.kLinear)
 
 
@@ -268,14 +327,99 @@ def paint(rgb=(0, 0, 0), a=1.0, stroke=None, blur=None, aa=True):
     return p
 
 
-def draw_text(c, res, text, x, y, size, font="serif", rgb=CREAM, a=1.0, track=0.0, align="left", reveal=None):
-    """Draw text with letter tracking (em fraction). reveal=n draws only the first n characters."""
+# ---------------------------------------------------------------- Arabic and right-to-left text
+# Arabic letters change shape with their neighbours and the line runs right to left, so a string that holds
+# Arabic (or Hebrew) is shaped as a whole by Skia's textlayout (HarfBuzz + ICU bidi) instead of being drawn
+# glyph by glyph. Arabic runs use the role's Arabic face (ARABIC_ROLES), Latin runs keep the role's face,
+# tracking applies to Latin runs only (spacing breaks the joins). Paragraphs are laid out once at a base size
+# and cached, then scaled, so a fading or zooming word costs a cache lookup per frame.
+_RTL_CHARS = re.compile(r"[֐-ࣿיִ-﷿ﹰ-﻿]")
+_RTL_BASE = 100.0
+
+
+def is_rtl(text):
+    """True when text holds Arabic or Hebrew letters: lay it out right to left (align right, words right to left)."""
+    return bool(text) and _RTL_CHARS.search(text) is not None
+
+
+def _script_runs(text):
+    """[(chunk, is_arabic)]: neutral characters (spaces, punctuation, digits) join the run before them."""
+    runs = []
+    for ch in text:
+        if _RTL_CHARS.match(ch):
+            kind = True
+        elif ch.isalpha():
+            kind = False
+        else:
+            kind = runs[-1][1] if runs else None
+        if runs and (kind is None or runs[-1][1] == kind or runs[-1][1] is None):
+            runs[-1] = (runs[-1][0] + ch, runs[-1][1] if kind is None else kind)
+        else:
+            runs.append((ch, kind))
+    return [(t, bool(k)) for t, k in runs]
+
+
+def _shaped(res, text, font, rgb, a, track, blur, size):
+    """A cached textlayout paragraph of `text` at _RTL_BASE px (scale by size / _RTL_BASE when painting)."""
+    from skia import textlayout as tl
+    fc = res.font_collection()
+    bl = round((blur or 0) * _RTL_BASE / max(size, 1e-3), 1)
+    if not any(ch.isalpha() and not _RTL_CHARS.match(ch) for ch in text):
+        track = 0.0                                     # no Latin letters: tracking never applies, keep one cache entry
+    key = (text, font, tuple(int(v) for v in rgb), int(round(clamp(a) * 96)), round(track, 3), bl)
+    p = res._paras.get(key)
+    if p is None:
+        if len(res._paras) > 6000:
+            res._paras.clear()
+        b = tl.ParagraphBuilder.make(tl.ParagraphStyle(), fc, res._uni)
+        rtl = is_rtl(text)
+        if rtl:
+            b.addText("‫")                                     # right-to-left embedding: base direction RTL
+        for chunk, arabic in _script_runs(text):
+            ts = tl.TextStyle()
+            ts.setFontFamilies([f"cf-ar-{font}", f"cf-{font}"] if arabic else [f"cf-{font}", f"cf-ar-{font}"])
+            ts.setFontSize(_RTL_BASE)
+            ts.setForegroundPaint(paint(rgb, int(round(clamp(a) * 96)) / 96, blur=bl or None))
+            if arabic:
+                ts.setLocale("ar")
+            elif track:
+                ts.setLetterSpacing(track * _RTL_BASE)
+            b.pushStyle(ts); b.addText(chunk); b.pop()
+        if rtl:
+            b.addText("‬")
+        p = b.Build(); p.layout(1e7)
+        res._paras[key] = p
+    return p
+
+
+def _draw_shaped(c, res, text, x, y, size, font, rgb, a, track, align, reveal, blur):
+    k = size / _RTL_BASE
+    full = _shaped(res, text, font, rgb, a, track, blur, size)
+    total = full.LongestLine * k
+    x0 = x - total / 2 if align == "center" else x - total if align == "right" else x
+    n = len(text) if reveal is None else int(reveal)
+    if n <= 0 or a <= 0:
+        return total
+    p = full if n >= len(text) else _shaped(res, text[:n], font, rgb, a, track, blur, size)
+    w = p.LongestLine * k
+    px = x0 + total - w if is_rtl(text) else x0                     # a reveal grows from the reading start
+    c.save(); c.translate(px, y - p.AlphabeticBaseline * k); c.scale(k, k)
+    p.paint(c, 0, 0)
+    c.restore()
+    return total
+
+
+def draw_text(c, res, text, x, y, size, font="serif", rgb=CREAM, a=1.0, track=0.0, align="left", reveal=None, blur=None):
+    """Draw text with letter tracking (em fraction). reveal=n draws only the first n characters.
+    Arabic / Hebrew text is shaped and laid out right to left (see is_rtl); reveal then types from the right."""
+    if is_rtl(text):
+        return _draw_shaped(c, res, text, x, y, size, font, rgb, a, track, align, reveal, blur)
     f = res.font(font, size)
     widths = f.getWidths(f.textToGlyphs(text))
     gap = track * size
     total = sum(widths) + gap * (len(text) - 1)
     x0 = x - total / 2 if align == "center" else x - total if align == "right" else x
-    p = paint(rgb, a)
+    p = paint(rgb, a, blur=blur)
     n = len(text) if reveal is None else int(reveal)
     cx = x0
     for i, ch in enumerate(text):
@@ -287,6 +431,8 @@ def draw_text(c, res, text, x, y, size, font="serif", rgb=CREAM, a=1.0, track=0.
 
 
 def text_width(res, text, size, font="serif", track=0.0):
+    if is_rtl(text):
+        return _shaped(res, text, font, (0, 0, 0), 1.0, track, None, size).LongestLine * size / _RTL_BASE
     f = res.font(font, size)
     return sum(f.getWidths(f.textToGlyphs(text))) + track * size * (len(text) - 1)
 
@@ -866,7 +1012,9 @@ class PaperDoc(Item):
         """(world point at the left of sentence line i, its width) for placing pen marks."""
         lines = self.wrap(res)
         y = -self.h / 2 + self.h * self.row_start + (self.srow + i) * self.row_gap
-        return rot_point(self.x, self.y, -self.w * 0.4, y, self.rot), text_width(res, lines[i], self.ssize, "serif")
+        tw = text_width(res, lines[i], self.ssize, "serif")
+        x = self.w * 0.4 - tw if is_rtl(self.sentence) else -self.w * 0.4      # Arabic lines sit flush right
+        return rot_point(self.x, self.y, x, y, self.rot), tw
 
     def phrase_spans(self, res, phrase):
         """[(world centre, width)] of `phrase` in the sentence block, one span per wrapped line it covers:
@@ -880,8 +1028,11 @@ class PaperDoc(Item):
         for i, ln in enumerate(lines):
             a, b = max(k, pos), min(k + len(phrase), pos + len(ln))
             if a < b:
-                x0 = -self.w * 0.4 + text_width(res, ln[:a - pos], self.ssize, "serif")
                 pw = text_width(res, ln[a - pos:b - pos].strip(), self.ssize, "serif")
+                if is_rtl(self.sentence):                                   # measured from the right edge
+                    x0 = self.w * 0.4 - text_width(res, ln[:a - pos], self.ssize, "serif") - pw
+                else:
+                    x0 = -self.w * 0.4 + text_width(res, ln[:a - pos], self.ssize, "serif")
                 y = -self.h / 2 + self.h * self.row_start + (self.srow + i) * self.row_gap
                 spans.append((rot_point(self.x, self.y, x0 + pw / 2, y, self.rot), pw))
             pos += len(ln) + 1
@@ -912,7 +1063,13 @@ class PaperDoc(Item):
         for i in range(self.rows):
             yy = -H / 2 + H * self.row_start + i * self.row_gap
             if lines and self.srow <= i < self.srow + len(lines):
-                draw_text(c, res, lines[i - self.srow], -W * 0.4, yy + self.ssize * 0.3, self.ssize, "serif", INK, a)
+                if is_rtl(self.sentence):
+                    draw_text(c, res, lines[i - self.srow], W * 0.4, yy + self.ssize * 0.3, self.ssize, "serif", INK, a, 0.0, "right")
+                else:
+                    draw_text(c, res, lines[i - self.srow], -W * 0.4, yy + self.ssize * 0.3, self.ssize, "serif", INK, a)
+                continue
+            if is_rtl(self.sentence or ""):
+                c.drawLine(W * 0.4, yy, W * 0.4 - W * 0.8 * self.lens[i], yy, paint((150, 140, 124), 0.55 * a, stroke=self.row_gap * 0.22))
                 continue
             c.drawLine(-W * 0.4, yy, -W * 0.4 + W * 0.8 * self.lens[i], yy, paint((150, 140, 124), 0.55 * a, stroke=self.row_gap * 0.22))
         if self.pin:
@@ -952,18 +1109,20 @@ class Card(Item):
         c.save(); c.translate(0, 26); c.drawRRect(rr, paint((0, 0, 0), 0.3 * a, blur=40)); c.restore()
         c.drawRRect(rr, paint(self.rgb, a))
         pad = W * 0.08
+        rtl = is_rtl(self.title or "") or any(is_rtl(ln) for ln in self.lines)     # Arabic card: mirrored
+        tx, al = (W / 2 - pad, "right") if rtl else (-W / 2 + pad, "left")
         if self.accent:
             c.save(); c.clipRRect(rr, skia.ClipOp.kIntersect, True)
-            c.drawRect(skia.Rect.MakeXYWH(-W / 2, -H / 2, W * 0.035, H), paint(self.accent, a))
+            c.drawRect(skia.Rect.MakeXYWH(W / 2 - W * 0.035 if rtl else -W / 2, -H / 2, W * 0.035, H), paint(self.accent, a))
             c.restore()
         y = -H / 2 + pad + self.ts * 0.85
         if self.title:
-            draw_text(c, res, self.title, -W / 2 + pad, y, self.ts, "label", self.text_rgb, a, 0.0)
+            draw_text(c, res, self.title, tx, y, self.ts, "label", self.text_rgb, a, 0.0, al)
             y += self.ts * 0.55
         for i, ln in enumerate(self.lines):
             la = a * ramp(t, self.t_in + 0.25 + 0.12 * i, 0.3)
             y += self.bs * 1.45
-            draw_text(c, res, ln, -W / 2 + pad, y, self.bs, "labelm", self.text_rgb, la * 0.85, 0.0)
+            draw_text(c, res, ln, tx, y, self.bs, "labelm", self.text_rgb, la * 0.85, 0.0, al)
         c.restore()
 
 
@@ -1043,6 +1202,8 @@ class OpenLedger(Item):
         x0 = self.w / 2 * 0.06; y = self.row_y(self.erow) + size * 0.1
         full = text_width(res, self.entry, size, "hand")
         tail = text_width(res, words, size, "hand")
+        if is_rtl(self.entry):                                  # flush right; the trailing words end on the left
+            return rot_point(self.x, self.y, self.w / 2 * 0.94 - full + tail / 2, y - size * 0.25, self.rot), tail
         return rot_point(self.x, self.y, x0 + full - tail / 2, y - size * 0.25, self.rot), tail
 
     def draw(self, c, res, t):
@@ -1076,7 +1237,10 @@ class OpenLedger(Item):
                 c.drawLine(px0 + pw * 0.2, yy, px0 + pw * d1, yy, paint((70, 60, 50), 0.32 * a, stroke=7))
                 c.drawLine(px0 + pw * 0.69, yy, px0 + pw * d2, yy, paint((70, 60, 50), 0.32 * a, stroke=7))
         size = H * 0.072
-        draw_text(c, res, self.entry, W / 2 * 0.06, self.row_y(self.erow) + size * 0.1, size, "hand", (22, 20, 40), a)
+        if is_rtl(self.entry):
+            draw_text(c, res, self.entry, W / 2 * 0.94, self.row_y(self.erow) + size * 0.1, size, "hand", (22, 20, 40), a, 0.0, "right")
+        else:
+            draw_text(c, res, self.entry, W / 2 * 0.06, self.row_y(self.erow) + size * 0.1, size, "hand", (22, 20, 40), a)
         c.restore()
 
 
