@@ -7,18 +7,18 @@ body>div{direction:rtl}
 .L{position:absolute;inset:0;opacity:0;display:none;overflow:hidden}
 .photo{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.25);filter:grayscale(1) brightness(1.05) contrast(1.15)}
 .tint{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,20,50,.35),rgba(20,40,90,0) 35%,rgba(20,40,90,0) 65%,rgba(8,14,36,.55));mix-blend-mode:normal}
-.band{position:absolute;left:0;right:0;top:720px;padding:60px 40px;background:rgba(8,16,40,.78);border-top:3px solid #7fa8ff;border-bottom:3px solid #7fa8ff;text-align:center}
-.v{font:700 92px/1.7 'Amiri';color:#fff;white-space:nowrap}
-.v .rh{color:#9cc0ff}
+.band{position:absolute;left:0;right:0;top:720px;padding:60px 40px;text-align:center;text-shadow:0 0 3px #000,0 0 8px #000,0 3px 10px rgba(0,0,0,.95),0 6px 30px rgba(0,0,0,.9);}
+.v{font:700 100px/1.7 'Amiri';color:#fff;white-space:nowrap}
+.v .rh{color:#8fd3ff}
 .num{position:absolute;top:640px;left:0;right:0;text-align:center;font:700 34px 'Cairo';color:#9cc0ff}
 .series{position:absolute;top:110px;left:0;right:0;text-align:center;z-index:9}
 .series span{font:700 38px 'Cairo';color:#0a1020;background:#fff;padding:8px 30px;border-radius:40px}
-.qt{text-shadow:0 3px 18px #000,0 0 6px #000;position:absolute;top:470px;left:60px;right:60px;text-align:center;font:700 92px/1.4 'Cairo';color:#fff}
-.btn{position:absolute;left:140px;right:140px;height:170px;border-radius:30px;border:4px solid #fff;background:rgba(8,16,40,.75);color:#fff;font:700 70px/170px 'Cairo';text-align:center}
-.bar{position:absolute;top:1480px;left:200px;right:200px;height:14px;border-radius:7px;background:rgba(255,255,255,.2);overflow:hidden}
+.qt{text-shadow:0 0 3px #000,0 0 8px #000,0 3px 10px rgba(0,0,0,.95),0 6px 30px rgba(0,0,0,.9);position:absolute;top:470px;left:60px;right:60px;text-align:center;font:700 92px/1.4 'Cairo';color:#fff}
+.btn{position:absolute;left:140px;right:140px;height:170px;border-radius:30px;border:4px solid #fff;background:transparent;box-shadow:0 0 20px rgba(0,0,0,.6),inset 0 0 20px rgba(0,0,0,.4);text-shadow:0 0 3px #000,0 0 8px #000,0 3px 10px rgba(0,0,0,.95),0 6px 30px rgba(0,0,0,.9);color:#fff;font:700 70px/170px 'Cairo';text-align:center}
+.bar{box-shadow:0 0 12px #000;position:absolute;top:1480px;left:200px;right:200px;height:14px;border-radius:7px;background:rgba(255,255,255,.2);overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:#9cc0ff;margin-right:0}
-.card{position:absolute;left:70px;right:70px;padding:40px;border-radius:26px;background:rgba(8,16,40,.85);border:2px solid rgba(156,192,255,.6);color:#fff;text-align:center;font:700 58px/1.5 'Cairo'}
-.card b{color:#9cc0ff}
+.card{position:absolute;left:50px;right:50px;padding:30px 20px;color:#fff;text-align:center;font:700 64px/1.5 'Cairo';text-shadow:0 0 3px #000,0 0 8px #000,0 3px 10px rgba(0,0,0,.95),0 6px 30px rgba(0,0,0,.9);}
+.card b{color:#8fd3ff}
 .book{position:absolute;top:470px;left:40px;right:40px;height:760px;display:flex;flex-direction:row;gap:0;filter:drop-shadow(0 25px 40px rgba(0,0,0,.6))}
 .pg{flex:1;background:#f4f1ea;color:#101a33;padding:50px 26px;text-align:center;position:relative}
 .pg:first-child{border-radius:0 18px 18px 0;box-shadow:inset 30px 0 40px -30px rgba(0,0,0,.35)}
@@ -27,37 +27,38 @@ body>div{direction:rtl}
 .pg small{display:block;font:400 30px 'Cairo';color:#56607a;margin-top:6px}
 .pg .pv{font:700 78px/1.7 'Amiri';margin-top:90px}
 .pg .pv .rh{color:#c0261d}
-.cap{text-shadow:0 3px 18px #000,0 0 6px #000;position:absolute;top:1290px;left:70px;right:70px;text-align:center;font:700 54px/1.5 'Cairo';color:#fff}
-.cap b{color:#9cc0ff}
+.cap{text-shadow:0 0 3px #000,0 0 8px #000,0 3px 10px rgba(0,0,0,.95),0 6px 30px rgba(0,0,0,.9);position:absolute;top:1290px;left:70px;right:70px;text-align:center;font:700 54px/1.5 'Cairo';color:#fff}
+.cap b{color:#8fd3ff}
+.glow{position:absolute;inset:0;background:radial-gradient(ellipse 75% 32% at 50% 47%,rgba(0,0,0,.42),rgba(0,0,0,0))}
 .src{position:absolute;bottom:115px;left:50px;right:50px;text-align:center;font:400 27px/1.5 'Cairo';color:#dfe7ff;z-index:9;opacity:0}
 .handle{position:absolute;bottom:50px;left:0;right:0;text-align:center;font:700 28px 'Cairo';color:#fff;opacity:.7;direction:ltr;letter-spacing:4px;z-index:9}
 .credit{position:absolute;bottom:62px;right:36px;font:400 20px 'Cairo';color:rgba(255,255,255,.65);z-index:9}
 </style></head><body>
 <div style="position:absolute;top:-500px;font:700 40px Amiri">ا</div><div style="position:absolute;top:-500px;font:700 40px Cairo">ا</div><div style="position:absolute;top:-500px;font:400 40px Cairo">ا</div>
 
-<div class="L" id="L0"><div class="photo" id="p0" style="background-image:url('../../../media/w49/kr-03915.jpg')"></div><div class="tint"></div>
+<div class="L" id="L0"><div class="photo" id="p0" style="background-image:url('../../../media/w49/kr-03915.jpg')"></div><div class="tint"></div><div class="glow"></div>
  <div class="band" id="b0"><div class="v">يا ليلُ الصبُّ متى غَ<span class="rh">دُهُ</span></div><div class="v">أقيامُ السّاعةِ موعِ<span class="rh">دُهُ</span></div></div>
  <div class="credit">القيروان، صورة أرشيفية · مكتبة الكونغرس</div></div>
-<div class="L" id="L1"><div class="photo" id="p1" style="background-image:url('../../../media/w49/kr-03873.jpg')"></div><div class="tint"></div>
+<div class="L" id="L1"><div class="photo" id="p1" style="background-image:url('../../../media/w49/kr-03873.jpg')"></div><div class="tint"></div><div class="glow"></div>
  <div class="band" id="b1"><div class="v">رقدَ السُّمّارُ فأرّقَهُ</div><div class="v">أسفٌ للبَيْنِ يُردِّ<span class="rh">دُهُ</span></div></div>
  <div class="credit">جامع القيروان، صورة أرشيفية · مكتبة الكونغرس</div></div>
-<div class="L" id="L2"><div class="photo" id="p2" style="background-image:url('../../../media/w49/kr-03870.jpg')"></div><div class="tint"></div>
+<div class="L" id="L2"><div class="photo" id="p2" style="background-image:url('../../../media/w49/kr-03870.jpg')"></div><div class="tint"></div><div class="glow"></div>
  <div class="band" id="b2"><div class="v">فبكاهُ النجمُ ورقَّ لهُ</div><div class="v">ممّا يرعاهُ ويرصُ<span class="rh">دُهُ</span></div></div>
  <div class="credit">جامع القيروان، صورة أرشيفية · مكتبة الكونغرس</div></div>
 
-<div class="L" id="L3"><div class="photo" style="background-image:url('../../../media/w49/kr-03889.jpg');filter:grayscale(1) brightness(.75) blur(3px)"></div><div class="tint"></div>
+<div class="L" id="L3"><div class="photo" style="background-image:url('../../../media/w49/kr-03889.jpg');filter:grayscale(1) brightness(.75) blur(3px)"></div><div class="tint"></div><div class="glow"></div>
  <div class="qt" id="q3">يا ترى مين<br>اللي كتبها؟</div>
  <div class="btn" id="bs" style="top:900px">أحمد شوقي؟</div>
  <div class="btn" id="bt" style="top:1130px">ولا شاعر تونسي؟</div>
  <div class="bar"><i id="bar"></i></div></div>
 
-<div class="L" id="L4"><div class="photo" id="p4" style="background-image:url('../../../media/w49/kr-03876.jpg')"></div><div class="tint"></div>
- <div class="card" id="c4a" style="top:430px;font-size:76px;background:#1f7a46;border-color:#fff">شاعر تونسي ✓</div>
+<div class="L" id="L4"><div class="photo" id="p4" style="background-image:url('../../../media/w49/kr-03876.jpg')"></div><div class="tint"></div><div class="glow"></div>
+ <div class="card" id="c4a" style="top:430px;font-size:88px;color:#6dffa8">شاعر تونسي ✓</div>
  <div class="card" id="c4b" style="top:700px"><b>الحُصري القيرواني</b><br>من القيروان، من أكتر من <b>900 سنة</b></div>
  <div class="card" id="c4c" style="top:1080px">وكان <b>كفيف</b> من وهو صغير</div>
  <div class="credit">أسوار القيروان، صورة أرشيفية · مكتبة الكونغرس</div></div>
 
-<div class="L" id="L5"><div class="photo" style="background-image:url('../../../media/w49/kr-03893.jpg');filter:grayscale(1) brightness(.75) blur(3px)"></div><div class="tint"></div>
+<div class="L" id="L5"><div class="photo" style="background-image:url('../../../media/w49/kr-03893.jpg');filter:grayscale(1) brightness(.75) blur(3px)"></div><div class="tint"></div><div class="glow"></div>
  <div class="qt" style="top:260px;font-size:60px" id="t5">نفس الوزن… ونفس القافية</div>
  <div class="book" id="bk">
   <div class="pg"><h3>الحُصري</h3><small>القرن الحادي عشر</small><div class="pv">يا ليلُ الصبُّ<br>متى غَ<span class="rh">دُهُ</span></div></div>
@@ -65,16 +66,16 @@ body>div{direction:rtl}
  </div>
  <div class="cap" id="cap5">شوقي <b>عارضها</b> بقصيدة على نفس الوزن<br>وغنّاها <b>محمد عبد الوهاب</b></div></div>
 
-<div class="L" id="L6"><div class="photo" id="p6" style="background-image:url('../../../media/w49/kr-03893.jpg')"></div><div class="tint"></div>
+<div class="L" id="L6"><div class="photo" id="p6" style="background-image:url('../../../media/w49/kr-03893.jpg')"></div><div class="tint"></div><div class="glow"></div>
  <div class="card" id="c6a" style="top:520px">أما قصيدة الحصري الأصلية…<br>غنّتها <b>فيروز</b> 🎶</div>
- <div class="card" id="c6b" style="top:900px;background:#fff;color:#0a1020;border-color:#fff">كنت فاكرها لمين؟<br>قول في الكومنت 👇</div>
+ <div class="card" id="c6b" style="top:900px">كنت فاكرها لمين؟<br>قول في الكومنت 👇</div>
  <div class="credit">جامع القيروان، صورة أرشيفية · مكتبة الكونغرس</div></div>
 
 <div class="series"><span>المشهورة غلط</span></div>
 <div class="src" id="src">📚 ويكيبيديا «علي الحصري القيرواني» · زكي مبارك «الموازنة بين الشعراء» (هنداوي)<br>📷 الصور: Lehnert &amp; Landrock، مكتبة الكونغرس (ملكية عامة)</div>
 <div class="handle">@batagonun</div>
 <script>
-const S=[[0,5.4],[5.4,10.2],[10.2,15],[15,19.8],[19.8,25.6],[25.6,31.6],[31.6,37]];
+const S=[[0,6.8],[6.8,13.6],[13.6,20.4],[20.4,25.6],[25.6,32],[32,38.6],[38.6,44]];
 const cl=v=>Math.max(0,Math.min(1,v)),ease=v=>1-Math.pow(1-cl(v),3);
 function pop(id,lt,a,dy){const e=document.getElementById(id);const k=ease((lt-a)/0.6);e.style.opacity=k;e.style.transform='translateY('+((1-k)*(dy||40))+'px)'}
 function lines(id,lt,a){[...document.getElementById(id).children].forEach((c,j)=>{const k=ease((lt-a-j*1.1)/0.9);c.style.opacity=k;c.style.filter='blur('+((1-k)*10)+'px)'})}
@@ -87,7 +88,7 @@ window.frame=function(t){
  lt=t-S[5][0];pop('t5',lt,0.1);pop('bk',lt,0.5);pop('cap5',lt,2.8);
  [...document.querySelectorAll('#bk .rh')].forEach(e=>{const k=cl((lt-1.6)/0.5);e.style.color=k>0?'#c0261d':'#101a33';e.style.textShadow=k>0?'0 0 '+(18*k)+'px rgba(192,38,29,.5)':'none'});
  lt=t-S[6][0];document.getElementById('p6').style.transform='scale('+(1.25+lt*0.02)+')';pop('c6a',lt,0.2);pop('c6b',lt,1.8);
- document.getElementById('src').style.opacity=ease((t-34)/0.8);
+ document.getElementById('src').style.opacity=ease((t-41)/0.8);
 };
 window.frame(0);
 </script></body></html>
