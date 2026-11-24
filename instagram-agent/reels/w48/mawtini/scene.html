@@ -1,0 +1,101 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:'Amiri';src:url('../../../fonts/Amiri-Bold.ttf');font-weight:700}
+@font-face{font-family:'Cairo';src:url('../../../fonts/Cairo-Regular.ttf');font-weight:400}
+@font-face{font-family:'Cairo';src:url('../../../fonts/Cairo-Bold.ttf');font-weight:700}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#1a1410}body>div{direction:rtl}
+.L{position:absolute;inset:0;opacity:0}
+.photo{position:absolute;inset:0;transform:scale(1.12);background-size:cover;background-position:center;filter:sepia(.55) brightness(.62) contrast(1.05)}
+.vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 45%,rgba(0,0,0,.75))}
+/* paper */
+.paper{background:#efe2c4;background-image:radial-gradient(circle at 20% 30%,rgba(120,80,30,.10),transparent 40%),radial-gradient(circle at 80% 70%,rgba(120,80,30,.13),transparent 45%),repeating-linear-gradient(0deg,rgba(90,60,20,.035) 0 2px,transparent 2px 6px);color:#2a1a0e;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.strip{position:absolute;left:70px;right:70px;padding:34px 40px;text-align:center;font:700 66px/1.45 'Cairo';transform:rotate(-1.2deg)}
+.strip .r{color:#9e1f17}
+/* scroll */
+.scroll{position:absolute;left:110px;right:110px;top:300px;height:0;overflow:hidden}
+.rod{position:absolute;left:80px;right:80px;height:46px;border-radius:23px;background:linear-gradient(180deg,#6b4423,#3d2412 60%,#22140a);box-shadow:0 8px 20px rgba(0,0,0,.6)}
+.rod::before,.rod::after{content:'';position:absolute;top:-8px;width:30px;height:62px;border-radius:12px;background:#a87a3a}
+.rod::before{left:-24px}.rod::after{right:-24px}
+.ink{position:absolute;left:0;right:0;text-align:center;color:#2a1a0e;white-space:nowrap}
+.ink.v{font:700 88px/1.6 'Amiri'}
+.ink.t{font:700 60px/1.5 'Cairo'}
+.ink .r{color:#9e1f17}
+.series{position:absolute;top:110px;left:0;right:0;text-align:center;z-index:9}
+.series span{font:700 38px 'Cairo';color:#2a1a0e;background:#efe2c4;padding:8px 30px;border-radius:6px;box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.pin{position:absolute;left:150px;right:150px;top:330px;padding:26px 26px 30px;transform:rotate(2deg)}
+.pin img{display:block;width:100%;filter:sepia(.35) contrast(1.05)}
+.pin .cap{font:400 30px 'Cairo';text-align:center;margin-top:14px;color:#4a3420}
+.src{position:absolute;bottom:120px;left:50px;right:50px;text-align:center;font:400 28px/1.5 'Cairo';color:#f3e6c8;text-shadow:0 2px 10px #000;z-index:9;opacity:0}
+.handle{position:absolute;bottom:50px;left:0;right:0;text-align:center;font:700 28px 'Cairo';color:#f3e6c8;opacity:.75;direction:ltr;letter-spacing:4px;z-index:9}
+.credit{position:absolute;bottom:60px;right:40px;font:400 20px 'Cairo';color:rgba(243,230,200,.7);z-index:9}
+</style></head><body>
+<div style="position:absolute;top:-500px;left:0;font:700 40px Amiri">ا</div><div style="position:absolute;top:-500px;left:0;font:700 40px Cairo">ا</div><div style="position:absolute;top:-500px;left:0;font:400 40px Cairo">ا</div>
+
+<!-- L0 hook: Nablus photo + paper strip -->
+<div class="L" id="L0"><div class="photo" id="p0" style="background-image:url('../../../media/w48d/loc-18631.jpg')"></div><div class="vig"></div>
+ <div class="strip paper" style="top:760px;font-size:58px;left:50px;right:50px" id="st0">النشيد الوطني بتاع <span class="r">العراق</span>…<br>كاتبه <span class="r">فلسطيني</span>، وملحّنه <span class="r">لبناني</span></div>
+ <div class="credit">نابلس، صورة أرشيفية · مكتبة الكونغرس</div></div>
+
+<!-- L1 the scroll with the verse -->
+<div class="L" id="L1"><div class="photo" style="background-image:url('../../../media/w48d/loc-07371.jpg');filter:sepia(.6) brightness(.35) blur(3px)"></div><div class="vig"></div>
+ <div class="rod" style="top:276px"></div>
+ <div class="scroll paper" id="sc1">
+  <div class="ink v" style="top:120px" data-a="1.2" data-d="1.4">مَوطِني… مَوطِني</div>
+  <div class="ink v" style="top:300px" data-a="2.7" data-d="1.8">الجلالُ والجمالُ</div>
+  <div class="ink v" style="top:450px" data-a="4.4" data-d="1.8">والسَّناءُ والبهاءُ</div>
+  <div class="ink v" style="top:600px;" data-a="6.1" data-d="1.2"><span class="r">في رُباكْ</span></div>
+  <div class="ink t" style="top:850px;font-size:44px;color:#6b4a2a" data-a="7.1" data-d="0.8">إبراهيم طوقان</div>
+ </div>
+ <div class="rod" id="rod1" style="top:300px"></div></div>
+
+<!-- L2 Tuqan photo pinned -->
+<div class="L" id="L2"><div class="photo" style="background-image:url('../../../media/w48d/loc-18631.jpg');filter:sepia(.6) brightness(.30) blur(4px)"></div>
+ <div class="pin paper" id="pin2"><img src="../../../media/w48/tq-pbs.jpg"><div class="cap">إبراهيم طوقان في إذاعة فلسطين · مجموعة ماتسون، مكتبة الكونغرس</div></div>
+ <div class="strip paper" style="top:1120px;font-size:58px" id="st2">شاعر من <span class="r">نابلس</span>…<br>كتب «موطني» في <span class="r">بيروت</span></div></div>
+
+<!-- L3 Flayfel brothers -->
+<div class="L" id="L3"><div class="photo" id="p3" style="background-image:url('../../../media/w48d/loc-07371.jpg')"></div><div class="vig"></div>
+ <div class="strip paper" style="top:560px;font-size:60px" id="st3a">لحّنه صحابه اللبنانيين<br><span class="r">الأخوين فليفل</span></div>
+ <div class="strip paper" style="top:960px;font-size:50px;transform:rotate(1deg)" id="st3b">كانوا مدرّسين موسيقى عند الانتداب الفرنسي…<br>و<span class="r">اتفصلوا</span> بسبب أناشيدهم</div>
+ <div class="credit">نابلس، صورة أرشيفية · مكتبة الكونغرس</div></div>
+
+<!-- L4 timeline on scroll -->
+<div class="L" id="L4"><div class="photo" style="background-image:url('../../../media/w48d/loc-22275.jpg');background-position:20% 50%;filter:sepia(.6) brightness(.35) blur(3px)"></div><div class="vig"></div>
+ <div class="rod" style="top:276px"></div>
+ <div class="scroll paper" id="sc4">
+  <div class="ink t" style="top:110px" data-a="0.6" data-d="0.9"><span class="r">لحد 1972</span></div>
+  <div class="ink t" style="top:200px;font-size:52px" data-a="1.4" data-d="1.3">النشيد غير الرسمي لفلسطين</div>
+  <div class="ink t" style="top:420px" data-a="2.9" data-d="0.9"><span class="r">2004</span></div>
+  <div class="ink t" style="top:510px;font-size:52px" data-a="3.6" data-d="1.3">بقى النشيد الوطني للعراق</div>
+ </div>
+ <div class="rod" id="rod4" style="top:300px"></div></div>
+
+<!-- L5 ending -->
+<div class="L" id="L5"><div class="photo" id="p5" style="background-image:url('../../../media/w48d/loc-22275.jpg');background-position:15% 50%"></div><div class="vig"></div>
+ <div class="strip paper" style="top:420px;font-size:52px" id="st5a">طوقان مات سنة 1941، عنده <span class="r">36 سنة</span></div>
+ <div class="strip paper" style="top:720px;font-size:54px;transform:rotate(1deg)" id="st5b">وابنه جعفر كان بيغنّي كلمات أبوه<br>كل صبح في <span class="r">طابور المدرسة</span> في نابلس</div>
+ <div class="strip paper" style="top:1160px;font-size:58px;background:#9e1f17;color:#fff;background-image:none" id="st5c">ابعته لحد فلسطيني أو عراقي 🤍</div>
+ <div class="credit">نابلس من الجو، صورة أرشيفية · مكتبة الكونغرس</div></div>
+
+<div class="series"><span>حكاية نشيد</span></div>
+<div class="src" id="src">📚 المصادر: المتحف الفلسطيني (قصة «موطني») · ويكيبيديا «موطني»<br>📷 الصور: مجموعة ماتسون، مكتبة الكونغرس (ملكية عامة)</div>
+<div class="handle">@batagonun</div>
+<script>
+const S=[[0,4.6],[4.6,13.4],[13.4,18.6],[18.6,24.6],[24.6,30.4],[30.4,38]];
+const cl=v=>Math.max(0,Math.min(1,v)),ease=v=>1-Math.pow(1-cl(v),3);
+function inks(sc,lt){[...sc.querySelectorAll('.ink')].forEach(e=>{const k=cl((lt-+e.dataset.a)/+e.dataset.d);
+ e.style.clipPath='inset(0 0 0 '+((1-k)*100)+'%)';e.style.opacity=k>0?1:0})}
+function unroll(id,rod,lt,h,d){const k=ease(lt/d);document.getElementById(id).style.height=(k*h)+'px';document.getElementById(rod).style.top=(300+k*h-24)+'px'}
+function pop(id,lt,a){const e=document.getElementById(id);const k=ease((lt-a)/0.6);e.style.opacity=k;e.style.marginTop=((1-k)*40)+'px'}
+window.frame=function(t){
+ S.forEach((s,i)=>{const L=document.getElementById('L'+i);const fi=cl((t-s[0])/0.45),fo=i==S.length-1?1:cl((s[1]-t)/0.45);L.style.opacity=Math.min(fi,fo);L.style.display=(t>=s[0]-.01&&t<s[1]+.01)?'block':'none'});
+ let lt;
+ lt=t-S[0][0];document.getElementById('p0').style.transform='scale('+(1.12+lt*0.02)+')';pop('st0',lt,0.4);
+ lt=t-S[1][0];unroll('sc1','rod1',lt,1000,1.2);inks(document.getElementById('sc1'),lt);
+ lt=t-S[2][0];pop('pin2',lt,0.2);pop('st2',lt,1.0);
+ lt=t-S[3][0];document.getElementById('p3').style.transform='scale('+(1.2-lt*0.012)+')';pop('st3a',lt,0.3);pop('st3b',lt,2.0);
+ lt=t-S[4][0];unroll('sc4','rod4',lt,700,1.0);inks(document.getElementById('sc4'),lt);
+ lt=t-S[5][0];document.getElementById('p5').style.transform='scale('+(1.12+lt*0.015)+') translateX('+(lt*4)+'px)';pop('st5a',lt,0.3);pop('st5b',lt,1.6);pop('st5c',lt,4.2);
+ document.getElementById('src').style.opacity=ease((t-34.5)/0.8);
+};
+window.frame(0);
+</script></body></html>
