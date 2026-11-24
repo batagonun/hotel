@@ -1,0 +1,28 @@
+{
+ "batch": "2026-11-w48",
+ "publish_via": "composio",
+ "status": "scheduled",
+ "post": "2026-11-29e-unesco-carousel",
+ "date": "2026-11-29T14:00",
+ "format": "CAROUSEL",
+ "caption": "فلسطين ليها 9 عناصر في قوائم اليونسكو للتراث الإنساني 🇵🇸\n\nاسحب وشوفهم:\n1. الحكاية الفلسطينية (2008): حواديت بتحكيها الستات\n2. التطريز (2021): التوب بيقول الست من أنهي بلد\n3. الدبكة (2023)\n4. الصابون النابلسي (2024): زيت زيتون ومية وقلوي بس\n5. و5 مشتركة مع دول عربية: الخط العربي، النخلة، النقش على المعادن، الحِنّة، الكحل العربي\n\nالنهارده 29 نوفمبر، اليوم الدولي للتضامن مع الشعب الفلسطيني.\nأنهي واحدة أول مرة تعرفها؟ قولنا في الكومنت 👇\n\n📚 المصدر: اليونسكو، قوائم التراث الثقافي غير المادي (ich.unesco.org)\n🖼️ الصور مولّدة بالذكاء الاصطناعي (MAGNIFIC)\n\n#فلسطين #تراث_فلسطيني #التطريز_الفلسطيني #اليونسكو",
+ "media": [
+  "out/w48-unesco/s0.jpg",
+  "out/w48-unesco/s1.jpg",
+  "out/w48-unesco/s2.jpg",
+  "out/w48-unesco/s3.jpg",
+  "out/w48-unesco/s4.jpg",
+  "out/w48-unesco/s5.jpg",
+  "out/w48-unesco/s6.jpg"
+ ],
+ "media_urls": [
+  "https://raw.githubusercontent.com/batagonun/hotel/208eac8d9f6829bad9849be32be8d99827b32a93/instagram-agent/out/w48-unesco/s0.jpg",
+  "https://raw.githubusercontent.com/batagonun/hotel/208eac8d9f6829bad9849be32be8d99827b32a93/instagram-agent/out/w48-unesco/s1.jpg",
+  "https://raw.githubusercontent.com/batagonun/hotel/208eac8d9f6829bad9849be32be8d99827b32a93/instagram-agent/out/w48-unesco/s2.jpg",
+  "https://raw.githubusercontent.com/batagonun/hotel/208eac8d9f6829bad9849be32be8d99827b32a93/instagram-agent/out/w48-unesco/s3.jpg",
+  "https://raw.githubusercontent.com/batagonun/hotel/208eac8d9f6829bad9849be32be8d99827b32a93/instagram-agent/out/w48-unesco/s4.jpg",
+  "https://raw.githubusercontent.com/batagonun/hotel/208eac8d9f6829bad9849be32be8d99827b32a93/instagram-agent/out/w48-unesco/s5.jpg",
+  "https://raw.githubusercontent.com/batagonun/hotel/208eac8d9f6829bad9849be32be8d99827b32a93/instagram-agent/out/w48-unesco/s6.jpg"
+ ],
+ "approved": "2026-11-24"
+}
