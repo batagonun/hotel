@@ -1,0 +1,11 @@
+{
+ "batch": "2026-11-w48",
+ "post": "2026-11-29e-question-story",
+ "date": "2026-11-29T21:00",
+ "status": "scheduled",
+ "format": "STORY",
+ "media": "out/w48-stories-v2/story-question.jpg",
+ "publish_via": "composio",
+ "media_url": "https://raw.githubusercontent.com/batagonun/hotel/d7564cd63704cd6bf337a0302d68891a04855813/instagram-agent/out/w48-stories-v2/story-question.jpg",
+ "approved": "2026-11-24"
+}
