@@ -1,0 +1,40 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:'Amiri';src:url('../../../fonts/Amiri-Bold.ttf');font-weight:700}
+@font-face{font-family:'Cairo';src:url('../../../fonts/Cairo-Bold.ttf');font-weight:700}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#1a0f08}
+body>div{direction:rtl}
+.frame{position:absolute;inset:0;background:
+ repeating-linear-gradient(90deg,#3b2414 0 6px,#4a2e19 6px 14px);}
+.cloth{position:absolute;left:60px;right:60px;top:220px;bottom:220px;overflow:hidden;border:10px solid #8a5a2b;outline:4px solid #c89a5a;outline-offset:-22px;box-shadow:inset 0 0 120px rgba(60,20,0,.85)}
+.light{position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 55%,#ffd99a,#f0a24a 55%,#b0581c 90%)}
+.weave{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(90,40,10,.06) 0 2px,transparent 2px 5px),repeating-linear-gradient(90deg,rgba(90,40,10,.05) 0 2px,transparent 2px 6px)}
+.sil{position:absolute;mix-blend-mode:multiply;filter:blur(1.4px) contrast(1.4)}
+#scene{left:-170px;bottom:200px;width:900px}
+#horse{width:500px;bottom:205px}
+.v{position:absolute;top:260px;left:0;right:0;text-align:center;font:700 96px/1.6 'Amiri';color:#2a1206;opacity:0;white-space:nowrap}
+.k{position:absolute;top:110px;left:0;right:0;text-align:center;font:700 40px 'Cairo';color:#e9c48a;letter-spacing:1px}
+.h{position:absolute;bottom:120px;left:0;right:0;text-align:center;font:700 30px 'Cairo';color:#e9c48a;letter-spacing:4px;direction:ltr;opacity:.8}
+.ai{position:absolute;bottom:70px;left:0;right:0;text-align:center;font:400 22px 'Cairo';color:rgba(233,196,138,.7)}
+</style></head><body>
+<div style="position:absolute;top:-500px;font:700 40px Amiri">ا</div><div style="position:absolute;top:-500px;font:700 40px Cairo">ا</div>
+<div class="frame"></div>
+<div class="k">حكاية في خيال الظل</div>
+<div class="cloth"><div class="light" id="light"></div><div class="weave"></div>
+ <img class="sil" id="scene" src="../../../media/w49/shadow/scene.png">
+ <img class="sil" id="horse" src="../../../media/w49/shadow/horseman.png">
+ <div class="v" id="v">اليومَ خمرٌ… وغدًا أمرُ</div>
+</div>
+<div class="h">@batagonun</div><div class="ai">تجربة · الظلال مولّدة بالذكاء الاصطناعي</div>
+<script>
+const cl=v=>Math.max(0,Math.min(1,v)),ease=v=>1-Math.pow(1-cl(v),3);
+window.frame=function(t){
+ const f=.92+.05*Math.sin(t*7.3)+.03*Math.sin(t*13.1);
+ document.getElementById('light').style.filter='brightness('+f+')';
+ const k=ease(t/4.2), x=1180-k*450; // right -> left
+ const bob=Math.abs(Math.sin(t*6))*14*(1-k*0.8);
+ const h=document.getElementById('horse');h.style.left=(x-250)+'px';h.style.transform='translateY('+(-bob)+'px) rotate('+(Math.sin(t*6)*1.5*(1-k))+'deg)';
+ document.getElementById('scene').style.transform='translateX('+(k*30)+'px)';
+ const v=document.getElementById('v');const kv=ease((t-4.3)/1);v.style.opacity=kv;v.style.filter='blur('+((1-kv)*8)+'px)';
+};
+window.frame(0);
+</script></body></html>
