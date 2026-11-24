@@ -35,7 +35,7 @@ for i, s in enumerate(segs):
     for k in ('video', 'img'):
         if k in bg: bg[k] = os.path.join(os.path.dirname(os.path.abspath(spec_path)), bg[k])
     c = os.path.join(tmp, f'b{i}.mp4')
-    look = "eq=brightness=-0.20:saturation=0.85,vignette=PI/4" + (f",boxblur={bg['blur']}:2" if bg.get('blur') else '')
+    look = spec.get('look', "eq=brightness=-0.20:saturation=0.85,vignette=PI/4") + (f",boxblur={bg['blur']}:2" if bg.get('blur') else '')
     if 'video' in bg:
         vf = f"scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps={fps},{look}"
         cmd = ['ffmpeg', '-y', '-loglevel', 'error', '-ss', str(bg.get('ss', 0)), '-i', bg['video'], '-t', f'{d:.3f}', '-an', '-vf', vf]
