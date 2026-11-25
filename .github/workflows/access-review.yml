@@ -1,0 +1,47 @@
+# مراجعة الوصول الأسبوعية: GitHub لا يتيح حدثاً عند تسجيل الدخول،
+# فيفتح هذا السير تقريراً أسبوعياً بحالة الأمان والفروع وطلبات الدمج المفتوحة.
+name: الحارس - مراجعة الوصول الأسبوعية
+
+on:
+  schedule:
+    - cron: "0 7 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+  security-events: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: إعداد التقرير وفتح Issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -u
+          today=$(date -u +%F)
+          {
+            echo "## تقرير الحارس الأسبوعي - $today"
+            echo
+            echo "### الفروع"
+            gh api "repos/$REPO/branches" --paginate --jq '.[] | "- `\(.name)`" + (if .protected then " (محمي)" else "" end)'
+            echo
+            echo "### طلبات الدمج المفتوحة"
+            gh pr list -R "$REPO" --state open --json number,title,updatedAt --jq '.[] | "- #\(.number) \(.title) (آخر تحديث \(.updatedAt[:10]))"' || true
+            echo
+            echo "### تنبيهات فحص الكود المفتوحة"
+            gh api "repos/$REPO/code-scanning/alerts?state=open" --jq 'if length==0 then "- لا توجد" else .[] | "- \(.rule.severity // "?"): \(.rule.description) (\(.most_recent_instance.location.path))" end' 2>/dev/null || echo "- غير متاح (فعّل فحص الكود أولاً)"
+            echo
+            echo "### مهام المراجعة اليدوية (دقيقتان)"
+            echo "- [ ] راجع سجل الأمان للحساب: https://github.com/settings/security-log"
+            echo "- [ ] راجع الجلسات والأجهزة النشطة: https://github.com/settings/sessions"
+            echo "- [ ] راجع التطبيقات المصرّح لها: https://github.com/settings/applications"
+            echo "- [ ] راجع المتعاونين ومفاتيح النشر: https://github.com/$REPO/settings/access"
+            echo "- [ ] أغلق هذه المشكلة بعد المراجعة"
+          } > report.md
+          gh label create guardian -R "$REPO" --color 555555 --description "تقارير الوكيل الحارس" 2>/dev/null || true
+          gh issue create -R "$REPO" --title "تقرير الحارس الأسبوعي - $today" --body-file report.md --label guardian

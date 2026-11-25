@@ -1,0 +1,62 @@
+# الوكيل الحارس للمستودع: يعمل مع كل رفع، وكل طلب دمج، وأسبوعياً، ويدوياً.
+name: الحارس - فحص المستودع
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 5 * * 0"   # كل أحد 05:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: guardian-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  secrets:
+    name: فحص الأسرار المسرّبة
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Gitleaks
+        run: |
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_linux_x64.tar.gz | tar xz gitleaks
+          ./gitleaks detect --source . --redact --verbose --exit-code 1
+
+  structure:
+    name: فحص هيكل المستودع
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash .github/scripts/check-structure.sh
+
+  quality:
+    name: فحص سلامة الكود والاختبارات
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: صياغة ملفات JavaScript
+        run: |
+          set -e
+          for f in $(git ls-files '*.js' | grep -v '^\.claude/'); do node --check "$f"; echo "✓ $f"; done
+      - name: صحة ملفات JSON
+        run: |
+          set -e
+          for f in $(git ls-files '*.json'); do python3 -m json.tool "$f" > /dev/null; echo "✓ $f"; done
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: صياغة ملفات Python
+        run: python3 -m compileall -q $(git ls-files '*.py' | xargs -r dirname | sort -u)
+      - name: اختبارات مدير الواي فاي
+        working-directory: wifi-manager
+        run: python3 -m unittest discover -s tests -v
+
