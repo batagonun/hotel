@@ -1,0 +1,33 @@
+{
+ "2026-11-26-tuqan": {
+  "img": "../../media/w48/tq-shawqi.jpg",
+  "pos": "72% 15%",
+  "filter": "grayscale(1) brightness(1.1) contrast(1.15)",
+  "tag": "الحكاية المشهورة غلط",
+  "hook": "مدرّس <b>ردّ</b><br>على شوقي!",
+  "sub": "«قم للمعلم وفّه التبجيلا»… والرد هيضحّكك"
+ },
+ "2026-11-28-rumi": {
+  "img": "../../media/w48b/ai-dervish.png",
+  "pos": "center 40%",
+  "tag": "الحكاية المشهورة غلط",
+  "hook": "الرومي<br><b>ما قالهاش!</b>",
+  "sub": "أشهر اقتباس ليه على النت… مش بتاعه"
+ },
+ "2026-11-30-sabb": {
+  "img": "../../media/w49/kr-03893.jpg",
+  "filter": "grayscale(1) brightness(1.15) contrast(1.1)",
+  "zoom": 1.05,
+  "tag": "بيت وحكاية",
+  "hook": "شوقي؟<br><b>ولا تونسي؟</b>",
+  "sub": "«يا ليلُ الصبُّ متى غدُهُ»",
+  "cta": "خمّن قبل ما <span>تتفرج</span>"
+ },
+ "2026-12-01-shadow-imru": {
+  "bg_html": "<div class='cloth'></div><img class='sil' src='../../media/w49/shadow/riders.png' style='left:-60px;top:1020px;width:1200px'>",
+  "tag": "حكاية في خيال الظل",
+  "hook": "اليوم خمر…<br><b>وغدًا أمر</b>",
+  "sub": "مين قالها؟ وليه؟",
+  "top": 600
+ }
+}
