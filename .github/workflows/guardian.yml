@@ -51,7 +51,7 @@ jobs:
         run: |
           set -e
           for f in $(git ls-files '*.json'); do python3 -m json.tool "$f" > /dev/null; echo "✓ $f"; done
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - name: صياغة ملفات Python
