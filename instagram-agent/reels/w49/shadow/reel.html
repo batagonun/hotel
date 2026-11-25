@@ -1,0 +1,90 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:'Amiri';src:url('../../../fonts/Amiri-Bold.ttf');font-weight:700}
+@font-face{font-family:'Cairo';src:url('../../../fonts/Cairo-Regular.ttf');font-weight:400}
+@font-face{font-family:'Cairo';src:url('../../../fonts/Cairo-Bold.ttf');font-weight:700}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#1a0f08}
+body>div{direction:rtl}
+.frame{position:absolute;inset:0;background:repeating-linear-gradient(90deg,#3b2414 0 6px,#4a2e19 6px 14px)}
+.cloth{position:absolute;left:60px;right:60px;top:220px;bottom:220px;overflow:hidden;border:10px solid #8a5a2b;outline:4px solid #c89a5a;outline-offset:-22px;box-shadow:inset 0 0 120px rgba(60,20,0,.85)}
+.light{position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 55%,#ffd99a,#f0a24a 55%,#b0581c 90%)}
+.weave{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(90,40,10,.06) 0 2px,transparent 2px 5px),repeating-linear-gradient(90deg,rgba(90,40,10,.05) 0 2px,transparent 2px 6px)}
+.sil{position:absolute;mix-blend-mode:multiply;filter:blur(1.3px) contrast(1.4);opacity:0}
+.t{position:absolute;left:30px;right:30px;text-align:center;color:#2a1206;opacity:0}
+.c{font:700 64px/1.45 'Cairo'}
+.v{font:700 82px/1.6 'Amiri';white-space:nowrap}
+.r{color:#7a1508}
+.photo{position:absolute;inset:0;background:url('../../../media/w49/shadow/bd-15116.jpg') center/cover;transform:scale(1.35);filter:sepia(.7) brightness(.8) contrast(1.1);opacity:0}
+.pt{position:absolute;left:30px;right:30px;text-align:center;color:#fff3dc;font:700 62px/1.5 'Cairo';opacity:0;text-shadow:0 0 4px #000,0 0 10px #000,0 4px 24px rgba(0,0,0,.95)}
+.k{position:absolute;top:110px;left:0;right:0;text-align:center;font:700 40px 'Cairo';color:#e9c48a}
+.h{position:absolute;bottom:125px;left:0;right:0;text-align:center;font:700 30px 'Cairo';color:#e9c48a;letter-spacing:4px;direction:ltr;opacity:.8}
+.ai{position:absolute;bottom:70px;left:20px;right:20px;text-align:center;font:400 22px 'Cairo';color:rgba(233,196,138,.75)}
+.src{position:absolute;bottom:40px;left:30px;right:30px;text-align:center;font:400 24px/1.5 'Cairo';color:#fff3dc;text-shadow:0 0 6px #000;opacity:0}
+</style></head><body>
+<div style="position:absolute;top:-500px;font:700 40px Amiri">ا</div><div style="position:absolute;top:-500px;font:700 40px Cairo">ا</div><div style="position:absolute;top:-500px;font:400 40px Cairo">ا</div>
+<div class="frame"></div>
+<div class="k">حكاية في خيال الظل</div>
+<div class="cloth"><div class="light" id="light"></div><div class="weave"></div>
+ <img class="sil" id="scene" src="../../../media/w49/shadow/scene.png" style="left:-150px;bottom:200px;width:760px">
+ <img class="sil" id="prince" src="../../../media/w49/shadow/prince.png" style="width:300px;bottom:205px;left:560px">
+ <img class="sil" id="msg" src="../../../media/w49/shadow/messenger.png" style="width:290px;bottom:200px">
+ <img class="sil" id="horse" src="../../../media/w49/shadow/horseman.png" style="width:480px;bottom:205px">
+ <img class="sil" id="riders" src="../../../media/w49/shadow/riders.png" style="width:1300px;bottom:230px">
+ <img class="sil" id="road" src="../../../media/w49/shadow/road.png" style="width:1500px;bottom:200px">
+ <div class="t c" id="a1" style="top:300px">أمير قاعد يشرب…</div>
+ <div class="t c" id="a2" style="top:420px">وجاله خبر <span class="r">قلب حياته كلها</span></div>
+ <div class="t c" id="b1" style="top:260px"><span class="r">امرؤ القيس</span>، ابن ملك وشاعر</div>
+ <div class="t c" id="b2" style="top:380px">عايش للهو والشعر</div>
+ <div class="t c" id="c1" style="top:260px">لحد ما جاله الخبر:</div>
+ <div class="t c" id="c2" style="top:380px">بنو أسد ثاروا على أبوه…<br><span class="r">وقتلوه</span></div>
+ <div class="t c" id="d1" style="top:170px;font-size:56px">«ضيّعني صغيرًا،<br>وحمّلني دمه كبيرًا…»</div>
+ <div class="t c" id="d2" style="top:370px;font-size:56px">«لا صحوَ اليوم، ولا سُكرَ غدًا»</div>
+ <div class="t v" id="d3" style="top:490px;font-size:100px"><span class="r">«اليومَ خمرٌ… وغدًا أمرُ»</span></div>
+ <div class="t c" id="e1" style="top:230px;font-size:58px">حلف ما يشرب لحد ما ياخد بتاره…</div>
+ <div class="t c" id="e2" style="top:360px;font-size:58px">ولفّ على القبايل لحد ما سمّوه<br><span class="r">«الملك الضليل»</span></div>
+ <div class="t v" id="f1" style="top:300px">بكى صاحبي لمّا رأى الدربَ دونَه</div>
+ <div class="t v" id="f2" style="top:450px">وأيقنَ أنّا لاحقانِ <span class="r">بقيصرا</span></div>
+ <div class="t v" id="g1" style="top:300px">فقلتُ له: لا تبكِ عينُك إنّما</div>
+ <div class="t v" id="g2" style="top:450px"><span class="r">نحاولُ مُلكًا أو نموتَ فنُعذَرا</span></div>
+ <div class="photo" id="photo"></div>
+ <div class="pt" id="h1" style="top:420px">وجملته لسه بنقولها<br>لحد النهارده…</div>
+ <div class="pt" id="h2" style="top:720px">إنت بتقولها إمتى؟ 👇</div>
+ <div class="src" id="src">📚 ويكيبيديا «امرؤ القيس» · «شرح الشواهد الشعرية» (المكتبة الشاملة)<br>📷 خيام بدوية، مجموعة ماتسون، مكتبة الكونغرس (ملكية عامة)</div>
+</div>
+<div class="h">@batagonun</div><div class="ai">الظلال مولّدة بالذكاء الاصطناعي</div>
+<script>
+const cl=v=>Math.max(0,Math.min(1,v)),ease=v=>1-Math.pow(1-cl(v),3);
+const $=id=>document.getElementById(id);
+function win(t,a,b,f){return Math.min(cl((t-a)/(f||.5)),cl((b-t)/(f||.5)))}
+function show(id,t,a,b){const e=$(id);const k=win(t,a,b,.6);e.style.opacity=k;e.style.filter='blur('+((1-k)*8)+'px)'}
+function sil(id,t,a,b){$(id).style.opacity=win(t,a,b,.5)}
+window.frame=function(t){
+ let f=.92+.05*Math.sin(t*7.3)+.03*Math.sin(t*13.1);
+ f*=0.25+0.75*ease(t/2.2);
+ if(t>16&&t<24){f*=0.85+0.15*Math.sin(t*20)*(t<17.5?1:0)}
+ $('light').style.filter='brightness('+f+')';
+ // texts
+ show('a1',t,0.8,5); show('a2',t,2.2,5);
+ show('b1',t,5.4,11); show('b2',t,6.6,11);
+ show('c1',t,11.2,16); show('c2',t,12.3,16);
+ show('d1',t,16.4,24); show('d2',t,18.2,24); show('d3',t,20,24);
+ show('e1',t,24.4,30); show('e2',t,25.8,30);
+ show('f1',t,30.4,37.2); show('f2',t,32,37.2);
+ show('g1',t,37.4,44.2); show('g2',t,39,44.2);
+ // silhouettes
+ sil('scene',t,4.6,24.2);
+ sil('prince',t,4.6,24.2);
+ const p=$('prince'); let pt='scaleX(-1)';
+ if(t>16&&t<17.2){pt+=' translateX('+(Math.sin(t*60)*6)+'px)'}
+ if(t>17){pt+=' translateY('+(ease((t-17)/1)*20)+'px) rotate('+(ease((t-17)/1)*-4)+'deg)'}
+ p.style.transform=pt;
+ sil('msg',t,11,16.2); const km=ease((t-11)/3.2); $('msg').style.left=(1000-km*230)+'px'; $('msg').style.transform='translateY('+(-Math.abs(Math.sin(t*9))*16*(1-km))+'px)';
+ sil('horse',t,24,30.2); const kh=ease((t-24)/4.5); $('horse').style.left=(980-kh*520)+'px'; $('horse').style.transform='translateY('+(-Math.abs(Math.sin(t*6))*12*(1-kh*.7))+'px)';
+ sil('riders',t,24.6,30.2); $('riders').style.left=(1100-ease((t-24.6)/5)*900)+'px'; $('riders').style.transform='scaleX(-1) scale(.55)';$('riders').style.transformOrigin='center bottom';
+ sil('road',t,30,44.4); $('road').style.left=(-260+(t-30)*14)+'px';
+ // ending
+ const kp=cl((t-44.2)/0.8); $('photo').style.opacity=kp; $('photo').style.transform='scale('+(1.35+(t-44)*0.01)+')';
+ show('h1',t,44.8,99); show('h2',t,46.4,99);
+ $('src').style.opacity=ease((t-47.6)/0.8);
+};
+window.frame(0);
+</script></body></html>
