@@ -1,2 +1,34 @@
+# Python
 __pycache__/
 *.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# أسرار وبيانات حساسة - لا تُرفع أبداً
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*credentials*.json
+*service-account*.json
+
+# ملفات نظام التشغيل والمحررات
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# مخرجات مؤقتة
+*.log
+dist/
+build/
+tmp/
