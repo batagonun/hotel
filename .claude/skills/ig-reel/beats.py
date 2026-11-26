@@ -26,9 +26,44 @@ import json
 import re
 import sys
 
-WORD_RE = re.compile(r"[A-Za-z0-9$%'’-]+")
-SENT_RE = re.compile(r"[^.!?]+[.!?]*")
-CONCRETE_RE = re.compile(r"\$\s?\d|\b\d[\d,.]*\b|(?<!^)\b[A-Z][a-z]{2,}\b", re.MULTILINE)
+WORD_RE = re.compile(r"[A-Za-z0-9$%'’\-\u0621-\u063A\u0640-\u0652\u0660-\u0669\u0670]+")
+SENT_RE = re.compile(r"[^.!?؟]+[.!?؟]*")
+CONCRETE_RE = re.compile(r"\$\s?\d|(?<![\d٠-٩])[\d٠-٩][\d٠-٩,.٫]*(?![\d٠-٩])|(?<!^)\b[A-Z][a-z]{2,}\b", re.MULTILINE)
+# Arabic: spelled-out numbers and money words count as concrete, and the loop
+# check ignores Arabic function words. Normalised: no harakat, ا for alef forms,
+# ه for taa marbuta, ي for alef maqsura.
+AR_LETTER = re.compile(r"[\u0621-\u064A]")
+_HARAKAT = re.compile(r"[\u0640\u064B-\u0652\u0670]")
+CONCRETE_AR = {
+    "اتنين", "اثنين", "تلاته", "ثلاثه", "اربعه", "خمسه", "سته", "سبعه", "تمانيه",
+    "ثمانيه", "تسعه", "عشره", "عشر", "خمس", "سبع", "تسع", "ست", "اربع", "عشرين", "تلاتين", "ثلاثين", "خمسين", "ميه", "مائه",
+    "الف", "الاف", "مليون", "مليار", "نص", "نصف", "ربع", "ضعف", "اضعاف",
+    "جنيه", "دولار", "ريال", "يورو", "فلوس", "سعر", "ليله",
+}
+STOPWORDS_AR = {
+    "في", "من", "علي", "الي", "عن", "مع", "و", "او", "ان", "انه", "ده", "دي", "دا",
+    "اللي", "الذي", "التي", "هو", "هي", "انا", "انت", "احنا", "هم", "كان", "يكون",
+    "مش", "لا", "ما", "بس", "كده", "عشان", "لما", "لو", "كل", "اي", "يا", "قد",
+}
+
+
+def norm_ar(token):
+    t = _HARAKAT.sub("", token)
+    t = re.sub("[أإآٱ]", "ا", t)
+    t = t.replace("ة", "ه").replace("ى", "ي")
+    for pre in ("وال", "بال", "فال", "لل", "ال", "و", "ب"):
+        if t.startswith(pre) and len(t) - len(pre) >= 2:
+            return t[len(pre):]
+    return t
+
+
+def is_arabic(text):
+    return len(AR_LETTER.findall(text)) > len(re.findall(r"[A-Za-z]", text))
+
+
+def concrete(text):
+    return len(CONCRETE_RE.findall(text)) + sum(
+        1 for w in words(text) if AR_LETTER.search(w) and norm_ar(w) in CONCRETE_AR)
 STOPWORDS = {
     "the", "a", "an", "and", "or", "but", "if", "of", "to", "in", "on", "for",
     "with", "that", "this", "it", "is", "are", "was", "were", "be", "been",
@@ -98,7 +133,7 @@ def analyse(raw, wpm=165, target=None):
             "dur": round(dur, 2),
             "words": n,
             "text": text,
-            "concrete": len(CONCRETE_RE.findall(text)),
+            "concrete": concrete(text),
             "label": "",
             "flags": [],
         })
@@ -146,8 +181,15 @@ def analyse(raw, wpm=165, target=None):
             run, start = 0, None
 
     # Does the last line hand you back to the first one?
-    first = {w.lower() for w in words(rows[0]["text"]) if w.lower() not in STOPWORDS}
-    last = {w.lower() for w in words(rows[-1]["text"]) if w.lower() not in STOPWORDS}
+    def keyset(text):
+        out = set()
+        for w in words(text):
+            k = norm_ar(w) if AR_LETTER.search(w) else w.lower()
+            if k not in STOPWORDS and k not in STOPWORDS_AR:
+                out.add(k)
+        return out
+    first = keyset(rows[0]["text"])
+    last = keyset(rows[-1]["text"])
     loop = sorted(pretty(w) for w in first & last)
     if loop:
         notes.append(f"Loops: the last beat repeats \"{', '.join(loop[:3])}\" from the hook. "
@@ -194,13 +236,16 @@ def render(a, out=sys.stdout):
 def main():
     ap = argparse.ArgumentParser(description="Time a Reel script into a beat sheet.")
     ap.add_argument("input", nargs="?", default="-", help="script file, or - for stdin")
-    ap.add_argument("--wpm", type=float, default=165, help="speaking rate (default 165)")
+    ap.add_argument("--wpm", type=float, default=None,
+                    help="speaking rate (default 165; 150 for Arabic scripts, "
+                         "measured on Gemini TTS Egyptian colloquial. Use ~90 for recited poetry)")
     ap.add_argument("--target", type=float, help="target length in seconds")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
 
     raw = sys.stdin.read() if args.input == "-" else open(args.input, encoding="utf-8").read()
-    a = analyse(raw, wpm=args.wpm, target=args.target)
+    wpm = args.wpm or (150 if is_arabic(raw) else 165)
+    a = analyse(raw, wpm=wpm, target=args.target)
     if not a:
         print("empty script", file=sys.stderr)
         sys.exit(2)

@@ -28,6 +28,11 @@ Usage
   python3 hookscore.py --hook "I lost $18,000 on one missing contract."
   pbpaste | python3 hookscore.py -
   python3 hookscore.py hooks.txt --json
+
+Arabic: hooks in Egyptian colloquial or Modern Standard Arabic are scored with
+Arabic word lists (numbers, money, stakes, greetings, preambles, "you"). The
+74-hook validation above was English only; treat Arabic scores as a filter for
+obviously weak hooks, never as a verdict on a good one.
 """
 
 import argparse
@@ -36,7 +41,9 @@ import re
 import statistics
 import sys
 
-WORD_RE = re.compile(r"[A-Za-z0-9$%'’-]+")
+# Arabic letters, Arabic-Indic digits, harakat and tatweel count as word characters,
+# so Arabic hooks are tokenised instead of scoring zero words (see ARABIC below).
+WORD_RE = re.compile(r"[A-Za-z0-9$%'’\-\u0621-\u063A\u0640-\u0652\u0660-\u0669\u0670]+")
 NUMBER_RE = re.compile(
     r"\$\s?\d[\d,]*(?:\.\d+)?"                       # money, whole
     r"|\b\d[\d,]*(?:\.\d+)?\s?"                      # a figure, with or
@@ -109,6 +116,99 @@ DEALBREAKERS = [
 ]
 
 
+# ---------------------------------------------------------------------------
+# ARABIC (Egyptian colloquial + Modern Standard). Added for batagonun/hotel.
+# Every word below is written in normalised form: no harakat or tatweel,
+# alef variants as "ا", taa marbuta as "ه", alef maqsura as "ي". Tokens are
+# normalised the same way and tried with and without common proclitics
+# (و، ف، ب، ل، ال) before lookup.
+# ---------------------------------------------------------------------------
+AR_LETTER = re.compile(r"[\u0621-\u064A]")
+AR_DIGITS = str.maketrans("٠١٢٣٤٥٦٧٨٩", "0123456789")
+_HARAKAT = re.compile(r"[\u0640\u064B-\u0652\u0670]")
+
+
+def is_arabic(text):
+    return len(AR_LETTER.findall(text)) > len(re.findall(r"[A-Za-z]", text))
+
+
+def norm(token):
+    t = _HARAKAT.sub("", token.translate(AR_DIGITS))
+    t = re.sub("[أإآٱ]", "ا", t)
+    return t.replace("ة", "ه").replace("ى", "ي").lower().strip("'’")
+
+
+def forms(token):
+    """The token plus the same token with a leading proclitic removed."""
+    t = norm(token)
+    out = {t}
+    for pre in ("وال", "فال", "بال", "كال", "لل", "ال", "و", "ف", "ب", "ل"):
+        if t.startswith(pre) and len(t) - len(pre) >= 2:
+            out.add(t[len(pre):])
+    return out
+
+
+def hit(token, *sets):
+    f = forms(token)
+    return any(f & s for s in sets)
+
+
+SPOKEN_NUMBERS_AR = {
+    "صفر", "اتنين", "اثنين", "تلاته", "ثلاثه", "اربعه", "اربع", "خمسه", "خمس",
+    "سته", "ست", "سبعه", "سبع", "تمانيه", "ثمانيه", "تسعه", "تسع", "عشره", "عشر",
+    "عشرين", "تلاتين", "ثلاثين", "اربعين", "خمسين", "ميه", "مايه", "مئه", "مائه",
+    "ميتين", "الف", "الاف", "مليون", "ملايين", "مليار", "نص", "نصف", "ربع",
+    "ضعف", "اضعاف", "دسته", "مرتين",
+}
+MONEY_WORDS_AR = {
+    "جنيه", "جنيهات", "دولار", "دولارات", "ريال", "درهم", "يورو", "فلوس",
+    "سعر", "اسعار", "ثمن", "مرتب", "راتب", "ايجار", "مكسب", "ربح", "ارباح",
+    "خساره", "فاتوره", "الميه", "بالميه", "نسبه", "ليله", "ليالي",
+    # Egyptian places: Arabic has no capital letters, so names need a list.
+    "القاهره", "اسكندريه", "الاسكندريه", "اسوان", "الاقصر", "الغردقه", "شرم", "دهب",
+    "النيل", "الساحل", "العلمين", "السويس", "بورسعيد", "سيناء", "الجونه", "الفيوم",
+    "سيوه", "مطروح", "الزمالك", "المعادي", "الهرم", "الاهرامات", "طابا", "نويبع",
+}
+STAKES_AR = {
+    "محدش", "ماحدش", "مفيش", "مافيش", "ابدا", "غلط", "غلطه", "اخطاء", "خطا",
+    "خسرت", "خسر", "خسرنا", "ضيع", "ضيعت", "ضاع", "مش", "ما", "لا", "لم", "لن",
+    "ليس", "ممنوع", "تحذير", "خطر", "سر", "اسرار", "الحقيقه", "حقيقه", "اسوا",
+    "وحش", "كدب", "كذب", "بدل", "الا", "لسه", "بس", "قبل", "لحد", "حتي", "ندم",
+    "ندمت", "رفض", "اترفض", "مجاني", "ببلاش", "مستحيل", "فشل", "فشلت", "صدمه",
+    "عيب", "مشكله", "اول", "اخر", "متعملش", "ماتعملش", "اوعي", "بطل",
+}
+IMPERATIVES_AR = {
+    "ابعت", "ابعته", "ابعتها", "شوف", "شوفوا", "جرب", "جربوا", "احفظ", "احفظه",
+    "اسمع", "اسمعوا", "خلي", "اعمل", "بطل", "متعملش", "ماتعملش", "اوعي", "اقرا",
+    "ركز", "افتكر", "خد", "حط", "اكتب", "قول", "امسح", "سيب", "اطلب", "احجز",
+}
+# Normalised starts of a line that spend the first second saying nothing.
+WEAK_OPENERS_AR = (
+    "اهلا", "مرحبا", "السلام", "ازيكم", "ازيك", "يا جماعه", "النهارده", "انهارده",
+    "اليوم", "في الفيديو", "في هذا", "فالفيديو", "تعالوا", "بص ", "بصوا", "طيب",
+    "اوك", "خلينا", "هنتكلم", "سنتحدث", "حابب", "عايز اكلمكم", "في البدايه",
+)
+ADDRESS_AR = {
+    "انت", "انتي", "انتو", "انتوا", "انتم", "لك", "ليك", "ليكي", "ليكم", "عندك",
+    "عندكم", "بتاعك", "معاك", "نفسك", "حضرتك", "حضرتكم",
+}
+# Words that end in "ك" without being "you".
+NOT_ADDRESS_AR = {
+    "ذلك", "كذلك", "لذلك", "هناك", "هنالك", "تلك", "ملك", "الملك", "بنك", "البنك",
+    "سمك", "السمك", "شباك", "الشباك", "ضحك", "مسك", "سلك", "شبك", "ديك", "كدك",
+}
+FIRST_PERSON_AR = {"انا", "احنا", "نحن", "عندي", "ليا", "بتاعي", "عندنا", "بتاعنا"}
+
+DEALBREAKERS_AR = [
+    (re.compile(r"^\s*(?:متقلبش|ما تقلبش|ماتقلبش|استني|استنا|اوعي تقلب)"),
+     "Opens with \"don't scroll\" (متقلبش). Asking for attention proves you have not earned it."),
+    (re.compile(r"(?:في|ف) (?:الفيديو|الريل) (?:ده|دا|هذا)|في هذا (?:الفيديو|المقطع)|هنتكلم عن|سنتحدث عن|هوريكم|خليني اوريك|هقولكم ازاي"),
+     "Video preamble (في الفيديو ده / هنتكلم عن). Delete it and open on the payoff."),
+    (re.compile(r"^\s*(?:اهلا|مرحبا|السلام عليكم|ازيكم|ازيك|يا جماعه|صباح الخير|مساء الخير)"),
+     "Greeting. Nobody came to the feed to be greeted."),
+]
+
+
 def clamp(n):
     return max(0.0, min(100.0, n))
 
@@ -122,25 +222,30 @@ def check_length(text):
     """A hook has to land before the thumb moves. Roughly two seconds."""
     w = words(text)
     n = len(w)
-    secs = n / 2.75                      # ~165 words per minute, spoken
+    ar = is_arabic(text)
+    # Arabic words carry their prepositions and pronouns, so the same idea
+    # takes fewer of them; Egyptian speech also runs ~150 wpm, not 165.
+    lo, hi, wps = (4, 11, 2.5) if ar else (5, 12, 2.75)
+    secs = n / wps
     chars = len(text.strip())
-    if 5 <= n <= 12:
+    if lo <= n <= hi:
         score = 100.0
-    elif n < 5:
-        score = clamp(100 - (5 - n) * 20)
+    elif n < lo:
+        score = clamp(100 - (lo - n) * 20)
     else:
-        score = clamp(100 - (n - 12) * 11)
+        score = clamp(100 - (n - hi) * 11)
     if chars > 60:                       # two lines of big on-screen text
         score -= 12
-    return clamp(score), f"{n} words, {chars} chars, ~{secs:.1f}s spoken (want 5-12 words)"
+    return clamp(score), f"{n} words, {chars} chars, ~{secs:.1f}s spoken (want {lo}-{hi} words)"
 
 
 def check_specificity(text):
     """One concrete thing beats three abstract ones."""
-    nums = [n.strip() for n in NUMBER_RE.findall(text) if n.strip()]
+    nums = [n.strip() for n in NUMBER_RE.findall(text.translate(AR_DIGITS)) if n.strip()]
     propers = set(PROPER_RE.findall(text))
     low = [w.lower().strip("'’") for w in words(text)]
-    spoken = [w for w in low if w in SPOKEN_NUMBERS or w in MONEY_WORDS]
+    spoken = [w for w in low if w in SPOKEN_NUMBERS or w in MONEY_WORDS
+              or hit(w, SPOKEN_NUMBERS_AR, MONEY_WORDS_AR)]
     hits = len(nums) + len(propers) + len(spoken)
     score = 15.0 if hits == 0 else clamp(45 + hits * 30)
     found = ", ".join(nums[:2] + sorted(propers)[:2] + spoken[:2])
@@ -151,7 +256,7 @@ def check_specificity(text):
 def check_stakes(text):
     """Tension, cost, negation. Something the viewer might lose."""
     w = [x.lower().strip("'’") for x in words(text)]
-    hits = [x for x in w if x in STAKES]
+    hits = [x for x in w if x in STAKES or hit(x, STAKES_AR)]
     markers = sorted(set(hits))
     if re.search(r"\$\s?\d", text):
         markers.append("a price")
@@ -175,10 +280,16 @@ def check_frontload(text):
         if opener.startswith(weak) or low[0] == weak:
             penalty, hit_opener = 30, weak
             break
+    ar_opener = " ".join(norm(x) for x in w[:3]) + " "
+    for weak in WEAK_OPENERS_AR:
+        if hit_opener is None and ar_opener.startswith(weak):
+            penalty, hit_opener = 30, weak.strip()
+            break
     payload = None
     for i, token in enumerate(low):
         if (token in STAKES or token in SPOKEN_NUMBERS or token in MONEY_WORDS
-                or NUMBER_RE.match(w[i]) or (i and PROPER_RE.match(w[i]))):
+                or hit(token, STAKES_AR, SPOKEN_NUMBERS_AR, MONEY_WORDS_AR)
+                or NUMBER_RE.match(w[i].translate(AR_DIGITS)) or (i and PROPER_RE.match(w[i]))):
             payload = i
             break
     if payload is None:
@@ -203,9 +314,14 @@ def check_address(text):
     w = [x.lower().strip("'’") for x in words(text)]
     if re.search(r"\b(you|your|you're|youre|yourself)\b", low):
         return 100.0, "speaks to the viewer"
-    if w and w[0] in IMPERATIVES:
+    for x in w:
+        f = forms(x)
+        if f & ADDRESS_AR or any(len(t) >= 4 and t.endswith(("ك", "كم")) and t not in NOT_ADDRESS_AR
+                                 for t in f):
+            return 100.0, f"speaks to the viewer (\"{x}\")"
+    if w and (w[0] in IMPERATIVES or hit(w[0], IMPERATIVES_AR)):
         return 90.0, f"imperative opener (\"{w[0]}\")"
-    if re.search(r"\b(i|my|me|we|our)\b", low):
+    if re.search(r"\b(i|my|me|we|our)\b", low) or any(hit(x, FIRST_PERSON_AR) for x in w):
         return 70.0, "first person, no viewer named"
     return 35.0, "third person, nobody in the room"
 
@@ -222,6 +338,8 @@ def run(text):
         "ADDRESS": check_address(text),
     }
     flags = [msg for pattern, msg in DEALBREAKERS if pattern.search(text)]
+    flat = " ".join(norm(t) for t in text.split())
+    flags += [msg for pattern, msg in DEALBREAKERS_AR if pattern.search(flat)]
     scores = [results[c][0] for c in CHECKS]
     # The weakest property caps the hook, same logic as detect.py: one bad
     # property is enough for the thumb to keep moving.

@@ -145,3 +145,17 @@ HOOKS  (scored)
 Shooting #5: the ratio is believable, it reads in one glance on screen,
 and the number is yours.
 ```
+
+## Arabic scripts
+
+`hookscore.py` and `beats.py` read Egyptian colloquial and Modern Standard
+Arabic: Arabic words are tokenised, Arabic-Indic digits and spelled-out numbers
+and money count as concrete, and Arabic greetings (أهلًا، يا جماعة), preambles
+(في الفيديو ده، هنتكلم عن) and "don't scroll" openers (متقلبش) are dealbreakers.
+`beats.py` defaults to 150 wpm for Arabic (measured on Gemini TTS Egyptian
+colloquial); pass `--wpm 90` for recited poetry.
+
+The 74-hook validation in `hookscore.py` was English only. For Arabic, use the
+score to kill obviously weak hooks, never to choose between two decent ones.
+A recited verse is not a hook in this sense and will score low by design:
+judge poetry openers by ear.
