@@ -180,6 +180,9 @@ def check_fingerprint(text):
     keep = {"\u200e", "\u200f", "\u061c"} if is_arabic(text) else set()
     invisible = sum(1 for c in text if unicodedata.category(c) == "Cf" and c not in keep)
     em = text.count("—")
+    if is_arabic(text):
+        # "— المتنبي" opening a line, or after a closing quote, is attribution, not a tell.
+        em -= len(re.findall(r"(?m)^[ \t]*—", text)) + len(re.findall(r"[»\"\u201d][ \t]*—", text))
     curly = sum(text.count(c) for c in "‘’“”")
     ellip = text.count("…")
     nbsp = sum(text.count(c) for c in "   ")
