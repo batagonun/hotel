@@ -1,0 +1,47 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:'Amiri';src:url('../../fonts/Amiri-Bold.ttf');font-weight:700}
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Regular.ttf');font-weight:400}
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Bold.ttf');font-weight:700}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#0d0b1a}
+canvas{position:absolute;inset:0}
+.seg{position:absolute;left:50px;right:50px;top:0;bottom:0;display:none;flex-direction:column;align-items:center;justify-content:center;direction:rtl;text-align:center;color:#f6efe3}
+.talk{font:700 84px/1.5 'Cairo'}
+.talk .y{color:#f2c75c}
+.verse{font:700 104px/1.55 'Amiri'}
+.verse span,.talk span{display:inline-block;margin:0 12px}
+.ln{white-space:nowrap}
+.gold{color:#f2c75c;text-shadow:0 0 40px rgba(242,199,92,.45)}
+.note{font:400 50px/1.6 'Cairo';margin-top:50px;opacity:.92}
+.note b{color:#f2c75c}
+.src{position:absolute;bottom:120px;left:40px;right:40px;text-align:center;font:400 32px/1.5 'Cairo';color:#f6efe3;opacity:0;direction:rtl}
+.series{position:absolute;top:110px;left:0;right:0;text-align:center;font:700 40px 'Cairo';color:#f2c75c;letter-spacing:2px;direction:rtl;opacity:.95}
+.handle{position:absolute;bottom:50px;left:0;right:0;text-align:center;font:600 30px 'Cairo';letter-spacing:4px;color:#f6efe3;opacity:.6;direction:ltr}
+</style></head><body><canvas id="c" width="1080" height="1920"></canvas>
+<div style="position:absolute;left:-9999px;top:0;font:700 40px Amiri">أكاد</div><div style="position:absolute;left:-9999px;top:0;font:700 40px Cairo">أكاد</div><div style="position:absolute;left:-9999px;top:0;font:400 40px Cairo">أكاد</div>
+<div class="seg" id="s0"><div class="talk"><div class="ln"><span class="">بيقولوا</span> <span class="">البيت</span> <span class="">ده</span></div><div class="ln"><span class="gold">هو</span> <span class="gold">اللي</span> <span class="gold">قتل</span> <span class="">صاحبه</span></div></div></div>
+<div class="seg" id="s1"><div class="verse"><div class="ln"><span class="">الخيلُ</span> <span class="">والليلُ</span> <span class="">والبيداءُ</span> <span class="">تعرفني</span></div><div class="ln"><span class="">والسيفُ</span> <span class="">والرمحُ</span> <span class="">والقرطاسُ</span> <span class="gold">والقلمُ</span></div></div></div>
+<div class="seg" id="s2"><div class="talk"><div class="ln"><span class="">المتنبي</span> <span class="">حب</span> <span class="">يهرب</span> <span class="">من</span> <span class="">معركة</span></div><div class="ln"><span class="">غلامه</span> <span class="">قاله:</span> <span class="gold">مش</span> <span class="gold">إنت</span> <span class="gold">اللي</span> <span class="gold">قلت</span> <span class="gold">ده؟</span></div></div><div class="note">فرجع يحارب… واتقتل</div></div>
+<div class="seg" id="s3"><div class="talk"><div class="ln"><span class="">بس</span> <span class="">الثابت</span> <span class="">إن</span> <span class="">قاتله</span> <span class="gold">فاتك</span> <span class="gold">الأسدي</span></div><div class="ln"><span class="">ثأرًا</span> <span class="gold">لقصيدة</span> <span class="gold">هجا</span> <span class="">فيها</span> <span class="">ابن</span> <span class="">أخته</span></div></div></div>
+<div class="seg" id="s4"><div class="talk"><div class="ln"><span class="">يعني</span> <span class="">اللي</span> <span class="">قتله</span> <span class="gold">الهجاء…</span></div><div class="ln"><span class="gold">مش</span> <span class="gold">البيت</span></div></div></div>
+<div class="seg" id="s5"><div class="talk"><div class="ln"><span class="">تابع</span> <span class="">عشان</span></div><div class="ln"><span class="">حكاية</span> <span class="gold">كل</span> <span class="gold">بيت</span> <span class="">مشهور</span></div></div></div>
+<div class="series">بيت وحكاية · الحكاية المشهورة غلط</div><div class="src" id="src">ابن كثير، «البداية والنهاية» (أحداث سنة 354هـ) · الجزيرة نت، الثقافة: مقتل المتنبي</div><div class="handle">@batagonun</div><script>
+const SEG=[[0, 4.0, 0.2, 2], [4.2, 8.8, 0.32, 6.2], [9.0, 16.3, 0.18, 14.64], [16.5, 22.6, 0.2, 18.5], [22.8, 26.4, 0.2, 24.8], [26.6, 30.2, 0.2, 28.6]], HUE=[35, 15], SRC_AT=26.6;
+const c=document.getElementById('c'),x=c.getContext('2d');
+let seed=7;const rnd=()=>((seed=seed*16807%2147483647)/2147483647);
+const P=[...Array(70)].map(()=>({x:rnd()*1080,y:rnd()*1920,r:1+rnd()*3,s:10+rnd()*30,p:rnd()*6}));
+const cl=v=>Math.max(0,Math.min(1,v)),ease=v=>1-Math.pow(1-cl(v),3);
+window.frame=function(t){
+ const g=x.createLinearGradient(0,0,1080,1920);
+ g.addColorStop(0,'hsl('+(HUE[0]+Math.sin(t/4)*12)+',45%,9%)');g.addColorStop(1,'hsl('+(HUE[1]+Math.cos(t/5)*12)+',40%,15%)');
+ x.fillStyle=g;x.fillRect(0,0,1080,1920);
+ for(const p of P){const y=(p.y-t*p.s+9600)%1920;x.globalAlpha=.22+.22*Math.sin(t*1.5+p.p);x.fillStyle='#f2c75c';x.beginPath();x.arc(p.x,y,p.r,0,7);x.fill()}
+ x.globalAlpha=1;
+ SEG.forEach((s,i)=>{const el=document.getElementById('s'+i);const on=t>=s[0]&&t<s[1];el.style.display=on?'flex':'none';if(!on)return;
+  if(!el.dataset.fit){const b=el.firstElementChild;let fs=parseFloat(getComputedStyle(b).fontSize);while([...b.children].some(l=>l.scrollWidth>975)&&fs>40){fs-=3;b.style.fontSize=fs+'px'}el.dataset.fit=1}
+  const out=cl((s[1]-t)/0.5);
+  [...el.querySelectorAll('span')].forEach((w,j)=>{const k=ease((t-s[0]-0.15-j*s[2])/0.6);w.style.opacity=k*out;w.style.transform='translateY('+((1-k)*40)+'px)';w.style.filter='blur('+((1-k)*8)+'px)'});
+  const n=el.querySelector('.note');if(n){const k=ease((t-s[3])/0.8);n.style.opacity=k*out;n.style.transform='translateY('+((1-k)*30)+'px)'}});
+ document.getElementById('src').style.opacity=ease((t-SRC_AT)/0.8);
+};
+window.frame(0);
+</script></body></html>

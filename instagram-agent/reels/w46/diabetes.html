@@ -1,0 +1,44 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Regular.ttf');font-weight:400}
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Bold.ttf');font-weight:700}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:linear-gradient(180deg,#0e1f33,#081320);color:#f3ede2;direction:rtl;font-family:'Cairo'}
+.c{position:absolute;left:0;right:0;text-align:center}
+#hook{top:180px;font:700 84px/1.45 'Cairo';padding:0 60px}
+#hook b{color:#5fb3f2}
+#num{top:560px;font:700 220px/1 'Cairo';color:#5fb3f2;text-shadow:0 0 60px rgba(95,179,242,.45);direction:ltr}
+#unit{top:810px;font:700 62px 'Cairo'}
+#grid{position:absolute;left:190px;right:190px;top:960px;display:grid;grid-template-columns:repeat(10,1fr);gap:18px;direction:ltr}
+.d{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.14)}
+#top10{top:980px;font:700 60px/1.5 'Cairo';padding:0 70px;opacity:0}
+#top10 b{color:#5fb3f2}
+#end{top:1200px;font:400 54px/1.6 'Cairo';padding:0 70px;opacity:0}
+#end b{color:#5fb3f2}
+#src{bottom:115px;font:400 31px/1.5 'Cairo';padding:0 60px;opacity:0}
+#h{bottom:50px;font:600 30px 'Cairo';letter-spacing:4px;opacity:.6;direction:ltr}
+</style></head><body>
+<div class="c" id="hook">أبوك وأمك عملوا<br><b>تحليل سكر</b> امتى آخر مرة؟</div>
+<div class="c" id="num">0</div>
+<div class="c" id="unit">مليون مصري بالغ عنده سكر</div>
+
+<div class="c" id="top10">ومصر من <b>أعلى 10 دول</b> في العالم</div>
+<div class="c" id="end">وعالميًا، <b>4 من كل 10</b> مرضى<br>مش عارفين إنهم عندهم سكر<br>ابعته لأهلك يكشفوا 🤍</div>
+<div class="c" id="src">المصدر: الاتحاد الدولي للسكري (IDF Diabetes Atlas)، بيانات مصر 2024 · البالغين 20–79 سنة</div>
+<div class="c" id="h">@batagonun</div>
+<script>
+const cl=v=>Math.max(0,Math.min(1,v)),ease=v=>1-Math.pow(1-cl(v),3),sm=v=>{v=cl(v);return v*v*(3-2*v)};
+const $=id=>document.getElementById(id);
+
+function show(el,a,y=0){el.style.opacity=a;el.style.transform='translateY('+y+'px)'}
+window.frame=function(t){
+ show($('hook'),ease(t/0.5),(1-ease(t/0.5))*30);
+ const k=ease((t-1.6)/0.6);show($('num'),k);show($('unit'),k);
+ const p=sm((t-2)/4);$('num').textContent=(13.2*p).toFixed(1);
+ 
+
+ const kt=ease((t-7)/0.7);show($('top10'),kt,(1-kt)*30);
+ const ke=ease((t-10.5)/0.8);show($('end'),ke,(1-ke)*30);
+ show($('src'),ease((t-11.5)/0.8));
+};
+window.frame(0);
+</script></body></html>
+<script>/*SLOW-WRAP*/{const _f=window.frame;window.frame=t=>_f(t*17/20);window.frame(0)}</script>

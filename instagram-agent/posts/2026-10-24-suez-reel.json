@@ -1,0 +1,35 @@
+{
+ "fade": 0.7,
+ "scenes": [
+  {
+   "photo": "assets/photos/b22/sz_city.png",
+   "overlay": "out/2026-10-24-suez/ov/o1.png",
+   "dur": 7.5
+  },
+  {
+   "photo": "assets/photos/b22/sz_canal.png",
+   "overlay": "out/2026-10-24-suez/ov/o2.png",
+   "dur": 7.5
+  },
+  {
+   "photo": "assets/photos/b22/sz_player.png",
+   "overlay": "out/2026-10-24-suez/ov/o3.png",
+   "dur": 9
+  },
+  {
+   "photo": "assets/photos/b22/sz_player2.png",
+   "overlay": "out/2026-10-24-suez/ov/o4.png",
+   "dur": 8.5
+  },
+  {
+   "photo": "assets/photos/b22/sz_port.png",
+   "overlay": "out/2026-10-24-suez/ov/o5.png",
+   "dur": 8
+  },
+  {
+   "photo": "assets/photos/b22/sz_boats.png",
+   "overlay": "out/2026-10-24-suez/ov/o6.png",
+   "dur": 7
+  }
+ ]
+}

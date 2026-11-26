@@ -1,0 +1,30 @@
+{
+ "fade": 0.7,
+ "scenes": [
+  {
+   "photo": "assets/photos/b22/du_wheel.png",
+   "overlay": "out/2026-10-22-durant/ov/o1.png",
+   "dur": 10
+  },
+  {
+   "photo": "assets/photos/b22/du_pottery.png",
+   "overlay": "out/2026-10-22-durant/ov/o2.png",
+   "dur": 10
+  },
+  {
+   "photo": "assets/photos/b22/du_keys.png",
+   "overlay": "out/2026-10-22-durant/ov/o3.png",
+   "dur": 10
+  },
+  {
+   "photo": "assets/photos/b22/du_draw.png",
+   "overlay": "out/2026-10-22-durant/ov/o4.png",
+   "dur": 10
+  },
+  {
+   "photo": "assets/photos/b22/du_journal.png",
+   "overlay": "out/2026-10-22-durant/ov/o5.png",
+   "dur": 9
+  }
+ ]
+}

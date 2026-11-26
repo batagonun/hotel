@@ -1,0 +1,35 @@
+{
+ "fade": 0.7,
+ "scenes": [
+  {
+   "photo": "assets/photos/b19/walk_silhouette.png",
+   "overlay": "out/2026-10-20-walk/ov/o1.png",
+   "dur": 6.5
+  },
+  {
+   "photo": "assets/photos/b19/walk_meal.png",
+   "overlay": "out/2026-10-20-walk/ov/o2.png",
+   "dur": 7.5
+  },
+  {
+   "photo": "assets/photos/b19/walk_zamalek.png",
+   "overlay": "out/2026-10-20-walk/ov/o3.png",
+   "dur": 10
+  },
+  {
+   "photo": "assets/photos/b19/walk_kids.png",
+   "overlay": "out/2026-10-20-walk/ov/o4.png",
+   "dur": 7.5
+  },
+  {
+   "photo": "assets/photos/b19/walk_woman.png",
+   "overlay": "out/2026-10-20-walk/ov/o5.png",
+   "dur": 7
+  },
+  {
+   "photo": "assets/photos/b19/walk_silhouette.png",
+   "overlay": "out/2026-10-20-walk/ov/o6.png",
+   "dur": 7
+  }
+ ]
+}

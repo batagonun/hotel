@@ -1,0 +1,35 @@
+{
+ "fade": 0.7,
+ "scenes": [
+  {
+   "photo": "assets/photos/b25/af_moon.png",
+   "overlay": "out/2026-10-27-abu-firas/ov/o1.png",
+   "dur": 7
+  },
+  {
+   "photo": "assets/photos/b25/af_citadel.png",
+   "overlay": "out/2026-10-27-abu-firas/ov/o2.png",
+   "dur": 9
+  },
+  {
+   "photo": "assets/photos/b25/af_tower.png",
+   "overlay": "out/2026-10-27-abu-firas/ov/o3.png",
+   "dur": 9.5
+  },
+  {
+   "photo": "assets/photos/b25/af_horses.png",
+   "overlay": "out/2026-10-27-abu-firas/ov/o4.png",
+   "dur": 9.5
+  },
+  {
+   "photo": "assets/photos/b25/af_umm.png",
+   "overlay": "out/2026-10-27-abu-firas/ov/o5.png",
+   "dur": 9
+  },
+  {
+   "photo": "assets/photos/b25/af_moon.png",
+   "overlay": "out/2026-10-27-abu-firas/ov/o6.png",
+   "dur": 8
+  }
+ ]
+}

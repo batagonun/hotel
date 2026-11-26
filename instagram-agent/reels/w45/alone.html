@@ -1,0 +1,51 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Regular.ttf');font-weight:400}
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Bold.ttf');font-weight:700}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#13212b;color:#f3ede2;direction:rtl;font-family:'Cairo'}
+.c{position:absolute;left:0;right:0;text-align:center}
+#hook{top:170px;font:700 84px/1.45 'Cairo';padding:0 60px}
+#hook b{color:#f2b84b}
+#age{top:560px;font:700 64px 'Cairo';color:#9fb8c8}
+#age span{display:inline-block;min-width:120px;font-size:120px;color:#fff;vertical-align:middle}
+#rows{position:absolute;top:800px;left:80px;right:80px}
+.r{display:flex;align-items:center;margin-bottom:56px}
+.lb{flex:0 0 400px;white-space:nowrap;font:700 54px 'Cairo'}
+.track{flex:1;height:84px;position:relative;direction:ltr}
+.b{position:absolute;right:0;top:0;bottom:0;border-radius:14px}
+.v{position:absolute;top:8px;font:700 52px 'Cairo';direction:ltr;color:#fff}
+#note{top:1440px;font:400 46px/1.6 'Cairo';padding:0 80px;color:#d9e3ea;opacity:0}
+#end{top:640px;font:700 76px/1.55 'Cairo';padding:0 70px;opacity:0}
+#end b{color:#f2b84b}
+#src{bottom:120px;font:400 32px/1.5 'Cairo';padding:0 60px;opacity:0;color:#9fb8c8}
+#h{bottom:50px;font:600 30px 'Cairo';letter-spacing:4px;opacity:.55;direction:ltr}
+</style></head><body>
+<div class="c" id="hook">كل ما بتكبر…<br>بتقضي وقت <b>لوحدك</b> أكتر</div>
+<div class="c" id="age">في سن <span id="a">15</span> سنة</div>
+<div id="rows"></div>
+<div class="c" id="note">ساعات في اليوم، في المتوسط</div>
+<div class="c" id="end">ووقت العيلة بيقلّ<br>من <b>4</b> ساعات لـ<b>ساعة</b> واحدة<br><br>كلّم حد كبير في عيلتك النهارده 🤍</div>
+<div class="c" id="src">المصدر: Our World in Data، من مسح استخدام الوقت الأمريكي (2010–2024)</div>
+<div class="c" id="h">@batagonun</div>
+<script>
+const cl=v=>Math.max(0,Math.min(1,v)),ease=v=>1-Math.pow(1-cl(v),3),sm=v=>{v=cl(v);return v*v*(3-2*v)};
+const $=id=>document.getElementById(id);
+const D=[['لوحدك',3.68,7.98,'#f2b84b'],['مع العيلة',4.29,0.96,'#5fa8d3'],['مع الصحاب',1.54,0.53,'#7cc6a4'],['مع شريك الحياة',0.00,3.84,'#e07a8f']];
+const rows=$('rows');
+D.forEach((d,i)=>{rows.insertAdjacentHTML('beforeend',`<div class="r" id="r${i}"><div class="lb">${d[0]}</div><div class="track"><div class="b" id="b${i}" style="background:${d[3]}"></div><div class="v" id="v${i}"></div></div></div>`)});
+const W=460/8.5;
+function show(el,a,y=0){el.style.opacity=a;el.style.transform='translateY('+y+'px)'}
+window.frame=function(t){
+ const out=cl((t-14.6)/0.6);
+ show($('hook'),ease(t/0.6)*(1-out),(1-ease(t/0.6))*30);
+ show($('age'),ease((t-1.6)/0.6)*(1-out));
+ const p=sm((t-5)/6);
+ $('a').textContent=Math.round(15+65*p);
+ D.forEach((d,i)=>{const k=ease((t-2-i*0.35)/0.7);const v=d[1]+(d[2]-d[1])*p;const w=Math.max(4,v*W*k);
+  $('b'+i).style.width=w+'px';const vv=$('v'+i);vv.textContent=v.toFixed(1);vv.style.right=(w+16)+'px';
+  show($('r'+i),k*(1-out),(1-k)*30)});
+ show($('note'),ease((t-3)/0.6)*(1-out));
+ const ke=ease((t-15.1)/0.8);show($('end'),ke,(1-ke)*30);
+ show($('src'),ease((t-11.5)/0.8));
+};
+window.frame(0);
+</script></body></html>

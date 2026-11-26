@@ -1,0 +1,41 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:'Amiri';src:url('../fonts/Amiri-Bold.ttf');font-weight:700}
+@font-face{font-family:'Cairo';src:url('../fonts/Cairo-Regular.ttf');font-weight:400}
+@font-face{font-family:'Cairo';src:url('../fonts/Cairo-Bold.ttf');font-weight:700}
+@font-face{font-family:'Corm';src:url('../fonts/Cormorant-SemiBold.ttf');font-weight:600}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000}
+.c{position:relative;overflow:hidden;color:#f4ede0}
+.ink{background:radial-gradient(circle at 50% 38%,#1b2a30 0%,#0b1418 62%,#070d10 100%)}
+.ring{position:absolute;border-radius:50%;border:3px solid rgba(231,200,115,.35)}
+.gold{color:#e7c873}
+/* profile A: big ba letter */
+#pA{width:1080px;height:1080px;display:grid;place-items:center}
+#pA .ba{font:700 640px/1 'Amiri';color:#e7c873;transform:translateY(-110px);text-shadow:0 0 60px rgba(231,200,115,.25)}
+#pA .dot{position:absolute;left:50%;top:812px;width:46px;height:46px;margin-left:-23px;border-radius:50%;background:#e7c873}
+/* profile B: wordmark */
+#pB{width:1080px;height:1080px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+#pB .ar{font:700 300px/1.05 'Amiri';color:#e7c873;transform:translateY(-20px)}
+#pB .en{font:600 118px/1 'Corm';letter-spacing:.06em;color:#f4ede0}
+/* cover */
+#cv{width:1640px;height:924px}
+#cv .in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;direction:rtl;text-align:center}
+#cv .t{font:700 150px/1.1 'Amiri';color:#e7c873}
+#cv .s{font:700 58px/1.4 'Cairo';color:#f4ede0}
+#cv .m{font:400 40px/1.4 'Cairo';color:rgba(244,237,224,.75)}
+#cv .q{position:absolute;font:700 520px/1 'Amiri';color:rgba(231,200,115,.035)}
+.line{width:220px;height:3px;background:#e7c873;opacity:.7;margin:4px auto}
+</style></head><body>
+<div id="pA" class="c ink"><div class="ring" style="inset:70px"></div><div class="ba">ب</div></div>
+<div id="pB" class="c ink"><div class="ring" style="inset:70px"></div><div class="ar">بتاجونن</div><div class="en">BATAGONUN</div></div>
+<div id="cv" class="c ink">
+ <div class="q" style="right:60px;top:40px">«</div><div class="q" style="left:60px;bottom:-120px">»</div>
+ <div class="in">
+  <div class="t">حكمة · شعر · حكايات</div>
+  <div class="line"></div>
+  <div class="s">من مصر والعالم، في 30 ثانية</div>
+  <div class="m">ريل جديد كل يوم الساعة 10 الصبح · كل معلومة بمصدرها</div>
+ </div>
+</div>
+</body></html>
