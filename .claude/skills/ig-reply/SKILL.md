@@ -93,3 +93,14 @@ NOISE  (2)  skipped. Replying gives them reach.
 
 Then the gate: nothing is posted until the user says yes. They paste the
 replies.
+
+## Hospitality accounts (Arabic)
+
+When replying for a hotel, a social club, or the user speaking as a hospitality
+manager, read `hospitality-ar.md` in this folder first. It adds the hospitality
+buckets (booking or price inquiry, complaint, recurring question, membership,
+event booking), Egyptian-colloquial and Modern Standard Arabic templates for
+each, and the fixed rules: no price or availability without a verified source,
+no personal data in public, complaints acknowledged in public and handled in
+DMs by a named manager, and no compensation promised without the duty
+manager's approval.

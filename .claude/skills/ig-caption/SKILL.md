@@ -117,3 +117,11 @@ linter:     READY
 ```
 
 Nothing is posted. The user pastes it.
+
+## Arabic captions
+
+`caption.py` counts Arabic hashtags toward the five-tag cap (they were not
+counted before), counts Arabic-Indic digits as concrete, and recognises Arabic
+calls to action: «اكتب كلمة ... في الكومنت», «ابعتلنا على الخاص», «احفظه»,
+«ابعته لـ...», «تابعنا», «قولّي في الكومنت». The feed preview box is drawn
+left-to-right in the terminal; read the Arabic lines inside it right-to-left.

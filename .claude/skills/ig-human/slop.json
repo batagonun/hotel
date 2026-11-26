@@ -1021,5 +1021,198 @@
       "name": "Reflex follow or tag bait",
       "fix": "Ask for the one action this post actually earns. The generic ask trains the audience to ignore every ask."
     }
-  ]
+  ],
+  "arabic": [
+    {
+      "find": "في عالم مليء ب",
+      "suggest": "افتح على المعلومة نفسها",
+      "family": "arabic-opener"
+    },
+    {
+      "find": "في عالمنا المتسارع",
+      "suggest": "احذفها وابدأ بالفكرة",
+      "family": "arabic-opener"
+    },
+    {
+      "find": "في ظل التطور",
+      "suggest": "احذفها",
+      "family": "arabic-opener"
+    },
+    {
+      "find": "في عصرنا الحالي",
+      "suggest": "النهارده",
+      "family": "arabic-opener"
+    },
+    {
+      "find": "في عالم اليوم",
+      "suggest": "النهارده",
+      "family": "arabic-opener"
+    },
+    {
+      "find": "مما لا شك فيه",
+      "suggest": "احذفها",
+      "family": "arabic-filler"
+    },
+    {
+      "find": "لا شك ان",
+      "suggest": "احذفها",
+      "family": "arabic-filler"
+    },
+    {
+      "find": "لا يخفي علي احد",
+      "suggest": "احذفها",
+      "family": "arabic-filler"
+    },
+    {
+      "find": "تجدر الاشاره الي",
+      "suggest": "احذفها",
+      "family": "arabic-filler"
+    },
+    {
+      "find": "من الجدير بالذكر",
+      "suggest": "احذفها",
+      "family": "arabic-filler"
+    },
+    {
+      "find": "في الختام",
+      "suggest": "احذفها",
+      "family": "arabic-filler"
+    },
+    {
+      "find": "بكل ما تحمله الكلمه من معني",
+      "suggest": "احذفها",
+      "family": "arabic-filler"
+    },
+    {
+      "find": "علي حد سواء",
+      "suggest": "الاتنين",
+      "family": "arabic-filler"
+    },
+    {
+      "find": "يعد من اهم",
+      "suggest": "من أهم",
+      "family": "arabic-filler"
+    },
+    {
+      "find": "يعتبر من اهم",
+      "suggest": "من أهم",
+      "family": "arabic-filler"
+    },
+    {
+      "find": "اكثر من مجرد",
+      "suggest": "قل ما هو بالضبط",
+      "family": "arabic-filler"
+    },
+    {
+      "find": "تجربه لا تنسي",
+      "suggest": "صف لحظة محددة بدلها",
+      "family": "arabic-hospitality"
+    },
+    {
+      "find": "رحله لا تنسي",
+      "suggest": "صف لحظة محددة بدلها",
+      "family": "arabic-hospitality"
+    },
+    {
+      "find": "تجربه فريده من نوعها",
+      "suggest": "قل ما الذي يختلف بالضبط",
+      "family": "arabic-hospitality"
+    },
+    {
+      "find": "فريد من نوعه",
+      "suggest": "قل ما الذي يختلف بالضبط",
+      "family": "arabic-hospitality"
+    },
+    {
+      "find": "تجربه استثنائيه",
+      "suggest": "صف التفصيلة",
+      "family": "arabic-hospitality"
+    },
+    {
+      "find": "لا مثيل لها",
+      "suggest": "اذكر الميزة بالرقم أو الاسم",
+      "family": "arabic-hospitality"
+    },
+    {
+      "find": "لا مثيل له",
+      "suggest": "اذكر الميزة بالرقم أو الاسم",
+      "family": "arabic-hospitality"
+    },
+    {
+      "find": "الفخامه والرقي",
+      "suggest": "اذكر تفصيلة واحدة ملموسة",
+      "family": "arabic-hospitality"
+    },
+    {
+      "find": "تلتقي الفخامه",
+      "suggest": "اذكر تفصيلة واحدة ملموسة",
+      "family": "arabic-hospitality"
+    },
+    {
+      "find": "يجمع بين الاصاله والمعاصره",
+      "suggest": "اذكر المثال",
+      "family": "arabic-hospitality"
+    },
+    {
+      "find": "يجمع بين الاصاله والحداثه",
+      "suggest": "اذكر المثال",
+      "family": "arabic-hospitality"
+    },
+    {
+      "find": "واحه من الهدوء",
+      "suggest": "صف الصوت أو المكان نفسه",
+      "family": "arabic-hospitality"
+    },
+    {
+      "find": "ملاذ مثالي",
+      "suggest": "صف لمن ولماذا",
+      "family": "arabic-hospitality"
+    },
+    {
+      "find": "انغمس في",
+      "suggest": "جرّب / عيش",
+      "family": "arabic-hospitality"
+    },
+    {
+      "find": "اكتشف سحر",
+      "suggest": "شوف",
+      "family": "arabic-hospitality"
+    },
+    {
+      "find": "اطلق العنان",
+      "suggest": "احذفها",
+      "family": "arabic-hospitality"
+    },
+    {
+      "find": "تابعونا للمزيد",
+      "suggest": "احذفها أو اعط سببًا محددًا للمتابعة",
+      "family": "arabic-instagram"
+    },
+    {
+      "find": "لا تنسوا الاعجاب",
+      "suggest": "احذفها",
+      "family": "arabic-instagram"
+    },
+    {
+      "find": "لا تنسي متابعه الصفحه",
+      "suggest": "احذفها",
+      "family": "arabic-instagram"
+    },
+    {
+      "find": "منشن صديق",
+      "suggest": "ابعته لـ (شخص محدد)",
+      "family": "arabic-instagram"
+    },
+    {
+      "find": "شاركونا ارائكم",
+      "suggest": "اسأل سؤالًا محددًا",
+      "family": "arabic-instagram"
+    }
+  ],
+  "arabic_keep_invisible": [
+    "U+200E",
+    "U+200F",
+    "U+061C"
+  ],
+  "note_arabic": "Arabic block (batagonun/hotel): 'find' is written normalised (no harakat or tatweel, alef forms as ا, taa marbuta as ه, alef maqsura as ي) and is matched against normalised text, with an optional proclitic و/ف/ب/ل. Arabic entries are FLAGGED with a suggestion, never auto-replaced, because a mechanical swap breaks Arabic grammar. arabic_keep_invisible: bidi marks that Arabic text needs around numbers and Latin words; humanize.py keeps them and detect.py does not count them when the draft is Arabic."
 }

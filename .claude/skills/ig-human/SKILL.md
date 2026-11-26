@@ -109,3 +109,17 @@ do not tell a user their text is undetectable.
    again. Two rounds is normal. Five means the draft was written by formula,
    and the fix is a different draft, not more passes.
 5. Show the user the cleaned text and the score. Never the score alone.
+
+## Arabic drafts
+
+- `detect.py` switches to Arabic signals when the draft is mostly Arabic:
+  Egyptian conversational particles and questions instead of contractions,
+  Arabic pronouns including the "-ك" you-suffix, spelled-out numbers, money
+  words and Egyptian place names for specificity, and the `arabic` block of
+  `slop.json` for stock phrases. Modern Standard Arabic (heritage, poetry) has
+  no colloquial particles by design, so a lower VOICE score there is expected.
+- `humanize.py` flags Arabic stock phrases with a suggestion and never
+  auto-replaces them, because a mechanical swap breaks Arabic grammar.
+- `humanize.py` keeps the bidi marks Arabic needs (U+200E, U+200F, U+061C) when
+  the draft is Arabic, so numbers and Latin words stay in place on screen. It
+  still converts «·» and «…»; review its typographic changes on Arabic text.

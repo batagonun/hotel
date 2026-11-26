@@ -73,7 +73,14 @@ def restore_urls(text, found):
 def pass_invisible(text, lex):
     """Delete or space-normalise invisible characters. Returns (text, hits)."""
     hits = []
+    # Arabic needs its bidi marks (RLM/LRM/ALM) around numbers and Latin words;
+    # deleting them can flip "بـ630 جنيه" on screen. Keep them in Arabic drafts.
+    arabic = len(re.findall(r"[\u0621-\u064A]", text)) > len(re.findall(r"[A-Za-z]", text))
+    keep_cps = set(lex.get("arabic_keep_invisible", [])) if arabic else set()
+    keep_chars = {chr(_cp(c)) for c in keep_cps}
     for entry in lex["invisible"]:
+        if entry["cp"] in keep_cps:
+            continue
         cp = _cp(entry["cp"])
         if isinstance(cp, tuple):
             pattern = "[" + re.escape(chr(cp[0])) + "-" + re.escape(chr(cp[1])) + "]"
@@ -85,11 +92,11 @@ def pass_invisible(text, lex):
                          "action": entry["action"]})
             text = re.sub(pattern, "" if entry["action"] == "delete" else " ", text)
     # Any remaining Cf (format) character is invisible by definition.
-    stray = [c for c in text if unicodedata.category(c) == "Cf"]
+    stray = [c for c in text if unicodedata.category(c) == "Cf" and c not in keep_chars]
     if stray:
         hits.append({"name": "other invisible format chars", "count": len(stray),
                      "action": "delete"})
-        text = "".join(c for c in text if unicodedata.category(c) != "Cf")
+        text = "".join(c for c in text if unicodedata.category(c) != "Cf" or c in keep_chars)
     return text, hits
 
 
@@ -174,6 +181,17 @@ def scan_structures(text, lex):
         found = pattern.findall(text)
         if found:
             flags.append({"name": s["name"], "count": len(found), "fix": s["fix"]})
+    # Arabic stock phrases are flagged with a suggestion, never auto-replaced:
+    # a mechanical swap breaks Arabic agreement and case endings.
+    _h = re.compile(r"[\u0640\u064B-\u0652\u0670]")
+    flat = " " + re.sub("[أإآٱ]", "ا", _h.sub("", text)).replace("ة", "ه").replace("ى", "ي") + " "
+    for entry in lex.get("arabic", []):
+        pat = re.compile(r"(?:(?<=[\s\W])|(?<=[\s\W][وفبل]))"
+                         + re.escape(entry["find"]).replace(r"\ ", r"\s+"))
+        n = len(pat.findall(flat))
+        if n:
+            flags.append({"name": f"Arabic stock phrase «{entry['find']}»", "count": n,
+                          "fix": entry["suggest"]})
     # Sentence-length uniformity is structural too.
     lens = [len(s.split()) for s in SENT_RE.findall(text) if len(s.split()) > 2]
     if len(lens) >= 4:

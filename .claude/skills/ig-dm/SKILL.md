@@ -116,3 +116,11 @@ Then stop. A third converts nobody and costs the relationship.
 The message, the character count, and the two follow-ups with the day each
 goes out, all run through `/ig-human`. The user sends every one of them by
 hand, or through their own approved automation for keyword replies only.
+
+## Hospitality accounts (Arabic)
+
+For booking follow-ups, complaint handling, membership inquiries and event
+bookings on a hotel or club account, use the DM templates in
+`../ig-reply/hospitality-ar.md` (sections 2, 4, 7 and 8). Same rules as above:
+the guest moved first, one follow-up at most, and prices only from the booking
+system on the day.
