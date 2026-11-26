@@ -14,6 +14,13 @@
       "sourceType": "github",
       "skillPath": "skills/find-skills/SKILL.md",
       "computedHash": "7bc223e2aafbdbf6e50ea243ba6ef67fe432bb069ab439fea0390795dac0bf7f"
+    },
+    "graphify": {
+      "source": "Graphify-Labs/graphify",
+      "commit": "16127eb30892f997d758efdd894e5e04264edbbb",
+      "sourceType": "github",
+      "skillPath": "graphify/skill.md",
+      "computedHash": "bbddbc077b4374a2d6b5181e0d9d0e7cac576df46dff328d7934a1c2f077bc4d"
     }
   }
 }

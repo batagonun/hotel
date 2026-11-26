@@ -32,3 +32,6 @@ desktop.ini
 dist/
 build/
 tmp/
+
+# Graphify (الرسم المعرفي يُبنى محليًا عند الحاجة)
+graphify-out/
