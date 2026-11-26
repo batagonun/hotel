@@ -121,5 +121,28 @@ do not tell a user their text is undetectable.
 - `humanize.py` flags Arabic stock phrases with a suggestion and never
   auto-replaces them, because a mechanical swap breaks Arabic grammar.
 - `humanize.py` keeps the bidi marks Arabic needs (U+200E, U+200F, U+061C) when
-  the draft is Arabic, so numbers and Latin words stay in place on screen. It
-  still converts «·» and «…»; review its typographic changes on Arabic text.
+  the draft is Arabic, so numbers and Latin words stay in place on screen.
+- Arabic typography (since Nov 2026): a mid-sentence em or en dash becomes the
+  Arabic comma «،», not ", "; curly double quotes become «» (paired per line);
+  number ranges keep a hyphen (٣-٥, 50-80). The attribution dash is KEPT: a
+  line opening with "— المتنبي، الديوان", or a dash right after a closing quote
+  («...» — الشافعي). Before this fix the attribution line was merged into the
+  line above as ", المتنبي".
+- `detect.py` does not count an attribution dash as a fingerprint on Arabic
+  drafts, so a correctly sourced quote no longer scores FLAGGED. Never delete
+  or reword an attribution to raise the score: sourcing is mandatory on this
+  account.
+
+## Mandatory gate for @batagonun
+
+Every piece of text shown to the user for approval goes through this skill
+first: caption, on-screen text, reel script, story frames, comment replies and
+DMs. Run `humanize.py` then `detect.py`, put the score and verdict next to the
+text on the review page, and:
+
+- FLAGGED: rewrite and run again; it is never shown as is.
+- REVIEW: may be shown, with the weakest signal named and what was done about it.
+- PASS: show it.
+
+Modern Standard Arabic (poetry, heritage quotes) scores lower on VOICE by
+design; judge those on FINGERPRINT and SLOP, and say so on the review page.
