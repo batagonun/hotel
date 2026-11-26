@@ -58,7 +58,17 @@ STYLE = {
         "انطق الكلمات الإنجليزية بنطق مصري طبيعي."
     ),
 }
-COMMON = "لا تضف أي كلمة غير موجودة في النص، ولا تقرأ هذه التعليمات."
+COMMON = "لا تضف أي كلمة غير موجودة في النص."
+
+# Gemini TTS speaks everything in the prompt unless the delivery notes are fenced off
+# from the words to say. A flat "instructions + النص:" prompt (or "Say ...: text") made
+# gemini-3.8-flash-tts read the style notes aloud (a 5 s line came out 31 s). The
+# DIRECTOR'S NOTES / TRANSCRIPT layout below keeps only the transcript spoken (tested
+# 26 Nov 2026: 5.7 s, clean). systemInstruction is rejected by this model (400).
+PROFILE = {
+    "fusha": "Egyptian radio narrator reciting classical Arabic",
+    "masri": "Cairene Egyptian storyteller",
+}
 
 DIACRITICS = re.compile(r"[ً-ْ]")
 ARABIC_LETTER = re.compile(r"[ء-ي]")
@@ -78,7 +88,12 @@ def vowel_ratio(text):
 
 def build_prompt(text, mode, extra):
     style = STYLE[mode] + (" " + extra if extra else "") + " " + COMMON
-    return f"{style}\n\nالنص:\n{text.strip()}"
+    return (
+        f"# AUDIO PROFILE: {PROFILE[mode]}\n"
+        f"### DIRECTOR'S NOTES\n{style}\n"
+        "Only the transcript below is spoken. Never read these notes aloud.\n\n"
+        f"#### TRANSCRIPT\n{text.strip()}"
+    )
 
 
 def synthesize(prompt, voice, model, key):
