@@ -198,5 +198,61 @@
   "hook": "أبوك وأمك<br><b>حلّلوا سكر؟</b>",
   "sub": "13.2 مليون مصري عندهم سكر",
   "size": 130
+ },
+ "2026-12-02-zawruni": {
+  "img": "../../media/w49b/sd-alam.jpg",
+  "pos": "center 20%",
+  "filter": "grayscale(1) brightness(1.1) contrast(1.15)",
+  "tag": "حكاية أغنية",
+  "hook": "مش أغنية<br><b>فيروز</b>!",
+  "sub": "«زوروني كل سنة مرة»… الحكاية بدأت في مصر"
+ },
+ "2026-12-03-taha": {
+  "img": "../../media/w49b/th-portrait.jpg",
+  "pos": "center 25%",
+  "filter": "grayscale(1) brightness(1.1) contrast(1.15)",
+  "tag": "زي النهارده",
+  "hook": "عميد الأدب<br><b>ما كانش بيشوف</b>",
+  "sub": "طه حسين… وحكايته في «الأيام»"
+ },
+ "2026-12-04-tarafa": {
+  "img": "../../media/w48/ai-manuscript.png",
+  "pos": "center",
+  "tag": "بيت وحكاية",
+  "hook": "شايل جواب<br><b>إعدامه</b> بإيده!",
+  "sub": "«ستُبدي لكَ الأيامُ…» وحكاية صاحبها",
+  "filter": "blur(7px) brightness(.85)"
+ },
+ "2026-12-05-humat": {
+  "img": "../../media/w49/kr-03915.jpg",
+  "pos": "center",
+  "filter": "grayscale(1) brightness(1.1) contrast(1.15)",
+  "tag": "الحكاية المشهورة غلط",
+  "hook": "نشيد تونس<br>كتبه <b>مصري</b>!",
+  "sub": "«حماة الحمى»… والشابي ليه بيتين بس"
+ },
+ "2026-12-06-jara": {
+  "img": "../../media/w49b/zahle.jpg",
+  "pos": "center",
+  "tag": "حكاية أغنية",
+  "hook": "«جارة الوادي»<br><b>مش حبيبة!</b>",
+  "sub": "أحمد شوقي كان بيتكلم عن مين؟"
+ },
+ "2026-12-07-bayram": {
+  "img": "../../media/w49b/anf-beach.jpg",
+  "pos": "35% center",
+  "filter": "brightness(1) contrast(1.05)",
+  "tag": "الحكاية المشهورة غلط",
+  "hook": "«التونسي»<br>اتولد في <b>إسكندرية</b>!",
+  "sub": "بيرم… شاعر الشعب",
+  "size": 120
+ },
+ "2026-12-08-nay": {
+  "img": "../../media/w49b/gibran13.jpg",
+  "pos": "center 20%",
+  "filter": "grayscale(1) brightness(1.1) contrast(1.15)",
+  "tag": "حكاية أغنية",
+  "hook": "مش كلام<br><b>الرحابنة</b>!",
+  "sub": "«أعطني الناي»… مين كتبها؟"
  }
 }

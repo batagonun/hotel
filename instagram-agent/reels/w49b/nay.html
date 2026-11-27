@@ -1,0 +1,109 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:'Amiri';src:url('../../fonts/Amiri-Bold.ttf');font-weight:700}
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Regular.ttf');font-weight:400}
+@font-face{font-family:'Cairo';src:url('../../fonts/Cairo-Bold.ttf');font-weight:700}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#0b0b10}
+body>div{direction:rtl}
+.L{position:absolute;inset:0;opacity:0;display:none;overflow:hidden}
+.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background-size:cover;background-position:center;transform:scale(1.2);filter:sepia(.35) brightness(.72) contrast(1.1)}
+.photo.blurred{filter:brightness(.55) blur(12px)}
+.portrait{position:absolute;left:250px;right:250px;top:300px;height:700px;background-size:cover;border:5px solid #ce93d8;border-radius:24px;box-shadow:0 20px 60px rgba(0,0,0,.7);filter:sepia(.35) brightness(.72) contrast(1.1)}
+.tint{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,0) 30%,rgba(0,0,0,0) 62%,rgba(0,0,0,.6))}
+.glow{position:absolute;inset:0;background:radial-gradient(ellipse 80% 34% at 50% 48%,rgba(0,0,0,.45),rgba(0,0,0,0))}
+.T{text-shadow:0 0 3px #000,0 0 8px #000,0 3px 10px rgba(0,0,0,.95),0 6px 30px rgba(0,0,0,.9)}
+.band{position:absolute;left:0;right:0;top:700px;padding:40px 30px;text-align:center}
+.v{font:700 92px/1.75 'Amiri';color:#fff;white-space:nowrap}
+.v .rh{color:#ce93d8}
+.who{position:absolute;left:0;right:0;top:1120px;text-align:center;font:700 44px 'Cairo';color:#ce93d8}
+.series{position:absolute;top:110px;left:0;right:0;text-align:center;z-index:9}
+.series span{font:700 38px 'Cairo';color:#111;background:#ce93d8;padding:8px 30px;border-radius:40px}
+.qt{position:absolute;top:470px;left:60px;right:60px;text-align:center;font:700 92px/1.4 'Cairo';color:#fff}
+.btn{position:absolute;left:140px;right:140px;height:170px;border-radius:30px;border:4px solid #fff;color:#fff;font:700 66px/170px 'Cairo';text-align:center;box-shadow:0 0 20px rgba(0,0,0,.6),inset 0 0 20px rgba(0,0,0,.4)}
+.bar{position:absolute;top:1480px;left:200px;right:200px;height:14px;border-radius:7px;background:rgba(255,255,255,.2);overflow:hidden;box-shadow:0 0 12px #000}
+.bar i{display:block;height:100%;width:0;background:#ce93d8}
+.card{position:absolute;left:50px;right:50px;padding:20px;color:#fff;text-align:center;font:700 64px/1.5 'Cairo'}
+.card b{color:#ce93d8}
+.src{position:absolute;bottom:115px;left:50px;right:50px;text-align:center;font:400 27px/1.5 'Cairo';color:#eee;z-index:9;opacity:0}
+.handle{position:absolute;bottom:50px;left:0;right:0;text-align:center;font:700 28px 'Cairo';color:#fff;opacity:.7;direction:ltr;letter-spacing:4px;z-index:9}
+.credit{position:absolute;bottom:62px;right:36px;font:400 20px 'Cairo';color:rgba(255,255,255,.7);z-index:9}
+.band,.who,.qt,.btn,.card,.src,.credit{text-shadow:0 0 3px #000,0 0 8px #000,0 3px 10px rgba(0,0,0,.95),0 6px 30px rgba(0,0,0,.9)}
+</style></head><body>
+<div style="position:absolute;top:-500px;font:700 40px Amiri">ا</div><div style="position:absolute;top:-500px;font:700 40px Cairo">ا</div><div style="position:absolute;top:-500px;font:400 40px Cairo">ا</div>
+<div class="L" id="L0">
+<div class="photo" id="p0" style="background-image:url('../../media/w49b/ney.jpg');background-position:center"></div>
+<div class="tint"></div><div class="glow"></div>
+<div class="band" id="b0">
+<div class="v">أعطني النايَ وغنِّ<span class="rh"></span></div>
+<div class="v">فالغِنا سِرُّ الوجو<span class="rh">دْ</span></div>
+</div>
+<div class="credit">الناي · Nerval، ويكيميديا (CC BY-SA 3.0)</div>
+</div>
+<div class="L" id="L1">
+<div class="photo blurred" style="background-image:url('../../media/w49b/fairuz-concert.jpg')"></div><div class="portrait" id="p1" style="background-image:url('../../media/w49b/fairuz-concert.jpg');background-position:center 30%"></div>
+<div class="tint"></div><div class="glow"></div>
+<div class="card" id="c1_0" style="top:1080px">غنّتها <b>فيروز</b>،<br>ولحّنها <b>نجيب حنكش</b></div>
+<div class="card" id="c1_1" style="top:1300px">بس الكلام مش ليهم</div>
+<div class="credit">فيروز 1971 · ملكية عامة</div>
+</div>
+<div class="L" id="L2">
+<div class="photo blurred" id="p2" style="background-image:url('../../media/w49b/ney.jpg');background-position:center"></div>
+<div class="tint"></div><div class="glow"></div>
+<div class="qt" id="q2">مين اللي<br>كتبها؟</div>
+<div class="btn" id="a2_0" style="top:900px">الأخوين رحباني؟</div>
+<div class="btn" id="a2_1" style="top:1130px">جبران خليل جبران؟</div>
+<div class="bar"><i id="bar2"></i></div>
+</div>
+<div class="L" id="L3">
+<div class="photo blurred" style="background-image:url('../../media/w49b/gibran13.jpg')"></div><div class="portrait" id="p3" style="background-image:url('../../media/w49b/gibran13.jpg');background-position:center 20%"></div>
+<div class="tint"></div><div class="glow"></div>
+<div class="card" id="c3_0" style="top:1080px;font-size:88px;color:#6dffa8">جبران ✓</div>
+<div class="card" id="c3_1" style="top:1300px">من قصيدته الطويلة<br><b>«المواكب»</b> سنة <b>1918</b></div>
+<div class="credit">جبران خليل جبران 1913 · ملكية عامة</div>
+</div>
+<div class="L" id="L4">
+<div class="photo" id="p4" style="background-image:url('../../media/w49b/gibran-muse.jpg');background-position:center 30%"></div>
+<div class="tint"></div><div class="glow"></div>
+<div class="card" id="c4_0" style="top:440px">جبران صاحب كتاب <b>«النبي»</b></div>
+<div class="card" id="c4_1" style="top:1150px">وكان كمان <b>رسّام</b> 🎨<br>ودي لوحة رسمها لنفسه</div>
+<div class="credit">جبران، «بورتريه ذاتي مع الملهمة» 1911 · CC0</div>
+</div>
+<div class="L" id="L5">
+<div class="photo" id="p5" style="background-image:url('../../media/w49b/ney.jpg');background-position:center"></div>
+<div class="tint"></div><div class="glow"></div>
+<div class="band" id="b5">
+<div class="v">إنّما النّاسُ سطورٌ<span class="rh"></span></div>
+<div class="v">كُتبتْ لكنْ بما<span class="rh">ءْ</span></div>
+</div>
+<div class="who" id="w5">— جبران، «المواكب»</div>
+<div class="credit">الناي · Nerval، ويكيميديا (CC BY-SA 3.0)</div>
+</div>
+<div class="L" id="L6">
+<div class="photo blurred" id="p6" style="background-image:url('../../media/w49b/gibran13.jpg');background-position:center"></div>
+<div class="tint"></div><div class="glow"></div>
+<div class="card" id="c6_0" style="top:520px">أنهي بيت فيها<br>الأقرب ليك؟ 👇</div>
+<div class="card" id="c6_1" style="top:900px;font-size:56px">تابع عشان حكاية<br>كل أغنية بتحبها</div>
+</div>
+<div class="series"><span>حكاية أغنية</span></div>
+<div class="src" id="src">📚 ويكيبيديا «أعطني الناي» · جبران خليل جبران، «المواكب» (1918)، aldiwan.net<br>📷 جبران وفيروز: ملكية عامة · لوحة جبران الذاتية: CC0 · الناي: Nerval (CC BY-SA 3.0)</div>
+<div class="handle">@batagonun</div>
+<script>
+const S=[[0, 7], [7, 13], [13, 18.6], [18.6, 25.1], [25.1, 31.6], [31.6, 38.6], [38.6, 44.1]],Ls=[{"type": "verse", "n": 2, "at": [], "kb": "in", "vid": false, "vs": 0}, {"type": "cards", "n": 2, "at": [0.2, 2.0], "kb": "portrait", "vid": false, "vs": 0}, {"type": "quiz", "n": 2, "at": [], "kb": "in", "vid": false, "vs": 0}, {"type": "cards", "n": 2, "at": [0.2, 1.2], "kb": "portrait", "vid": false, "vs": 0}, {"type": "cards", "n": 2, "at": [0.2, 1.8], "kb": "in", "vid": false, "vs": 0}, {"type": "verse", "n": 2, "at": [], "kb": "out", "vid": false, "vs": 0}, {"type": "cards", "n": 2, "at": [0.2, 1.4], "kb": "in", "vid": false, "vs": 0}],TOTAL=44.1;
+const cl=v=>Math.max(0,Math.min(1,v)),ease=v=>1-Math.pow(1-cl(v),3);
+const $=id=>document.getElementById(id);
+function pop(id,lt,a,dy){const e=$(id);if(!e)return;const k=ease((lt-a)/0.6);e.style.opacity=k;e.style.transform='translateY('+((1-k)*(dy===undefined?40:dy))+'px)'}
+function lines(id,lt,a){[...$(id).children].forEach((c,j)=>{const k=ease((lt-a-j*1.2)/0.9);c.style.opacity=k;c.style.filter='blur('+((1-k)*10)+'px)'})}
+window.frame=async function(t){
+ const waits=[];
+ S.forEach((s,i)=>{const L=$('L'+i);const fi=i==0?1:cl((t-s[0])/0.4),fo=i==S.length-1?1:cl((s[1]-t)/0.4);L.style.opacity=Math.min(fi,fo);const on=(t>=s[0]-.01&&t<s[1]+.01);L.style.display=on?'block':'none';
+  if(!on)return; const lt=t-s[0],D=s[1]-s[0],P=Ls[i],p=$('p'+i);
+  const sc=P.kb=='portrait'?1+lt*0.006:(P.kb=='out'?1.3-lt*0.012:1.2+lt*0.015); p.style.transform='scale('+sc+')';
+  if(P.vid){const want=P.vs+lt; if(Math.abs(p.currentTime-want)>0.02){waits.push(new Promise(r=>{p.addEventListener('seeked',r,{once:true});p.currentTime=want}))}}
+  if(P.type=='verse'){pop('b'+i,lt,0.1,0);lines('b'+i,lt,0.3);pop('w'+i,lt,0.3+P.n*1.2)}
+  else if(P.type=='cards'){P.at.forEach((a,j)=>pop('c'+i+'_'+j,lt,a))}
+  else if(P.type=='quiz'){pop('q'+i,lt,0.1);for(let j=0;j<P.n;j++)pop('a'+i+'_'+j,lt,0.9+j*0.6);$('bar'+i).style.width=(cl((lt-1.8)/(D-2.2))*100)+'%'}
+ });
+ $('src').style.opacity=ease((t-(TOTAL-3.2))/0.8);
+ if(waits.length) await Promise.all(waits);
+};
+window.frame(0);
+</script></body></html>
