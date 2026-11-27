@@ -32,11 +32,77 @@ import unicodedata
 HERE = os.path.dirname(os.path.abspath(__file__))
 LEX = os.path.join(HERE, "slop.json")
 
-SENT_RE = re.compile(r"[^.!?\n]+[.!?]*")
-WORD_RE = re.compile(r"[A-Za-z']+")
+SENT_RE = re.compile(r"[^.!?؟\n]+[.!?؟]*")
+WORD_RE = re.compile(r"[A-Za-z']+|[\u0621-\u063A\u0640-\u0652\u0670]+")
 CONTRACTIONS = re.compile(r"\b\w+'(?:s|t|re|ve|ll|d|m)\b", re.IGNORECASE)
 PRONOUNS = re.compile(r"\b(i|me|my|mine|we|us|our|you|your)\b", re.IGNORECASE)
-NUMBERS = re.compile(r"\b\d[\d,.]*%?\b|\$\d")
+NUMBERS = re.compile(r"(?<![\d٠-٩])[\d٠-٩][\d٠-٩,.٫]*%?(?![\d٠-٩])|\$\d")
+
+# ---------------------------------------------------------------------------
+# ARABIC (batagonun/hotel). When a draft is mostly Arabic, the English-only
+# signals are swapped for Arabic ones: spelled-out numbers and money words for
+# SPECIFICITY, the "arabic" block of slop.json for SLOP DENSITY, Egyptian
+# conversational particles and questions in place of contractions for VOICE,
+# and Arabic pronouns (including the "-ك" you-suffix) for person. Bidi marks
+# that Arabic needs are not counted as fingerprint characters.
+# Modern Standard Arabic (heritage and poetry posts) has no colloquial
+# particles by design, so expect a lower VOICE score there and judge by eye.
+# ---------------------------------------------------------------------------
+AR_LETTER = re.compile(r"[\u0621-\u064A]")
+_HARAKAT = re.compile(r"[\u0640\u064B-\u0652\u0670]")
+AR_CONCRETE = {
+    "اتنين", "اثنين", "تلاته", "ثلاثه", "اربعه", "خمسه", "سته", "سبعه", "تمانيه",
+    "ثمانيه", "تسعه", "عشره", "عشر", "عشرين", "تلاتين", "ثلاثين", "خمسين", "ميه",
+    "مائه", "الف", "الاف", "مليون", "مليار", "نص", "نصف", "ربع", "ضعف", "اضعاف",
+    "جنيه", "دولار", "ريال", "يورو", "فلوس", "سعر", "ليله",
+    # Egyptian places: Arabic has no capital letters, so names need a list.
+    "القاهره", "اسكندريه", "الاسكندريه", "اسوان", "الاقصر", "الغردقه", "شرم", "دهب",
+    "النيل", "الساحل", "العلمين", "السويس", "بورسعيد", "سيناء", "الجونه", "الفيوم",
+    "سيوه", "مطروح", "الزمالك", "المعادي", "الهرم", "الاهرامات", "طابا", "نويبع",
+}
+AR_TALK = {
+    "ده", "دي", "دا", "اللي", "مش", "بس", "كده", "عشان", "ازاي", "ليه", "ايه",
+    "فين", "امتي", "يعني", "خالص", "اوي", "قوي", "بقي", "طب", "طيب", "كمان",
+    "برضه", "لسه", "هنا", "دلوقتي", "النهارده", "زي",
+}
+AR_PRONOUNS = {
+    "انا", "احنا", "نحن", "انت", "انتي", "انتو", "انتم", "عندي", "ليا", "بتاعي",
+    "عندك", "ليك", "معاك", "حضرتك", "بتاعك", "عندنا", "بتاعنا", "نفسك",
+}
+AR_NOT_YOU = {"ذلك", "كذلك", "لذلك", "هناك", "تلك", "ملك", "بنك", "سمك", "شباك", "ضحك", "مسك"}
+
+
+def is_arabic(text):
+    return len(AR_LETTER.findall(text)) > len(re.findall(r"[A-Za-z]", text))
+
+
+def norm_ar(text):
+    t = _HARAKAT.sub("", text)
+    t = re.sub("[أإآٱ]", "ا", t)
+    return t.replace("ة", "ه").replace("ى", "ي")
+
+
+def strip_clitic(token):
+    for pre in ("وال", "بال", "فال", "لل", "ال", "و", "ف", "ب"):
+        if token.startswith(pre) and len(token) - len(pre) >= 2:
+            return token[len(pre):]
+    return token
+
+
+def ar_tokens(text):
+    return [strip_clitic(norm_ar(w)) for w in words(text) if AR_LETTER.search(w)]
+
+
+def ar_phrase_hits(text, lex):
+    """Arabic stock phrases, matched on normalised text with an optional و/ف/ب/ل."""
+    flat = " " + norm_ar(text) + " "
+    found = []
+    for entry in lex.get("arabic", []):
+        pat = re.compile(r"(?:(?<=[\s\W])|(?<=[\s\W][وفبل]))" + re.escape(entry["find"]).replace(r"\ ", r"\s+"))
+        n = len(pat.findall(flat))
+        if n:
+            found.append((entry, n))
+    return found
 PROPER = re.compile(r"(?<![.!?]\s)(?<!^)\b[A-Z][a-z]{2,}\b", re.MULTILINE)
 
 
@@ -77,6 +143,9 @@ def check_specificity(text):
         return 50.0, "too short to judge"
     per100 = 100 / len(w)
     hits = len(NUMBERS.findall(text)) + len(set(PROPER.findall(text)))
+    if is_arabic(text):
+        raw = [norm_ar(w) for w in words(text) if AR_LETTER.search(w)]
+        hits += sum(1 for r in raw if r in AR_CONCRETE or strip_clitic(r) in AR_CONCRETE)
     density = hits * per100
     score = scale(density, human=6.0, machine=0.5)
     return score, f"{hits} concrete markers, {density:.1f} per 100 words (want 4+)"
@@ -95,6 +164,9 @@ def check_slop(text, lex):
         if n:
             hits += n
             found.append(entry["find"])
+    for entry, n in ar_phrase_hits(text, lex):
+        hits += n
+        found.append(entry["find"])
     density = hits * 100 / len(w)
     score = scale(density, human=0.0, machine=4.0)
     detail = f"{hits} stock terms, {density:.1f} per 100 words"
@@ -105,8 +177,12 @@ def check_slop(text, lex):
 
 def check_fingerprint(text):
     """Characters a phone keyboard does not produce."""
-    invisible = sum(1 for c in text if unicodedata.category(c) == "Cf")
+    keep = {"\u200e", "\u200f", "\u061c"} if is_arabic(text) else set()
+    invisible = sum(1 for c in text if unicodedata.category(c) == "Cf" and c not in keep)
     em = text.count("—")
+    if is_arabic(text):
+        # "— المتنبي" opening a line, or after a closing quote, is attribution, not a tell.
+        em -= len(re.findall(r"(?m)^[ \t]*—", text)) + len(re.findall(r"[»\"\u201d][ \t]*—", text))
     curly = sum(text.count(c) for c in "‘’“”")
     ellip = text.count("…")
     nbsp = sum(text.count(c) for c in "   ")
@@ -126,6 +202,12 @@ def check_voice(text, lex):
     per100 = 100 / len(w)
     contractions = len(CONTRACTIONS.findall(text)) * per100
     person = len(PRONOUNS.findall(text)) * per100
+    if is_arabic(text):
+        toks = ar_tokens(text)
+        # Egyptian particles and questions do the job contractions do in English.
+        contractions = (sum(1 for t in toks if t in AR_TALK) + text.count("؟") + text.count("?")) * per100
+        person = sum(1 for t in toks if t in AR_PRONOUNS
+                     or (len(t) >= 4 and t.endswith(("ك", "كم")) and t not in AR_NOT_YOU)) * per100
     tells = 0
     names = []
     for s in lex["structures"]:
@@ -144,7 +226,8 @@ def check_voice(text, lex):
     if uniform:
         score -= 12
         names.append("uniform-bullets")
-    detail = (f"{contractions:.1f} contractions, {person:.1f} personal pronouns "
+    label = "conversational markers" if is_arabic(text) else "contractions"
+    detail = (f"{contractions:.1f} {label}, {person:.1f} personal pronouns "
               f"per 100 words, {tells} structural tell(s)")
     if names:
         detail += " [" + ", ".join(names[:4]) + "]"
@@ -216,7 +299,7 @@ def main():
         })
 
     if args.json:
-        print(json.dumps(payload if args.compare else payload[0], indent=2))
+        print(json.dumps(payload if args.compare else payload[0], indent=2, ensure_ascii=False))
         return
 
     for (name, text), p in zip(targets, payload):

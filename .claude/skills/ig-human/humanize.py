@@ -11,6 +11,9 @@ Three passes, in this order:
                  any generated text.
   2. TYPOGRAPHIC em dash -> comma, en dash -> hyphen, curly quotes -> straight,
                  ellipsis -> three dots, bullet -> hyphen.
+                 Arabic drafts: a mid-sentence dash becomes the Arabic comma «،»,
+                 an attribution dash ("— المتنبي" at the start of a line, or right
+                 after a closing quote) is kept, and curly quotes become «».
   3. LEXICAL     replace the slop lexicon in slop.json with plain words,
                  preserving capitalisation and leaving URLs untouched.
 
@@ -37,6 +40,26 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 LEX = os.path.join(HERE, "slop.json")
 
 URL_RE = re.compile(r"https?://\S+|www\.\S+|\S+@\S+\.\S+")
+AR_LETTER = re.compile(r"[\u0621-\u064A]")
+
+
+def is_arabic(text):
+    """Mostly Arabic letters: switch to the Arabic typography rules."""
+    return len(AR_LETTER.findall(text)) > len(re.findall(r"[A-Za-z]", text))
+
+
+def to_guillemets(text):
+    """Curly double quotes -> Arabic «», paired in order within each line."""
+    out = []
+    for line in text.split("\n"):
+        opening, buf = True, []
+        for c in line:
+            if c in "\u201c\u201d":
+                buf.append("«" if opening else "»"); opening = not opening
+            else:
+                buf.append(c)
+        out.append("".join(buf))
+    return "\n".join(out)
 SENT_RE = re.compile(r"[^.!?\n]+[.!?]*")
 
 
@@ -73,7 +96,14 @@ def restore_urls(text, found):
 def pass_invisible(text, lex):
     """Delete or space-normalise invisible characters. Returns (text, hits)."""
     hits = []
+    # Arabic needs its bidi marks (RLM/LRM/ALM) around numbers and Latin words;
+    # deleting them can flip "بـ630 جنيه" on screen. Keep them in Arabic drafts.
+    arabic = len(re.findall(r"[\u0621-\u064A]", text)) > len(re.findall(r"[A-Za-z]", text))
+    keep_cps = set(lex.get("arabic_keep_invisible", [])) if arabic else set()
+    keep_chars = {chr(_cp(c)) for c in keep_cps}
     for entry in lex["invisible"]:
+        if entry["cp"] in keep_cps:
+            continue
         cp = _cp(entry["cp"])
         if isinstance(cp, tuple):
             pattern = "[" + re.escape(chr(cp[0])) + "-" + re.escape(chr(cp[1])) + "]"
@@ -85,20 +115,41 @@ def pass_invisible(text, lex):
                          "action": entry["action"]})
             text = re.sub(pattern, "" if entry["action"] == "delete" else " ", text)
     # Any remaining Cf (format) character is invisible by definition.
-    stray = [c for c in text if unicodedata.category(c) == "Cf"]
+    stray = [c for c in text if unicodedata.category(c) == "Cf" and c not in keep_chars]
     if stray:
         hits.append({"name": "other invisible format chars", "count": len(stray),
                      "action": "delete"})
-        text = "".join(c for c in text if unicodedata.category(c) != "Cf")
+        text = "".join(c for c in text if unicodedata.category(c) != "Cf" or c in keep_chars)
     return text, hits
 
 
-def pass_typographic(text, lex):
+def pass_typographic(text, lex, arabic=False):
     hits = []
+    if arabic:
+        n = sum(text.count(c) for c in "\u201c\u201d")
+        if n:
+            hits.append({"name": "“” curly double quotes", "count": n, "to": "«» (Arabic)"})
+            text = to_guillemets(text)
     for entry in lex["typographic"]:
         ch = entry["from"]
         n = text.count(ch)
         if not n:
+            continue
+        if arabic and ch == "—":
+            # Keep the attribution dash: "— المتنبي" opening a line, or after a closing quote.
+            text = re.sub(r"(?m)^([ \t]*)—[ \t]*", lambda m: m.group(1) + "\x00ATT\x00", text)
+            text = re.sub(r"([»\"\u201d])[ \t]*—[ \t]*", lambda m: m.group(1) + " \x00ATT\x00", text)
+            kept = text.count("\x00ATT\x00")
+            text = re.sub(r"[ \t]*—[ \t]*", "، ", text)
+            text = text.replace("\x00ATT\x00", "— ")
+            hits.append({"name": f"{ch} {entry['name']}", "count": n,
+                         "to": "، (Arabic comma)" + (f"; {kept} attribution dash kept" if kept else "")})
+            continue
+        if arabic and ch == "–":
+            text = re.sub(r"\s*–\s*(?=\d)", "-", text)      # ٥–١٠ / 5–10 -> 5-10
+            text = re.sub(r"\s+–\s+", "، ", text)            # used as a dash in a sentence
+            text = text.replace("–", "-")
+            hits.append({"name": f"{ch} {entry['name']}", "count": n, "to": "- or ، (Arabic)"})
             continue
         hits.append({"name": f"{ch} {entry['name']}", "count": n, "to": entry["to"].strip() or "(space)"})
         if ch == "—":
@@ -113,6 +164,9 @@ def pass_typographic(text, lex):
     # A comma inserted before existing punctuation reads wrong.
     text = re.sub(r",\s*([,.;:!?])", r"\1", text)
     text = re.sub(r",\s*\n", "\n", text)
+    if arabic:
+        text = re.sub(r"،\s*([،,.؛;:!؟?])", r"\1", text)
+        text = re.sub(r"،[ \t]*(\n|$)", r"\1", text)
     return text, hits
 
 
@@ -145,11 +199,11 @@ def pass_lexical(text, lex):
     # punctuation behind ("system. ." or a line that now opens on a comma),
     # and that reads worse than the slop did.
     text = re.sub(r"[ \t]{2,}", " ", text)
-    text = re.sub(r"(?m)^[ \t]*(?:[,.;:]+[ \t]*)+", "", text)
+    text = re.sub(r"(?m)^[ \t]*(?:[,.;:،؛]+[ \t]*)+", "", text)
     text = re.sub(r"(?m)^[ \t](?=\S)", "", text)       # one space left by a deletion.
                                                       # Deeper indents are deliberate.
-    text = re.sub(r"\s+([,.;:!?])", r"\1", text)
-    text = re.sub(r",\s*([,.;:!?])", r"\1", text)      # an em dash became a comma,
+    text = re.sub(r"\s+([,.;:!?،؛؟])", r"\1", text)
+    text = re.sub(r"[,،]\s*([,.;:!?،؛؟])", r"\1", text)  # an em dash became a comma,
                                                       # then the clause after it went
     text = text.replace("...", "\x00ELL\x00")          # protect real ellipses
     text = re.sub(r"\.\s*\.+", ".", text)
@@ -174,6 +228,17 @@ def scan_structures(text, lex):
         found = pattern.findall(text)
         if found:
             flags.append({"name": s["name"], "count": len(found), "fix": s["fix"]})
+    # Arabic stock phrases are flagged with a suggestion, never auto-replaced:
+    # a mechanical swap breaks Arabic agreement and case endings.
+    _h = re.compile(r"[\u0640\u064B-\u0652\u0670]")
+    flat = " " + re.sub("[أإآٱ]", "ا", _h.sub("", text)).replace("ة", "ه").replace("ى", "ي") + " "
+    for entry in lex.get("arabic", []):
+        pat = re.compile(r"(?:(?<=[\s\W])|(?<=[\s\W][وفبل]))"
+                         + re.escape(entry["find"]).replace(r"\ ", r"\s+"))
+        n = len(pat.findall(flat))
+        if n:
+            flags.append({"name": f"Arabic stock phrase «{entry['find']}»", "count": n,
+                          "fix": entry["suggest"]})
     # Sentence-length uniformity is structural too.
     lens = [len(s.split()) for s in SENT_RE.findall(text) if len(s.split()) > 2]
     if len(lens) >= 4:
@@ -205,9 +270,10 @@ def restore_capitals(original, text):
 
 def humanize(text, lex):
     raw_for_case = text
+    arabic = is_arabic(text)
     text, urls = protect_urls(text)
     text, inv = pass_invisible(text, lex)
-    text, typo = pass_typographic(text, lex)
+    text, typo = pass_typographic(text, lex, arabic)
     text, lexi = pass_lexical(text, lex)
     text = restore_capitals(raw_for_case, text)
     text = restore_urls(text, urls)
