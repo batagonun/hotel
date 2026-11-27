@@ -254,5 +254,12 @@
   "tag": "حكاية أغنية",
   "hook": "مش كلام<br><b>الرحابنة</b>!",
   "sub": "«أعطني الناي»… مين كتبها؟"
+ },
+ "2026-12-04e-tarafa-shadow": {
+  "bg_html": "<div class='cloth'></div><img class='sil' src='../../media/w49b/shadow/lone.png' style='left:-120px;top:1050px;width:1320px'>",
+  "tag": "حكاية في خيال الظل",
+  "hook": "شايل جواب<br><b>إعدامه</b> بإيده",
+  "sub": "وهو مش عارف… حكاية طرفة بن العبد",
+  "top": 560
  }
 }
