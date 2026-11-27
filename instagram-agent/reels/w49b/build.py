@@ -57,7 +57,7 @@ def bg_html(i, L):
     pos = L.get('pos', 'center')
     if L.get('fit') == 'portrait':
         return (f'<div class="photo blurred" style="background-image:url(\'{bg}\')"></div>'
-                f'<div class="portrait{" wide" if L.get("wide") else ""}" id="p{i}" style="background-image:url(\'{bg}\');background-position:{pos}"></div>')
+                f'<div class="portrait{" wide" if L.get("wide") else ""}" id="p{i}" style="background-image:url(\'{bg}\');background-position:{pos};background-size:{L.get("psize", "cover")}"></div>')
     return f'<div class="photo{blur}" id="p{i}" style="background-image:url(\'{bg}\');background-position:{pos}"></div>'
 
 
