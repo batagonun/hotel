@@ -2,9 +2,10 @@
  "batch": "2026-12-w49",
  "post": "2026-12-02-zawruni-story",
  "date": "2026-12-02T19:00",
- "status": "pending_approval",
+ "status": "scheduled",
  "format": "STORY",
  "media": "out/w49b/stories/2026-12-02-zawruni.jpg",
  "publish_via": "composio",
- "media_url": "https://raw.githubusercontent.com/batagonun/hotel/5cd303ac07f3dc0f0ce81f86f1c29899a6aaa549/instagram-agent/out/w49b/stories/2026-12-02-zawruni.jpg"
+ "media_url": "https://raw.githubusercontent.com/batagonun/hotel/5cd303ac07f3dc0f0ce81f86f1c29899a6aaa549/instagram-agent/out/w49b/stories/2026-12-02-zawruni.jpg",
+ "approved": "2026-11-27"
 }
