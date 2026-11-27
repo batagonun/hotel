@@ -2,12 +2,13 @@
  "batch": "2026-12-w49",
  "post": "2026-12-02-zawruni",
  "date": "2026-12-02T10:00",
- "status": "pending_approval",
+ "status": "scheduled",
  "format": "REEL",
  "caption": "«زوروني كل سنة مرة»... كلنا سامعينها بصوت فيروز، بس الحكاية بدأت في مصر 🎶\n\nاللحن لسيد درويش، وأول واحد غنّاها حامد مرسي سنة 1917.\nوالكلام منسوب للشاعر محمد يونس القاضي، نفس الثنائي اللي عمل «بلادي بلادي».\nوبعد سنين طويلة، فيروز غنّتها ورجّعتها لكل بيت عربي.\n\nإنت كنت فاكرها لبنانية من الأول؟ 😄\nابعتها لحد واحشك 🤍\n\n📚 المصادر: ويكيبيديا العربية «زوروني كل سنة مرة (أغنية)» و«بلادي بلادي بلادي» - بيلبورد عربية «للغناء قصة: زوروني كل سنة مرة» (نسبة الكلام فيها خلاف)\n📷 صور سيد درويش وفيروز: ملكية عامة (ويكيميديا) · تمثال سيد درويش في أوبرا الإسكندرية: Marsupium (CC BY 4.0) - صورة الجرامافون مولّدة بالذكاء الاصطناعي (MAGNIFIC)\n🎵 Music: \"Dreamer\" Kevin MacLeod (incompetech.com), CC BY 4.0\n\n#حكاية_أغنية #سيد_درويش #فيروز #زوروني_كل_سنة_مرة",
  "media": "out/w49b/zawruni.mp4",
  "publish_via": "composio",
- "media_url": "https://raw.githubusercontent.com/batagonun/hotel/6dedea9d3f4c2163da0380e63957a4610d0a9fff/instagram-agent/out/w49b/zawruni.mp4",
+ "media_url": "https://raw.githubusercontent.com/batagonun/hotel/16303510e0c8075bfddc55e7741ea7ed254bdbdc/instagram-agent/out/w49b/zawruni.mp4",
  "cover_url": "https://raw.githubusercontent.com/batagonun/hotel/6dedea9d3f4c2163da0380e63957a4610d0a9fff/instagram-agent/out/covers/2026-12-02-zawruni.jpg",
- "approved_plan": "2026-11-27"
+ "approved_plan": "2026-11-27",
+ "approved": "2026-11-27"
 }

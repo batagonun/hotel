@@ -2,12 +2,13 @@
  "batch": "2026-12-w49",
  "post": "2026-12-06-jara",
  "date": "2026-12-06T10:00",
- "status": "pending_approval",
+ "status": "scheduled",
  "format": "REEL",
  "caption": "«يا جارة الوادي»... الجارة دي مش حبيبة، دي مدينة 🇱🇧\n\nأحمد شوقي زار زحلة في لبنان واتشدّ لها، وكتب القصيدة، واسمها في ديوانه «الشوقيات»: «زحلة».\nوالوادي اللي جنبها هو اللي ادّاها اللقب.\nومحمد عبد الوهاب لحّنها وغنّاها.\n\n«وتعطّلتْ لغةُ الكلامِ وخاطبتْ... عينيَّ في لغةِ الهوى عيناكِ»\n\nإنت كنت فاكرها بتتكلم عن مين؟\nابعتها لحد عينيه بتتكلم 🤍\n\n📚 المصادر: أحمد شوقي، «الشوقيات» (قصيدة «زحلة») - د. منير توما، «قصيدة يا جارة الوادي»، الاتحاد - CafeInPress، «يا جارة الوادي من قبل مولدها إلى غنائها»\n🤖 الصوت متولّد بالذكاء الاصطناعي (Gemini) - 📷 زحلة وشوقي ولوحة مصطفى فرّوخ: ملكية عامة (ويكيميديا)\n🎵 Music: \"Healing\" Kevin MacLeod (incompetech.com), CC BY 4.0\n\n#يا_جارة_الوادي #أحمد_شوقي #عبد_الوهاب #حكاية_أغنية",
  "media": "out/w49b/jara.mp4",
  "publish_via": "composio",
  "media_url": "https://raw.githubusercontent.com/batagonun/hotel/6dedea9d3f4c2163da0380e63957a4610d0a9fff/instagram-agent/out/w49b/jara.mp4",
  "cover_url": "https://raw.githubusercontent.com/batagonun/hotel/6dedea9d3f4c2163da0380e63957a4610d0a9fff/instagram-agent/out/covers/2026-12-06-jara.jpg",
- "approved_plan": "2026-11-27"
+ "approved_plan": "2026-11-27",
+ "approved": "2026-11-27"
 }

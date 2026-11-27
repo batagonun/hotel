@@ -2,12 +2,13 @@
  "batch": "2026-12-w49",
  "post": "2026-12-04-tarafa",
  "date": "2026-12-04T10:00",
- "status": "pending_approval",
+ "status": "scheduled",
  "format": "REEL",
  "caption": "«ستُبدي لك الأيامُ ما كنتَ جاهلًا»... صاحب البيت ده اتقتل وهو شايل جواب إعدامه بإيده 📜\n\nطرفة بن العبد وخاله المتلمّس هجوا الملك عمرو بن هند.\nالملك اداهم جوابين لعامله في البحرين، وقالهم إن فيهم هدية.\nالمتلمّس فتح جوابه، لقى فيه أمر بقتله، فرماه وهرب.\nوطرفة رفض يفتح جوابه، وراح، واتقتل وهو لسه في العشرينات.\n\nومن هنا المثل: «صحيفة المتلمّس»، يعني اللي شايل هلاكه بإيده وهو مش عارف.\n\n«ستُبدي لكَ الأيامُ ما كنتَ جاهلًا... ويأتيكَ بالأخبارِ مَن لم تُزوِّدِ»\n\nإنت بتقول البيت ده إمتى؟ 👇\n\n📚 المصادر: معلقة طرفة بن العبد (الزوزني، «شرح المعلقات السبع») - مصطفى صادق الرافعي، «تاريخ آداب العرب»، فصل طرفة (مؤسسة هنداوي، عن رواية ابن السكيت)\n🤖 الصوت متولّد بالذكاء الاصطناعي (Gemini) - صورة المخطوطة مولّدة بالذكاء الاصطناعي (MAGNIFIC) - 🎬 لقطات الصحراء من فيديوهات Freepik (رخصة مجانية) - 📷 قلعة البحرين: Martin Falbisoner، ويكيميديا (CC BY-SA 4.0)\n🎵 Music: \"Sovereign\" Kevin MacLeod (incompetech.com), CC BY 4.0\n\n#طرفة_بن_العبد #شعر_جاهلي #المعلقات #بيت_وحكاية",
  "media": "out/w49b/tarafa.mp4",
  "publish_via": "composio",
  "media_url": "https://raw.githubusercontent.com/batagonun/hotel/6dedea9d3f4c2163da0380e63957a4610d0a9fff/instagram-agent/out/w49b/tarafa.mp4",
  "cover_url": "https://raw.githubusercontent.com/batagonun/hotel/6dedea9d3f4c2163da0380e63957a4610d0a9fff/instagram-agent/out/covers/2026-12-04-tarafa.jpg",
- "approved_plan": "2026-11-27"
+ "approved_plan": "2026-11-27",
+ "approved": "2026-11-27"
 }
