@@ -344,14 +344,19 @@ def api(body, ip, local):
         metas = sorted((os.path.getmtime(os.path.join(INSP_DIR, f)), f) for f in os.listdir(INSP_DIR)
                        if f.endswith(".json"))
         metas = [m for m in metas if m[0] * 1000 > since]
-        items, nxt, k = [], since, 0
+        items, nxt, k, size = [], since, 0, 0
         for k, (t, f) in enumerate(metas):
             if len(items) >= 20:
+                break
+            # حد لحجم الدفعة: الهاتف يستلم الرد كله في الذاكرة، وتفتيش الصور قد يبلغ 4 ميجا
+            fsize = os.path.getsize(os.path.join(INSP_DIR, f))
+            if items and size + fsize > 3 * 1024 * 1024:
                 break
             nxt = t * 1000
             o = jread(os.path.join(INSP_DIR, f))
             if o and (not who or o.get("inspectorId") == who):
                 items.append(o)
+                size += fsize
         else:
             k = len(metas)
         return {"ok": True, "items": items, "next": nxt, "more": k < len(metas)}
